@@ -1,59 +1,95 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
+import { Stack, router } from 'expo-router';
 import { useEffect } from 'react';
-import 'react-native-reanimated';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import {
+  useFonts,
+  BebasNeue_400Regular,
+} from '@expo-google-fonts/bebas-neue';
+import {
+  DMSans_400Regular,
+  DMSans_500Medium,
+} from '@expo-google-fonts/dm-sans';
+import { Pacifico_400Regular } from '@expo-google-fonts/pacifico';
+import {
+  JetBrainsMono_400Regular,
+} from '@expo-google-fonts/jetbrains-mono';
+import { useAuthStore } from '@/store/auth_store';
+import { Colors } from '@/styles/theme';
 
-import { useColorScheme } from '@/components/useColorScheme';
-
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: '(tabs)',
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
+  const [fontsLoaded, fontError] = useFonts({
+    BebasNeue_400Regular,
+    DMSans_400Regular,
+    DMSans_500Medium,
+    Pacifico_400Regular,
+    JetBrainsMono_400Regular,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+  const { isLoading: authLoading, init } = useAuthStore();
+
+  // Start Firebase auth listener on mount
   useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+    const unsubscribe = init();
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
-    if (loaded) {
+    if (fontError) throw fontError;
+  }, [fontError]);
+
+  // Hold splash screen until both fonts AND auth state are resolved
+  useEffect(() => {
+    if (fontsLoaded && !authLoading) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [fontsLoaded, authLoading]);
 
-  if (!loaded) {
-    return null;
-  }
+  if (!fontsLoaded) return null;
 
   return <RootLayoutNav />;
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+  const { user, isLoading } = useAuthStore();
+
+  // AUTH GUARD
+  // Redirect based on user state once auth is resolved
+  useEffect(() => {
+    if (isLoading) return;
+    if (user) {
+      router.replace('/(tabs)/home_screen');
+    } else {
+      router.replace('/(auth)/login_screen');
+    }
+  }, [user, isLoading]);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+    <>
+      <StatusBar style="dark" />
+      <Stack screenOptions={{ 
+        headerShown: false,
+        contentStyle: { backgroundColor: Colors.bg }
+      }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen
+          name="detail/[id]"
+          options={{ headerShown: false, animation: 'slide_from_right' }}
+        />
+        <Stack.Screen
+          name="add_spot_screen"
+          options={{ headerShown: false, animation: 'slide_from_bottom' }}
+        />
       </Stack>
-    </ThemeProvider>
+    </>
   );
 }

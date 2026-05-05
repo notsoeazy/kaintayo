@@ -39,3 +39,13 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# IDE
+.vscode/
+docs/
+.env
+.agents/
+
+# Firebase
+google-services.json
+GoogleService-Info.plist
