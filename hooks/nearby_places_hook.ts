@@ -2,17 +2,18 @@ import { useMemo } from 'react';
 import type { Place, FeedFilters } from '@/types';
 import type { LocationObject } from 'expo-location';
 
-// Haversine formula to calculate distance between two coordinates in km
+const NEARBY_RADIUS_KM = 5;
+
+// Haversine formula
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371; // Radius of the earth in km
+  const R = 6371;
   const dLat = deg2rad(lat2 - lat1);
   const dLon = deg2rad(lon2 - lon1);
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
     Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function deg2rad(deg: number): number {
@@ -29,35 +30,35 @@ export function useNearbyPlaces(
   userLocation: LocationObject | null
 ) {
   return useMemo(() => {
-    let filteredPlaces: PlaceWithDistance[] = [...places];
+    let result: PlaceWithDistance[] = [...places];
 
-    // 1. Calculate distances if location is available
+    // Calculate distance for all places when location is available
     if (userLocation) {
-      filteredPlaces = filteredPlaces.map(place => ({
+      result = result.map((place) => ({
         ...place,
         distance: calculateDistance(
           userLocation.coords.latitude,
           userLocation.coords.longitude,
           place.latitude,
           place.longitude
-        )
+        ),
       }));
+
+      // Auto-filter to 5km radius
+      if (!filters.showAllDistances) {
+        result = result.filter((p) => (p.distance ?? Infinity) <= NEARBY_RADIUS_KM);
+      }
+
+      result.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
     }
 
-    // 2. Filter by category
-    if (filters.category) {
-      filteredPlaces = filteredPlaces.filter(place => place.category === filters.category);
+    // Multi-category filter
+    if (filters.categories.length > 0) {
+      result = result.filter((place) =>
+        place.categories.some((c) => filters.categories.includes(c))
+      );
     }
 
-    // 3. Sort by distance if nearMe is active and location is available
-    if (filters.nearMe && userLocation) {
-      filteredPlaces.sort((a, b) => {
-        if (a.distance === undefined) return 1;
-        if (b.distance === undefined) return -1;
-        return a.distance - b.distance;
-      });
-    }
-
-    return filteredPlaces;
+    return result;
   }, [places, filters, userLocation]);
 }

@@ -9,7 +9,6 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // FIREBASE CONFIG
-// Values are sourced from EXPO_PUBLIC env vars in .env
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY!,
   authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN!,
@@ -20,7 +19,6 @@ const firebaseConfig = {
 };
 
 // SINGLETON INIT
-// Prevent double initialization in hot reload or test environments
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 // Auth persistence to AsyncStorage for session survival

@@ -10,43 +10,54 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { FontAwesome } from '@expo/vector-icons';
 import { useAuthStore } from '@/store/auth_store';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Colors } from '@/styles/theme';
 import { styles } from '@/styles/screens/login_screen.styles';
 
-// Required to complete the OAuth session when returning from browser
-WebBrowser.maybeCompleteAuthSession();
+GoogleSignin.configure({
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+});
 
 export default function LoginScreen() {
   const { signInWithEmail, signUpWithEmail, signInWithGoogle } = useAuthStore();
+  const { t } = useTranslation();
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError]       = useState('');
 
-  // GOOGLE OAUTH SETUP
-  // In Expo Go, passing the webClientId to all platforms satisfies the hook's requirements
-  // without needing native configurations, since Expo Go uses the web proxy flow anyway.
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-  });
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { id_token } = response.params;
-      handleGoogleSignIn(id_token);
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    setError('');
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      if (response.data?.idToken) {
+        await signInWithGoogle(response.data.idToken);
+      }
+    } catch (e: any) {
+      if (e.code === 'SIGN_IN_CANCELLED') {
+        // User cancelled the login flow
+      } else if (e.code === 'IN_PROGRESS') {
+        // operation (e.g. sign in) is in progress already
+      } else if (e.code === 'PLAY_SERVICES_NOT_AVAILABLE') {
+        // play services not available or outdated
+        setError('Google Play Services is not available');
+      } else {
+        setError(t.loginScreen.errorGoogle);
+      }
+    } finally {
+      setIsLoading(false);
     }
-  }, [response]);
+  };
 
   const handleEmailAuth = async () => {
     if (!email || !password) {
-      setError('Lagyan mo ng email at password!');
+      setError(t.loginScreen.errorEmptyFields);
       return;
     }
     setIsLoading(true);
@@ -59,30 +70,19 @@ export default function LoginScreen() {
       }
     } catch (e: any) {
       if (e?.code === 'auth/email-already-in-use') {
-        setError('Ginagamit na ang email na ito.');
+        setError(t.loginScreen.errorEmailInUse);
       } else if (e?.code === 'auth/weak-password') {
-        setError('Dapat 6 characters pataas ang password.');
+        setError(t.loginScreen.errorWeakPassword);
       } else if (e?.code === 'auth/invalid-credential') {
-        setError('Mali ang email o password.');
+        setError(t.loginScreen.errorInvalidCreds);
       } else {
-        setError('May error na nangyari. Subukan ulit!');
+        setError(t.loginScreen.errorGeneric);
       }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleSignIn = async (idToken: string) => {
-    setIsLoading(true);
-    setError('');
-    try {
-      await signInWithGoogle(idToken);
-    } catch {
-      setError('Hindi makapag-login sa Google. Subukan ulit!');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -96,10 +96,10 @@ export default function LoginScreen() {
         >
           {/* HERO */}
           <View style={styles.heroSection}>
-            <Text style={styles.appName}>KainTayo</Text>
-            <Text style={styles.tagline}>Saan tayo kakain?</Text>
+            <Text style={styles.appName}>{t.loginScreen.appName}</Text>
+            <Text style={styles.tagline}>{t.home.title}</Text>
             <Text style={styles.sub}>
-              {isLoginMode ? 'Mag-login para magsimula' : 'Gumawa ng account'}
+              {isLoginMode ? t.loginScreen.loginSubtitle : t.loginScreen.registerSubtitle}
             </Text>
           </View>
 
@@ -107,7 +107,7 @@ export default function LoginScreen() {
           <View style={styles.formSection}>
             <TextInput
               style={styles.input}
-              placeholder="Email address"
+              placeholder={t.loginScreen.emailPlaceholder}
               placeholderTextColor={Colors.muted}
               value={email}
               onChangeText={setEmail}
@@ -117,7 +117,7 @@ export default function LoginScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="Password"
+              placeholder={t.loginScreen.passwordPlaceholder}
               placeholderTextColor={Colors.muted}
               value={password}
               onChangeText={setPassword}
@@ -141,20 +141,19 @@ export default function LoginScreen() {
                   activeOpacity={0.85}
                 >
                   <Text style={styles.primaryButtonText}>
-                    {isLoginMode ? 'Mag-login' : 'Mag-register'}
+                    {isLoginMode ? t.loginScreen.loginButton : t.loginScreen.registerButton}
                   </Text>
                 </TouchableOpacity>
 
                 <View style={styles.divider}>
                   <View style={styles.dividerLine} />
-                  <Text style={styles.dividerText}>o kaya</Text>
+                  <Text style={styles.dividerText}>{t.loginScreen.orText}</Text>
                   <View style={styles.dividerLine} />
                 </View>
 
                 <TouchableOpacity
                   style={styles.googleButton}
-                  onPress={() => promptAsync()}
-                  disabled={!request}
+                  onPress={handleGoogleSignIn}
                   activeOpacity={0.85}
                 >
                   <FontAwesome
@@ -164,7 +163,7 @@ export default function LoginScreen() {
                     style={styles.googleIcon}
                   />
                   <Text style={styles.googleButtonText}>
-                    Mag-login gamit ang Google
+                    {t.loginScreen.googleButton}
                   </Text>
                 </TouchableOpacity>
 
@@ -177,8 +176,8 @@ export default function LoginScreen() {
                 >
                   <Text style={{ color: Colors.primary, fontWeight: '600' }}>
                     {isLoginMode
-                      ? 'Wala pang account? Mag-register'
-                      : 'May account na? Mag-login'}
+                      ? t.loginScreen.noAccountText
+                      : t.loginScreen.hasAccountText}
                   </Text>
                 </TouchableOpacity>
               </>

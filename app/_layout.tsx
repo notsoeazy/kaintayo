@@ -1,4 +1,4 @@
-import { Stack, router } from 'expo-router';
+import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -23,6 +23,7 @@ export const unstable_settings = {
   initialRouteName: '(tabs)',
 };
 
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -34,7 +35,7 @@ export default function RootLayout() {
     JetBrainsMono_400Regular,
   });
 
-  const { isLoading: authLoading, init } = useAuthStore();
+  const { user, isLoading: authLoading, init } = useAuthStore();
 
   // Start Firebase auth listener on mount
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function RootLayout() {
     if (fontError) throw fontError;
   }, [fontError]);
 
-  // Hold splash screen until both fonts AND auth state are resolved
+  // Hold splash screen until both fonts and auth state are resolved
   useEffect(() => {
     if (fontsLoaded && !authLoading) {
       SplashScreen.hideAsync();
@@ -55,23 +56,6 @@ export default function RootLayout() {
 
   if (!fontsLoaded) return null;
 
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
-  const { user, isLoading } = useAuthStore();
-
-  // AUTH GUARD
-  // Redirect based on user state once auth is resolved
-  useEffect(() => {
-    if (isLoading) return;
-    if (user) {
-      router.replace('/(tabs)/home_screen');
-    } else {
-      router.replace('/(auth)/login_screen');
-    }
-  }, [user, isLoading]);
-
   return (
     <>
       <StatusBar style="dark" />
@@ -79,6 +63,7 @@ function RootLayoutNav() {
         headerShown: false,
         contentStyle: { backgroundColor: Colors.bg }
       }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(auth)" />
         <Stack.Screen

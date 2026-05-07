@@ -1,6 +1,6 @@
 /* 
 Usage: 
-<CategoryChip category="Karinderya" />
+<CategoryChip category="silog" />
 */
 
 import React from 'react';
@@ -11,22 +11,22 @@ import {
   type StyleProp, 
   type ViewStyle 
 } from 'react-native';
+import { FOOD_CATEGORIES } from '@/constants/categories';
 import { Colors, FontFamily, Radius, Spacing, Typography } from '@/styles/theme';
+import type { FoodCategory } from '@/types';
 
 export interface CategoryChipProps {
-  category: string;
+  category: FoodCategory;
   style?: StyleProp<ViewStyle>;
 }
 
-export function CategoryChip({
-  category,
-  style,
-}: CategoryChipProps) {
+export function CategoryChip({ category, style }: CategoryChipProps) {
+  const meta = FOOD_CATEGORIES.find((c) => c.id === category);
+  const label = meta ? `${meta.emoji} ${meta.label}` : category;
+
   return (
     <View style={[styles.chip, style]}>
-      <Text style={styles.text}>
-        {category}
-      </Text>
+      <Text style={styles.text}>{label}</Text>
     </View>
   );
 }

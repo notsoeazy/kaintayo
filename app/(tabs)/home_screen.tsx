@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
@@ -13,22 +13,35 @@ import { FilterBar } from '@/components/FilterBar';
 import { FoodCard } from '@/components/FoodCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { KButton } from '@/components/ui/KButton';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function HomeScreen() {
-  const { places, filters, isLoading } = useFeedStore();
+  const { places, filters, isLoading, fetchPlaces } = useFeedStore();
   const { location } = useLocation();
+  const { t } = useTranslation();
+  const [refreshing, setRefreshing] = useState(false);
 
   const filteredPlaces = useNearbyPlaces(places, filters, location);
+
+  useEffect(() => {
+    fetchPlaces();
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchPlaces();
+    setRefreshing(false);
+  }, [fetchPlaces]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.headerContainer}>
-        <Text style={styles.heading}>Saan tayo kakain?</Text>
+        <Text style={styles.heading}>{t.home.title}</Text>
       </View>
       
       <FilterBar containerStyle={{ marginBottom: 16 }} />
 
-      {isLoading ? (
+      {isLoading && !refreshing ? (
         <View style={styles.emptyContainer}>
           <ActivityIndicator size="large" color={Colors.primary} />
         </View>
@@ -37,6 +50,14 @@ export default function HomeScreen() {
           data={filteredPlaces}
           keyExtractor={(item) => item.id}
           contentContainerStyle={[styles.listContent, { flexGrow: 1 }]}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={Colors.primary}
+              colors={[Colors.primary]}
+            />
+          }
           renderItem={({ item }) => (
             <FoodCard 
               place={item} 
@@ -47,11 +68,11 @@ export default function HomeScreen() {
           ListEmptyComponent={
             <EmptyState
               icon={<Coffee size={64} color={Colors.muted} strokeWidth={1.5} />}
-              title="Wala pang listings dito"
-              description="Maging lodi! Ikaw ang unang mag-add ng paborito mong kainan para dito."
+              title={t.home.emptyStateTitle}
+              description={t.home.emptyStateDesc}
               action={
                 <KButton 
-                  title="Mag-add ka!" 
+                  title={t.home.emptyStateAction} 
                   onPress={() => router.push('/add_spot_screen')} 
                   variant="danger"
                   size="lg"

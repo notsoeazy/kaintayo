@@ -16,6 +16,7 @@ import { PriceBadge } from './ui/PriceBadge';
 import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
 import { useListStore } from '@/store/list_store';
 import { useAuthStore } from '@/store/auth_store';
+import { useTranslation } from '@/hooks/useTranslation';
 import type { Place } from '@/types';
 
 export interface FoodCardProps {
@@ -27,6 +28,7 @@ export interface FoodCardProps {
 const FoodCardComponent = ({ place, distance, onPress }: FoodCardProps) => {
   const { user } = useAuthStore();
   const { wishlistIds, addToWishlist, triedIds, addToTried } = useListStore();
+  const { t } = useTranslation();
   
   const isWishlisted = wishlistIds.includes(place.id);
   const isTried = triedIds.includes(place.id);
@@ -86,10 +88,17 @@ const FoodCardComponent = ({ place, distance, onPress }: FoodCardProps) => {
         {/* CONTENT SECTION */}
         <View style={styles.content}>
           <View style={styles.headerRow}>
-            <CategoryChip category={place.category} />
+            <View style={styles.categoriesRow}>
+              <CategoryChip category={place.categories[0]} />
+              {place.categories.length > 1 && (
+                <Text style={styles.extraCategories}>
+                  +{place.categories.length - 1}
+                </Text>
+              )}
+            </View>
             {!place.isSeeded && (
               <View style={styles.seedBadge}>
-                <Text style={styles.seedBadgeText}>Community Added ★</Text>
+                <Text style={styles.seedBadgeText}>{t.foodCard.communityAdded}</Text>
               </View>
             )}
           </View>
@@ -101,7 +110,7 @@ const FoodCardComponent = ({ place, distance, onPress }: FoodCardProps) => {
           <View style={styles.detailsRow}>
             <PriceBadge priceMin={place.priceMin} priceMax={place.priceMax} />
             {distance !== undefined && (
-              <Text style={styles.distanceText}>📍 {distance.toFixed(1)} km away</Text>
+              <Text style={styles.distanceText}>📍 {distance.toFixed(1)} {t.foodCard.distanceAway}</Text>
             )}
           </View>
 
@@ -128,7 +137,7 @@ const FoodCardComponent = ({ place, distance, onPress }: FoodCardProps) => {
                   color={isTried ? Colors.success : Colors.muted} 
                 />
                 <Text style={[styles.actionText, isTried && { color: Colors.success }]}>
-                  {isTried ? 'Na-try Ko Na ✓' : 'Na-try mo na?'}
+                  {isTried ? t.foodCard.triedItYes : t.foodCard.triedItNo}
                 </Text>
               </View>
             </TouchableWithoutFeedback>
@@ -181,6 +190,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: Spacing.sm,
+  },
+  categoriesRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  extraCategories: {
+    ...Typography.caption,
+    fontFamily: FontFamily.bodyMedium,
+    color: Colors.muted,
+    fontSize: 11,
   },
   title: {
     ...Typography.title,

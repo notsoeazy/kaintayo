@@ -7,16 +7,19 @@ import { styles } from '@/styles/screens/detail_screen.styles';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { KBadge } from '@/components/ui/KBadge';
 
+import { useTranslation } from '@/hooks/useTranslation';
+
 export default function DetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { t } = useTranslation();
 
   return (
     <SafeAreaView style={styles.container}>
       <EmptyState
         icon={<Store color={Colors.muted} size={64} strokeWidth={1.5} />}
-        title="Lugar Detalye"
-        description={`Pila muna tayo lods. Wala pang detalye.`}
-        action={<KBadge label="COMING SOON" variant="secondary" />}
+        title={t.detailScreen.title}
+        description={t.detailScreen.emptyDesc}
+        action={<KBadge label={t.detailScreen.comingSoon} variant="secondary" />}
       />
     </SafeAreaView>
   );

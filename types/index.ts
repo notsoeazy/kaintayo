@@ -4,14 +4,15 @@ import { Timestamp } from 'firebase/firestore';
 
 export type FoodCategory =
   | 'silog'
-  | 'merienda'
   | 'turo-turo'
-  | 'karinderya'
-  | 'snacks'
-  | 'ulam'
-  | 'street food'
+  | 'carinderia'
+  | 'street-food'
+  | 'ihaw-ihaw'
+  | 'merienda'
   | 'fastfood'
-  | 'empty';
+  | 'kape-inumin'
+  | 'bakery'
+  | 'seafood';
 
 export type PriceTier = 'very-budget' | 'affordable' | 'moderate' | 'expensive';
 
@@ -20,17 +21,18 @@ export type PriceTier = 'very-budget' | 'affordable' | 'moderate' | 'expensive';
 export interface Place {
   id: string;
   name: string;
-  category: FoodCategory;
-  priceMin: number;       // Philippine Peso amounts
-  priceMax: number;       // Philippine Peso amounts
+  categories: FoodCategory[];
+  priceMin: number;
+  priceMax: number;
   description: string;
+  address?: string;
   latitude: number;
   longitude: number;
   googleMapsUrl: string;
   photoUrl?: string;
   likes: number;
-  addedBy: string;        // Firebase user ID
-  isSeeded: boolean;      // Admin seeded or community added
+  createdBy: string;           // Firebase user ID
+  isSeeded: boolean;           // Admin seeded or community added
   createdAt: Timestamp | null;
 }
 
@@ -52,9 +54,9 @@ export interface LikeEntry {
 // STATE
 
 export interface FeedFilters {
-  category: FoodCategory | null;
+  categories: FoodCategory[];  // multi-select; empty = show all
   priceTier: PriceTier | null;
-  nearMe: boolean;
+  showAllDistances?: boolean;
 }
 
 // GEOCODING

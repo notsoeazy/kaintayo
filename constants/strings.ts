@@ -1,0 +1,251 @@
+export const strings = {
+  en: {
+    addSpot: {
+      title: "Add a Spot",
+      locationStepTitle: "Pin Location",
+      detailsStepTitle: "Add Details",
+      searchPlaceholder: "Search location...",
+      pinLocationButton: "Pin Location",
+      openMapButton: "Open Map",
+      nextButton: "Next",
+      submitButton: "Add Spot",
+      cancelButton: "Cancel",
+      placeNamePlaceholder: "Place Name (e.g., Aling Lucing's Sisig)",
+      cameraOption: "Take a Photo",
+      galleryOption: "Choose from Gallery",
+      categoryLabel: "Category",
+      priceLabel: "Price Range",
+      priceVeryBudget: "Very Budget (₱50-100)",
+      priceAffordable: "Affordable (₱100-200)",
+      priceModerate: "Moderate (₱200-350)",
+      reviewPlaceholder: "What's good here?",
+      uploadingLocation: "Getting location...",
+      uploadingData: "Adding food spot...",
+      successTitle: "Success!",
+      successMessage: "Food spot added to your list.",
+      errorTitle: "Oops!",
+      errorNoImage: "Please add an image.",
+      errorNoName: "Please enter a place name.",
+      errorNoLocation: "Please pin a location.",
+      imagePickerTitle: "Choose a Photo",
+      imagePickerMessage: "Where do you want to get the photo?",
+      imagePickerCancel: "Cancel",
+      permissionDenied: "Permission denied",
+      cameraPermissionMsg: "Camera permission is required to take photos.",
+      galleryPermissionMsg: "Gallery permission is required to choose photos.",
+      loginRequired: "Please sign in first.",
+      tapMapError: "Tap the map to pin your location.",
+      thanksTitle: "Salamat!",
+      thanksMessage: "Your spot has been added. The community will love it!",
+      okButton: "Done",
+      genericError: "Something went wrong. Please try again.",
+      cameraPromptText: "Take a picture of that delicious find!\n(optional)",
+      placeNameLabel: "Place Name",
+      placeNameHint: "e.g., Aling Nena's Silog",
+      descriptionLabel: "Short Description",
+      descriptionHint: "What makes this place special?",
+      foodCategoryLabel: "Food Type",
+      foodCategoryHint: "(can choose multiple)",
+      priceRangeLabel: "Price (₱)",
+      priceMinLabel: "Minimum",
+      priceMaxLabel: "Maximum",
+      mapInstruction: "Open the map and drag to your location. The pin stays in the center.",
+      noPinnedLocation: "No location pinned yet",
+      dragMapHint: "Drag map to pin location",
+      mapCenterHint: "Hold still to confirm",
+      addressLabel: "Street / Landmark",
+      addressHint: "e.g., Near ADNU Gate (optional)",
+      confirmButton: "Confirm"
+    },
+    home: {
+      title: "Saan tayo kakain?",
+      emptyStateTitle: "Wala pang listings dito",
+      emptyStateDesc: "Maging lodi! Ikaw ang unang mag-add ng paborito mong kainan para dito.",
+      emptyStateAction: "Mag-add ka!",
+      showAllFilter: "🌍 Show Anywhere"
+    },
+    tabs: {
+      home: "Home",
+      map: "Mapa",
+      randomizer: "Kahit Saan",
+      profile: "Profile"
+    },
+    mapScreen: {
+      title: "MAPA",
+      emptyDesc: "Kalma kapatid, pagod pa si Google Maps eh.",
+      comingSoon: "COMING SOON"
+    },
+    profileScreen: {
+      title: "Profile",
+      emptyDesc: "Wait lang Yah, di pa keri ng Ferson.",
+      comingSoon: "COMING SOON"
+    },
+    randomizerScreen: {
+      title: "Randomizer",
+      emptyDesc: "Wala pa munang randomizer idol.",
+      comingSoon: "COMING SOON"
+    },
+    detailScreen: {
+      title: "Lugar Detalye",
+      emptyDesc: "Pila muna tayo lods. Wala pang detalye.",
+      comingSoon: "COMING SOON"
+    },
+    loginScreen: {
+      appName: "KainTayo",
+      loginSubtitle: "Sign in to start",
+      registerSubtitle: "Create an account",
+      emailPlaceholder: "Email address",
+      passwordPlaceholder: "Password",
+      loginButton: "Sign in",
+      registerButton: "Register",
+      orText: "or",
+      googleButton: "Sign in with Google",
+      noAccountText: "No account yet? Register",
+      hasAccountText: "Already have an account? Sign in",
+      errorEmptyFields: "Please enter email and password!",
+      errorEmailInUse: "This email is already in use.",
+      errorWeakPassword: "Password must be at least 6 characters.",
+      errorInvalidCreds: "Invalid email or password.",
+      errorGeneric: "An error occurred. Please try again!",
+      errorGoogle: "Failed to sign in with Google. Please try again!"
+    },
+    settings: {
+      languageTitle: "Language",
+      englishOption: "Taglish (Default)",
+      tagalogOption: "Tagalog",
+      logout: "Log out"
+    },
+    foodCard: {
+      communityAdded: "Community Added ★",
+      distanceAway: "km away",
+      triedItYes: "Na-try Ko Na ✓",
+      triedItNo: "Na-try mo na?"
+    }
+  },
+  tl: {
+    addSpot: {
+      title: "Mag-Add ng Spot",
+      locationStepTitle: "I-pin ang Lokasyon",
+      detailsStepTitle: "Ilagay ang Detalye",
+      searchPlaceholder: "Maghanap ng lokasyon...",
+      pinLocationButton: "I-pin ang Lokasyon",
+      openMapButton: "Buksan ang Mapa",
+      nextButton: "Susunod",
+      submitButton: "I-add ang Spot",
+      cancelButton: "Kanselahin",
+      placeNamePlaceholder: "Pangalan ng Lugar (hal. Aling Lucing's Sisig)",
+      cameraOption: "Kumuha ng Litrato",
+      galleryOption: "Pumili sa Gallery",
+      categoryLabel: "Kategorya",
+      priceLabel: "Presyo",
+      priceVeryBudget: "Sobrang Sulit (₱50-100)",
+      priceAffordable: "Sakto Lang (₱100-200)",
+      priceModerate: "Medyo May Kamahalan (₱200-350)",
+      reviewPlaceholder: "Anong masarap dito?",
+      uploadingLocation: "Kinukuha ang lokasyon...",
+      uploadingData: "Dinadagdag ang food spot...",
+      successTitle: "Tagumpay!",
+      successMessage: "Nai-add na ang food spot sa iyong listahan.",
+      errorTitle: "Teka lang!",
+      errorNoImage: "Mangyaring maglagay ng litrato.",
+      errorNoName: "Mangyaring ilagay ang pangalan ng lugar.",
+      errorNoLocation: "Mangyaring i-pin ang lokasyon.",
+      imagePickerTitle: "Pumili ng Larawan",
+      imagePickerMessage: "Saan mo kukunin ang litrato?",
+      imagePickerCancel: "Huwag na",
+      permissionDenied: "Permission denied",
+      cameraPermissionMsg: "Kailangan ang camera permission para kumuha ng litrato.",
+      galleryPermissionMsg: "Kailangan ang gallery permission para pumili ng litrato.",
+      loginRequired: "Kailangan mag-login muna. Please sign in first.",
+      tapMapError: "I-tap ang mapa para i-pin ang lokasyon mo.",
+      thanksTitle: "Salamat!",
+      thanksMessage: "Na-add na ang spot mo. Malaki ang tulong mo!",
+      okButton: "OK",
+      genericError: "May nangyaring mali. Subukan ulit.",
+      cameraPromptText: "Pikturan ang masarap na find!\n(optional)",
+      placeNameLabel: "Pangalan ng Kainan",
+      placeNameHint: "hal. Aling Nena's Silog",
+      descriptionLabel: "Maikling Paglalarawan",
+      descriptionHint: "Anong specialty nila? Bakit paborito mo?",
+      foodCategoryLabel: "Klase ng Pagkain",
+      foodCategoryHint: "(puwedeng marami)",
+      priceRangeLabel: "Presyo (₱)",
+      priceMinLabel: "Minimum",
+      priceMaxLabel: "Maximum",
+      mapInstruction: "I-tap ang button sa ibaba para buksan ang buong mapa at i-drop ang pin.",
+      noPinnedLocation: "Wala pang pinned location",
+      dragMapHint: "I-drag ang mapa para i-pin ang lokasyon",
+      mapCenterHint: "Sandali lang para ma-confirm",
+      addressLabel: "Kalye / Landmark",
+      addressHint: "hal. Malapit sa ADNU Gate (optional)",
+      confirmButton: "Kumpirmahin"
+    },
+    home: {
+      title: "Saan tayo kakain?",
+      emptyStateTitle: "Wala pang listings dito",
+      emptyStateDesc: "Maging lodi! Ikaw ang unang mag-add ng paborito mong kainan para dito.",
+      emptyStateAction: "Mag-add ka!",
+      showAllFilter: "🌍 Kahit Saan"
+    },
+    tabs: {
+      home: "Home",
+      map: "Mapa",
+      randomizer: "Kahit Saan",
+      profile: "Profile"
+    },
+    mapScreen: {
+      title: "MAPA",
+      emptyDesc: "Kalma kapatid, pagod pa si Google Maps eh.",
+      comingSoon: "COMING SOON"
+    },
+    profileScreen: {
+      title: "Profile",
+      emptyDesc: "Wait lang Yah, di pa keri ng Ferson.",
+      comingSoon: "COMING SOON"
+    },
+    randomizerScreen: {
+      title: "Randomizer",
+      emptyDesc: "Wala pa munang randomizer idol.",
+      comingSoon: "COMING SOON"
+    },
+    detailScreen: {
+      title: "Lugar Detalye",
+      emptyDesc: "Pila muna tayo lods. Wala pang detalye.",
+      comingSoon: "COMING SOON"
+    },
+    loginScreen: {
+      appName: "KainTayo",
+      loginSubtitle: "Mag-login para magsimula",
+      registerSubtitle: "Gumawa ng account",
+      emailPlaceholder: "Email address",
+      passwordPlaceholder: "Password",
+      loginButton: "Mag-login",
+      registerButton: "Mag-register",
+      orText: "o kaya",
+      googleButton: "Mag-login gamit ang Google",
+      noAccountText: "Wala pang account? Mag-register",
+      hasAccountText: "May account na? Mag-login",
+      errorEmptyFields: "Lagyan mo ng email at password!",
+      errorEmailInUse: "Ginagamit na ang email na ito.",
+      errorWeakPassword: "Dapat 6 characters pataas ang password.",
+      errorInvalidCreds: "Mali ang email o password.",
+      errorGeneric: "May error na nangyari. Subukan ulit!",
+      errorGoogle: "Hindi makapag-login sa Google. Subukan ulit!"
+    },
+    settings: {
+      languageTitle: "Wika (Language)",
+      englishOption: "Taglish (Default)",
+      tagalogOption: "Tagalog",
+      logout: "Mag-log out"
+    },
+    foodCard: {
+      communityAdded: "Dagdag ng Komunidad ★",
+      distanceAway: "km ang layo",
+      triedItYes: "Na-try Ko Na ✓",
+      triedItNo: "Nasubukan mo na?"
+    }
+  }
+};
+
+export type LanguageOption = keyof typeof strings;
+export type AppStrings = typeof strings['en'];

@@ -33,7 +33,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     await createUserWithEmailAndPassword(auth, email, password);
   },
 
-  // Receives the id_token from Google OAuth and exchanges it for a Firebase credential
   signInWithGoogle: async (idToken) => {
     const credential = GoogleAuthProvider.credential(idToken);
     await signInWithCredential(auth, credential);
@@ -43,7 +42,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     await firebaseSignOut(auth);
   },
 
-  // Subscribes to Firebase auth state changes. Returns unsubscribe for cleanup.
   init: () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       set({ user, isLoading: false });

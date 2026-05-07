@@ -10,24 +10,22 @@ import { FilterChip } from './ui/FilterChip';
 import { useFeedStore } from '@/store/feed_store';
 import { Spacing } from '@/styles/theme';
 import type { FoodCategory } from '@/types';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export interface FilterBarProps {
   containerStyle?: StyleProp<ViewStyle>;
 }
 
 export function FilterBar({ containerStyle }: FilterBarProps) {
-  const { filters, setFilter } = useFeedStore();
+  const { filters, toggleCategory, setFilter } = useFeedStore();
+  const { t } = useTranslation();
 
-  const handleCategoryPress = (categoryId: FoodCategory) => {
-    if (filters.category === categoryId) {
-      setFilter('category', null);
-    } else {
-      setFilter('category', categoryId);
-    }
+  const handleCategoryPress = (id: FoodCategory) => {
+    toggleCategory(id);
   };
 
-  const handleNearMePress = () => {
-    setFilter('nearMe', !filters.nearMe);
+  const handleShowAllPress = () => {
+    setFilter('showAllDistances', !filters.showAllDistances);
   };
 
   return (
@@ -38,16 +36,15 @@ export function FilterBar({ containerStyle }: FilterBarProps) {
       contentContainerStyle={styles.contentContainer}
     >
       <FilterChip
-        label="Near Me"
-        isActive={filters.nearMe}
-        onPress={handleNearMePress}
+        label={t.home.showAllFilter}
+        isActive={filters.showAllDistances}
+        onPress={handleShowAllPress}
       />
-      
       {FOOD_CATEGORIES.map((cat) => (
         <FilterChip
           key={cat.id}
-          label={cat.label}
-          isActive={filters.category === cat.id}
+          label={`${cat.emoji} ${cat.label}`}
+          isActive={filters.categories.includes(cat.id)}
           onPress={() => handleCategoryPress(cat.id)}
         />
       ))}
