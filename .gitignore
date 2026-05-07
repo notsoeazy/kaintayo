@@ -42,7 +42,9 @@ yarn-error.*
 
 # IDE
 .vscode/
-docs/
+docs/*
+!docs/DEV_GUIDE.md
+!docs/AI_USAGE.md
 .env
 .agents/
 
