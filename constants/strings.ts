@@ -72,8 +72,12 @@ export const strings = {
     },
     mapScreen: {
       title: "MAPA",
+      subtitle: "Mga kainan sa mapa",
       emptyDesc: "Kalma kapatid, pagod pa si Google Maps eh.",
-      comingSoon: "COMING SOON"
+      comingSoon: "COMING SOON",
+      spotsCount: (n: number) => `${n} spot${n !== 1 ? 's' : ''} sa mapa`,
+      loadingSpots: "Hahanapin ang mga kainan...",
+      loadingLocation: "Hahanapin ang location mo..."
     },
     profileScreen: {
       title: "Profile",
@@ -195,8 +199,12 @@ export const strings = {
     },
     mapScreen: {
       title: "MAPA",
+      subtitle: "Mga kainan sa mapa",
       emptyDesc: "Kalma kapatid, pagod pa si Google Maps eh.",
-      comingSoon: "COMING SOON"
+      comingSoon: "COMING SOON",
+      spotsCount: (n: number) => `${n} kainan sa mapa`,
+      loadingSpots: "Hinahanap ang mga kainan...",
+      loadingLocation: "Hinahanap ang iyong lokasyon..."
     },
     profileScreen: {
       title: "Profile",
