@@ -4,10 +4,12 @@ Usage:
 */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, Modal, Pressable, Image, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, Pressable, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
 import { CategoryChip } from './ui/CategoryChip';
 import { PriceBadge } from './ui/PriceBadge';
 import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 import type { Place } from '@/types';
 
 interface SpotCalloutProps {
@@ -17,6 +19,7 @@ interface SpotCalloutProps {
 }
 
 export const SpotCallout = ({ place, onPress, onClose }: SpotCalloutProps) => {
+  const { t } = useTranslation();
   if (!place) return null;
 
   return (
@@ -36,7 +39,7 @@ export const SpotCallout = ({ place, onPress, onClose }: SpotCalloutProps) => {
             <Image
               source={{ uri: place.photoUrl }}
               style={styles.image}
-              resizeMode="cover"
+              contentFit="cover"
             />
           ) : (
             <View style={[styles.image, styles.imagePlaceholder]} />
@@ -66,7 +69,7 @@ export const SpotCallout = ({ place, onPress, onClose }: SpotCalloutProps) => {
                 activeOpacity={0.8}
                 onPress={() => onPress?.(place)}
               >
-                <Text style={styles.detailsButtonText}>Tap for details</Text>
+                <Text style={styles.detailsButtonText}>{t.spotCallout.detailsButton}</Text>
               </TouchableOpacity>
             </View>
           </View>

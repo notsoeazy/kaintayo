@@ -49,50 +49,55 @@ export const strings = {
       priceRangeLabel: "Price (₱)",
       priceMinLabel: "Minimum",
       priceMaxLabel: "Maximum",
-      mapInstruction: "Open the map and drag to your location. The pin stays in the center.",
+      mapInstruction:
+        "Open the map and drag to your location. The pin stays in the center.",
       noPinnedLocation: "No location pinned yet",
       dragMapHint: "Drag map to pin location",
       mapCenterHint: "Hold still to confirm",
       addressLabel: "Street / Landmark",
       addressHint: "e.g., Near ADNU Gate (optional)",
-      confirmButton: "Confirm"
+      confirmButton: "Confirm",
     },
     home: {
       title: "Saan tayo kakain?",
       emptyStateTitle: "Wala pang listings dito",
-      emptyStateDesc: "Maging lodi! Ikaw ang unang mag-add ng paborito mong kainan para dito.",
+      emptyStateDesc:
+        "Maging lodi! Ikaw ang unang mag-add ng paborito mong kainan para dito.",
       emptyStateAction: "Mag-add ka!",
-      showAllFilter: "🌍 Show Anywhere"
+      showAllFilter: "🌍 Show Anywhere",
     },
     tabs: {
       home: "Home",
       map: "Mapa",
       randomizer: "Kahit Saan",
-      profile: "Profile"
+      profile: "Profile",
     },
     mapScreen: {
       title: "MAPA",
-      subtitle: "Mga kainan sa mapa",
+      subtitle: "Spots on the map",
       emptyDesc: "Kalma kapatid, pagod pa si Google Maps eh.",
       comingSoon: "COMING SOON",
-      spotsCount: (n: number) => `${n} spot${n !== 1 ? 's' : ''} sa mapa`,
-      loadingSpots: "Hahanapin ang mga kainan...",
-      loadingLocation: "Hahanapin ang location mo..."
+      spotsCount: (n: number) => `${n} spot${n !== 1 ? "s" : ""} on map`,
+      loadingSpots: "Searching for spots...",
+      loadingLocation: "Finding your location...",
+      filterFab: "Filter the Map",
+      filterModalTitle: "Filter the Map",
+      filterComingSoon: "Filters coming soon!",
     },
     profileScreen: {
       title: "Profile",
       emptyDesc: "Wait lang Yah, di pa keri ng Ferson.",
-      comingSoon: "COMING SOON"
+      comingSoon: "COMING SOON",
     },
     randomizerScreen: {
       title: "Randomizer",
       emptyDesc: "Wala pa munang randomizer idol.",
-      comingSoon: "COMING SOON"
+      comingSoon: "COMING SOON",
     },
     detailScreen: {
       title: "Lugar Detalye",
       emptyDesc: "Pila muna tayo lods. Wala pang detalye.",
-      comingSoon: "COMING SOON"
+      comingSoon: "COMING SOON",
     },
     loginScreen: {
       appName: "KainTayo",
@@ -111,20 +116,23 @@ export const strings = {
       errorWeakPassword: "Password must be at least 6 characters.",
       errorInvalidCreds: "Invalid email or password.",
       errorGeneric: "An error occurred. Please try again!",
-      errorGoogle: "Failed to sign in with Google. Please try again!"
+      errorGoogle: "Failed to sign in with Google. Please try again!",
     },
     settings: {
       languageTitle: "Language",
       englishOption: "Taglish (Default)",
       tagalogOption: "Tagalog",
-      logout: "Log out"
+      logout: "Log out",
     },
     foodCard: {
       communityAdded: "Community Added ★",
       distanceAway: "km away",
       triedItYes: "Na-try Ko Na ✓",
-      triedItNo: "Na-try mo na?"
-    }
+      triedItNo: "Na-try mo na?",
+    },
+    spotCallout: {
+      detailsButton: "Tap for details",
+    },
   },
   tl: {
     addSpot: {
@@ -158,8 +166,10 @@ export const strings = {
       imagePickerMessage: "Saan mo kukunin ang litrato?",
       imagePickerCancel: "Huwag na",
       permissionDenied: "Permission denied",
-      cameraPermissionMsg: "Kailangan ang camera permission para kumuha ng litrato.",
-      galleryPermissionMsg: "Kailangan ang gallery permission para pumili ng litrato.",
+      cameraPermissionMsg:
+        "Kailangan ang camera permission para kumuha ng litrato.",
+      galleryPermissionMsg:
+        "Kailangan ang gallery permission para pumili ng litrato.",
       loginRequired: "Kailangan mag-login muna. Please sign in first.",
       tapMapError: "I-tap ang mapa para i-pin ang lokasyon mo.",
       thanksTitle: "Salamat!",
@@ -176,26 +186,28 @@ export const strings = {
       priceRangeLabel: "Presyo (₱)",
       priceMinLabel: "Minimum",
       priceMaxLabel: "Maximum",
-      mapInstruction: "I-tap ang button sa ibaba para buksan ang buong mapa at i-drop ang pin.",
+      mapInstruction:
+        "I-tap ang button sa ibaba para buksan ang buong mapa at i-drop ang pin.",
       noPinnedLocation: "Wala pang pinned location",
       dragMapHint: "I-drag ang mapa para i-pin ang lokasyon",
       mapCenterHint: "Sandali lang para ma-confirm",
       addressLabel: "Kalye / Landmark",
       addressHint: "hal. Malapit sa ADNU Gate (optional)",
-      confirmButton: "Kumpirmahin"
+      confirmButton: "Kumpirmahin",
     },
     home: {
       title: "Saan tayo kakain?",
       emptyStateTitle: "Wala pang listings dito",
-      emptyStateDesc: "Maging lodi! Ikaw ang unang mag-add ng paborito mong kainan para dito.",
+      emptyStateDesc:
+        "Maging lodi! Ikaw ang unang mag-add ng paborito mong kainan para dito.",
       emptyStateAction: "Mag-add ka!",
-      showAllFilter: "🌍 Kahit Saan"
+      showAllFilter: "🌍 Kahit Saan",
     },
     tabs: {
       home: "Home",
       map: "Mapa",
       randomizer: "Kahit Saan",
-      profile: "Profile"
+      profile: "Profile",
     },
     mapScreen: {
       title: "MAPA",
@@ -204,22 +216,25 @@ export const strings = {
       comingSoon: "COMING SOON",
       spotsCount: (n: number) => `${n} kainan sa mapa`,
       loadingSpots: "Hinahanap ang mga kainan...",
-      loadingLocation: "Hinahanap ang iyong lokasyon..."
+      loadingLocation: "Hinahanap ang iyong lokasyon...",
+      filterFab: "Salain ang Mapa",
+      filterModalTitle: "I-filter ang Mapa",
+      filterComingSoon: "Malapit na ang mga filter!",
     },
     profileScreen: {
       title: "Profile",
       emptyDesc: "Wait lang Yah, di pa keri ng Ferson.",
-      comingSoon: "COMING SOON"
+      comingSoon: "COMING SOON",
     },
     randomizerScreen: {
       title: "Randomizer",
       emptyDesc: "Wala pa munang randomizer idol.",
-      comingSoon: "COMING SOON"
+      comingSoon: "COMING SOON",
     },
     detailScreen: {
       title: "Lugar Detalye",
       emptyDesc: "Pila muna tayo lods. Wala pang detalye.",
-      comingSoon: "COMING SOON"
+      comingSoon: "COMING SOON",
     },
     loginScreen: {
       appName: "KainTayo",
@@ -238,22 +253,25 @@ export const strings = {
       errorWeakPassword: "Dapat 6 characters pataas ang password.",
       errorInvalidCreds: "Mali ang email o password.",
       errorGeneric: "May error na nangyari. Subukan ulit!",
-      errorGoogle: "Hindi makapag-login sa Google. Subukan ulit!"
+      errorGoogle: "Hindi makapag-login sa Google. Subukan ulit!",
     },
     settings: {
       languageTitle: "Wika (Language)",
       englishOption: "Taglish (Default)",
       tagalogOption: "Tagalog",
-      logout: "Mag-log out"
+      logout: "Mag-log out",
     },
     foodCard: {
       communityAdded: "Dagdag ng Komunidad ★",
       distanceAway: "km ang layo",
       triedItYes: "Na-try Ko Na ✓",
-      triedItNo: "Nasubukan mo na?"
-    }
-  }
+      triedItNo: "Nasubukan mo na?",
+    },
+    spotCallout: {
+      detailsButton: "I-tap para sa detalye",
+    },
+  },
 };
 
 export type LanguageOption = keyof typeof strings;
-export type AppStrings = typeof strings['en'];
+export type AppStrings = (typeof strings)["en"];
