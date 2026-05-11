@@ -75,16 +75,19 @@ kaintayo/
 │   ├── firebase_service.ts       # Firebase app init (Auth + Firestore + Storage)
 │   ├── firebase_storage_service.ts # Image upload to Cloud Storage
 │   ├── firestore_service.ts      # Firestore query helpers
+│   ├── geo_utils.ts              # Pure geographic math (haversine formula)
 │   ├── randomizer_service.ts     # Kahit Saan pick logic
 │   └── seed_service.ts           # Firestore seed data (dev only)
 │
 ├── hooks/                        # Custom React hooks
 │   ├── location_hook.ts          # expo-location wrapper
 │   ├── nearby_places_hook.ts     # Distance filter + Show Anywhere toggle
+│   ├── map_screen_hook.ts        # Map screen state, effects, and handlers
 │   └── useTranslation.ts         # i18n hook (reads from settings_store)
 │
 ├── constants/
 │   ├── categories.ts             # FOOD_CATEGORIES array
+│   ├── map_config.ts             # Map constants (region, style, pin size, radius)
 │   ├── price_ranges.ts           # PRICE_TIERS with label + min/max
 │   └── strings.ts                # All UI strings — EN and TL translations
 │
@@ -209,6 +212,10 @@ Is it a call to Firebase, an API, or pure business logic?
 Is it a reusable React hook (uses useState/useEffect)?
   → hooks/*_hook.ts
 
+Is it a screen-level logic hook (complex state/effects for one specific screen)?
+  → hooks/*_screen_hook.ts  (e.g., map_screen_hook.ts)
+  → If a screen has more than 3 callbacks, 2+ effects, or any non-trivial memos, extract them into a dedicated hook.
+
 Is it a TypeScript type or interface?
   → types/index.ts
 
@@ -220,6 +227,10 @@ Is it a UI string or translation?
 
 Is it a design value (color, spacing, font)?
   → styles/theme.ts  ← never anywhere else
+
+Is it a static layout/sizing value specific to a screen (e.g., pin size, label width)?
+  → constants/  in a dedicated file (e.g., map_config.ts)
+  → Never leave these as named exports inside a *.styles.ts file — styles files should only export StyleSheet objects.
 ```
 
 ---
@@ -439,7 +450,8 @@ Before shipping any screen with a list:
 - [ ] Using `FlatList`, not `ScrollView`, for any scrollable list of data
 - [ ] `keyExtractor` provided to all `FlatList` instances
 - [ ] `FoodCard` wrapped in `React.memo`
-- [ ] Images use `expo-image` (not `Image` from `react-native`)
+- [ ] Images use `expo-image` (not `Image` from `react-native`) — `expo-image` provides disk caching and is required project-wide
+- [ ] Screen logic (effects, memos, callbacks) extracted to a `*_screen_hook.ts` if the component body exceeds ~3 handlers or 2 effects
 
 ---
 
@@ -465,17 +477,5 @@ npx expo run:android
 # Check for outdated or incompatible deps
 npx expo-doctor
 ```
-
----
-
-## 14. AI Agent Workflows
-
-The AI agent (Antigravity) MUST follow these specific workflows when working on the KainTayo project:
-
-### Update Docs Workflow
-- When architectural changes, new layers, or major features are implemented, update `docs/DEV_GUIDE.md` to reflect the current state.
-- After finishing any task or phase, immediately update `docs/TODO.md` to check off completed items.
-
-### Commit Workflow
-- After implementing features, finishing phases, or completing bug fixes, STOP and wait for explicit user approval before executing a `git commit`.
-- Never auto-commit without the user's explicit go-ahead.
+> NOTE
+> Did not test on IOS yet. Expect some issues.
