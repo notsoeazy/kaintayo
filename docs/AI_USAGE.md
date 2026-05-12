@@ -3,3 +3,4 @@
 * Used Gemini to debug the problem with connecting Firebase Cloud Storage and Firestore database.
 * Used Gemini to scan for vulnerabilities with usage of .env and API keys.
 * Used Claude to create temporary README.md for collaboration guides.
+* Used Antigravity IDE for code reviews and auto-generating commit messages and other development tasks.

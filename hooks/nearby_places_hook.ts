@@ -1,24 +1,10 @@
 import { useMemo } from 'react';
 import type { Place, FeedFilters } from '@/types';
 import type { LocationObject } from 'expo-location';
+import { haversineKm } from '@/lib/geo_utils';
+import { MAP_NEARBY_RADIUS_KM } from '@/constants/map_config';
 
-const NEARBY_RADIUS_KM = 5;
 
-// Haversine formula
-function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371;
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-function deg2rad(deg: number): number {
-  return deg * (Math.PI / 180);
-}
 
 export interface PlaceWithDistance extends Place {
   distance?: number;
@@ -36,7 +22,7 @@ export function useNearbyPlaces(
     if (userLocation) {
       result = result.map((place) => ({
         ...place,
-        distance: calculateDistance(
+        distance: haversineKm(
           userLocation.coords.latitude,
           userLocation.coords.longitude,
           place.latitude,
@@ -46,7 +32,7 @@ export function useNearbyPlaces(
 
       // Auto-filter to 5km radius
       if (!filters.showAllDistances) {
-        result = result.filter((p) => (p.distance ?? Infinity) <= NEARBY_RADIUS_KM);
+        result = result.filter((p) => (p.distance ?? Infinity) <= MAP_NEARBY_RADIUS_KM);
       }
 
       result.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
