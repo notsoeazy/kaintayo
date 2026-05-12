@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase_service";
-import type { LikeEntry, Place, TriedEntry, WishlistEntry } from "@/types";
+import type { LikeEntry, Place, PriceTier, TriedEntry, WishlistEntry } from "@/types";
 import {
   addDoc,
   collection,
@@ -9,6 +9,7 @@ import {
   increment,
   orderBy,
   query,
+  setDoc,
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
@@ -103,4 +104,71 @@ export async function getUserTried(uid: string): Promise<string[]> {
 export async function getUserWishlist(uid: string): Promise<string[]> {
   const snapshot = await getDocs(collection(db, userWishlistCol(uid)));
   return snapshot.docs.map((d) => (d.data() as WishlistEntry).placeId);
+}
+
+// PLACE PHOTOS
+
+const placePhotosCol = (placeId: string) => `places/${placeId}/photos`;
+const priceVotesCol = (placeId: string) => `places/${placeId}/priceVotes`;
+
+// Fetch all user-submitted photo URLs newest first
+export async function getPlacePhotos(placeId: string): Promise<string[]> {
+  const q = query(collection(db, placePhotosCol(placeId)), orderBy("uploadedAt", "desc"));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((d) => (d.data() as { url: string }).url);
+}
+
+// Save a newly uploaded photo URL
+export async function addPlacePhoto(
+  placeId: string,
+  url: string,
+  uid: string,
+): Promise<void> {
+  await addDoc(collection(db, placePhotosCol(placeId)), {
+    url,
+    uploadedBy: uid,
+    uploadedAt: Timestamp.now(),
+  });
+}
+
+// PRICE VOTES
+
+// Upsert a price tier vote
+export async function votePriceTier(
+  placeId: string,
+  uid: string,
+  tier: PriceTier,
+): Promise<void> {
+  await setDoc(doc(db, priceVotesCol(placeId), uid), {
+    tier,
+    votedAt: Timestamp.now(),
+  });
+}
+
+// Get the current vote
+export async function getUserPriceVote(
+  placeId: string,
+  uid: string,
+): Promise<PriceTier | null> {
+  const docSnap = await getDoc(doc(db, priceVotesCol(placeId), uid));
+  if (!docSnap.exists()) return null;
+  return (docSnap.data() as { tier: PriceTier }).tier;
+}
+
+// Count votes per tier and return a tally
+export async function getPriceVoteTally(
+  placeId: string,
+): Promise<Record<PriceTier, number>> {
+  const snapshot = await getDocs(collection(db, priceVotesCol(placeId)));
+  const tally: Record<PriceTier, number> = {
+    'very-budget': 0,
+    affordable: 0,
+    moderate: 0,
+    expensive: 0,
+  };
+  snapshot.docs.forEach((d) => {
+    const tier = (d.data() as { tier: PriceTier }).tier;
+    if (tier in tally) tally[tier]++;
+  });
+  return tally;
 }

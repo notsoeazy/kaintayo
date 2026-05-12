@@ -10,6 +10,18 @@ service cloud.firestore {
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']);
       allow delete: if false;
     }
+
+    // Photo gallery for the place
+    match /places/{placeId}/photos/{photoId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+    }
+
+    // Community price survey votes
+    match /places/{placeId}/priceVotes/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
     // Users can only read/write their own subcollections
     match /users/{userId}/{subcollection}/{docId} {
       allow read, write: if request.auth != null

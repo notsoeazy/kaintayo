@@ -59,10 +59,9 @@ export default function HomeScreen() {
             />
           }
           renderItem={({ item }) => (
-            <FoodCard 
-              place={item} 
-              distance={item.distance} 
-              onPress={(place) => router.push(`/detail/${place.id}` as any)} 
+            <FoodCard
+              place={item}
+              distance={item.distance}
             />
           )}
           ListEmptyComponent={

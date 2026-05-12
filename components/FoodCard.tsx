@@ -17,18 +17,19 @@ import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/sty
 import { useListStore } from '@/store/list_store';
 import { useAuthStore } from '@/store/auth_store';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useDetailsNavigation } from '@/hooks/useDetailsNavigation';
 import type { Place } from '@/types';
 
 export interface FoodCardProps {
   place: Place;
   distance?: number;
-  onPress?: (place: Place) => void;
 }
 
-const FoodCardComponent = ({ place, distance, onPress }: FoodCardProps) => {
+const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
   const { user } = useAuthStore();
   const { wishlistIds, addToWishlist, triedIds, addToTried } = useListStore();
   const { t } = useTranslation();
+  const { openDetailsForPlace } = useDetailsNavigation();
   
   const isWishlisted = wishlistIds.includes(place.id);
   const isTried = triedIds.includes(place.id);
@@ -65,7 +66,7 @@ const FoodCardComponent = ({ place, distance, onPress }: FoodCardProps) => {
 
   return (
     <TouchableWithoutFeedback
-      onPress={() => onPress?.(place)}
+      onPress={() => openDetailsForPlace(place)}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
     >
