@@ -1,13 +1,14 @@
 import React from 'react';
-import { View, ScrollView, ActivityIndicator, Text, StyleSheet } from 'react-native';
+import { View, ScrollView, ActivityIndicator, Text, Share, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { useDetailScreen } from '@/hooks/useDetailScreen';
-import { HeroImage } from '@/components/detail/HeroImage';
+import { HeroTopBar } from '@/components/detail/HeroTopBar';
 import { InfoSection } from '@/components/detail/InfoSection';
 import { PhotoGallery } from '@/components/detail/PhotoGallery';
 import { PriceSurvey } from '@/components/detail/PriceSurvey';
-import { ActionGrid } from '@/components/detail/ActionGrid';
+import { LocationMap } from '@/components/detail/LocationMap';
+import { ActionRow } from '@/components/detail/ActionRow';
 import { Colors, FontFamily, FontSize, Spacing } from '@/styles/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -31,6 +32,14 @@ export default function DetailScreen() {
     handleWishlist,
     handleTried,
   } = useDetailScreen(id);
+
+  const handleShare = async () => {
+    if (!place) return;
+    const msg = t.detailScreen.shareMessage
+      .replace('{{placeName}}', place.name)
+      .replace('{{url}}', place.googleMapsUrl ?? '');
+    await Share.share({ message: msg });
+  };
 
   if (isLoading) {
     return (
@@ -56,18 +65,34 @@ export default function DetailScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <HeroImage photoUrl={place.photoUrl} />
-
-        <InfoSection place={place} />
-
-        <View style={styles.divider} />
-
-        <PhotoGallery
-          photos={photos}
-          isUploading={isUploadingPhoto}
-          onAddPhoto={handleAddPhoto}
+        {/* 1. HERO + TOP BAR */}
+        <HeroTopBar
+          photoUrl={place.photoUrl}
+          placeName={place.name}
+          onShare={handleShare}
         />
 
+        {/* 2. CORE INFO: NAME → DESC → TAGS → PRICE/ADDRESS */}
+        <InfoSection place={place} />
+
+        {/* 3. ACTION ROW: I-SAVE + NA-TRY KO NA */}
+        <ActionRow
+          isWishlisted={isWishlisted}
+          isTried={isTried}
+          onWishlist={handleWishlist}
+          onTried={handleTried}
+        />
+
+        {/* 4. PHOTO GALLERY (COLLAGE) */}
+        <View style={styles.sectionPadding}>
+          <PhotoGallery
+            photos={photos}
+            isUploading={isUploadingPhoto}
+            onAddPhoto={handleAddPhoto}
+          />
+        </View>
+
+        {/* 5. PRICE SURVEY */}
         <PriceSurvey
           voteTally={voteTally}
           userVote={userVote}
@@ -76,14 +101,15 @@ export default function DetailScreen() {
           onVote={handleVote}
         />
 
-        <ActionGrid
-          googleMapsUrl={place.googleMapsUrl}
-          placeName={place.name}
-          isWishlisted={isWishlisted}
-          isTried={isTried}
-          onWishlist={handleWishlist}
-          onTried={handleTried}
-        />
+        {/* 6. LOCATION MAP + DIRECTIONS */}
+        {place.latitude && place.longitude ? (
+          <LocationMap
+            latitude={place.latitude}
+            longitude={place.longitude}
+            googleMapsUrl={place.googleMapsUrl ?? ''}
+            address={place.address}
+          />
+        ) : null}
 
         {/* BOTTOM SPACER */}
         <View style={{ height: Spacing.xl }} />
@@ -117,5 +143,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.border,
     marginHorizontal: Spacing.md,
     marginBottom: Spacing.md,
+  },
+  sectionPadding: {
+    marginBottom: Spacing.xs,
   },
 });

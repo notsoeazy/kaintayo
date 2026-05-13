@@ -1,6 +1,17 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Check } from 'lucide-react-native';
+/*
+Usage:
+<PriceSurvey
+  voteTally={voteTally}
+  userVote={userVote}
+  isVoting={isVoting}
+  canVote={canVote}
+  onVote={handleVote}
+/>
+*/
+import React, { useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import { Check, Utensils } from 'lucide-react-native';
+
 import { PRICE_TIERS, type PriceRangeMeta } from '@/constants/price_ranges';
 import { Colors, FontFamily, FontSize, Radius, Spacing } from '@/styles/theme';
 import type { PriceTier } from '@/types';
@@ -14,7 +25,43 @@ interface PriceSurveyProps {
   onVote: (tier: PriceTier) => void;
 }
 
-export const PriceSurvey = React.memo(function PriceSurvey({ voteTally, userVote, isVoting, canVote, onVote }: PriceSurveyProps) {
+// Animated progress bar for a single tier
+function AnimatedBar({ pct, isSelected }: { pct: number; isSelected: boolean }) {
+  const widthAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(widthAnim, {
+      toValue: pct,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
+  }, [pct]);
+
+  const widthInterpolated = widthAnim.interpolate({
+    inputRange: [0, 100],
+    outputRange: ['0%', '100%'],
+  });
+
+  return (
+    <View style={styles.barTrack}>
+      <Animated.View
+        style={[
+          styles.barFill,
+          { width: widthInterpolated },
+          isSelected && styles.barFillSelected,
+        ]}
+      />
+    </View>
+  );
+}
+
+export const PriceSurvey = React.memo(function PriceSurvey({
+  voteTally,
+  userVote,
+  isVoting,
+  canVote,
+  onVote,
+}: PriceSurveyProps) {
   const { t } = useTranslation();
   const totalVotes = Object.values(voteTally).reduce((a, b) => a + b, 0);
 
@@ -48,11 +95,6 @@ export const PriceSurvey = React.memo(function PriceSurvey({ voteTally, userVote
               activeOpacity={canVote ? 0.72 : 1}
               disabled={!canVote || isVoting}
             >
-              {/* RADIO / CHECK */}
-              <View style={[styles.radio, isSelected && styles.radioSelected]}>
-                {isSelected && <Check size={11} color={Colors.bg} strokeWidth={3} />}
-              </View>
-
               {/* LABEL + RANGE */}
               <View style={styles.labelGroup}>
                 <Text style={[styles.label, isSelected && styles.labelSelected]}>
@@ -66,16 +108,8 @@ export const PriceSurvey = React.memo(function PriceSurvey({ voteTally, userVote
                 </Text>
               </View>
 
-              {/* PROGRESS BAR */}
-              <View style={styles.barTrack}>
-                <View
-                  style={[
-                    styles.barFill,
-                    { width: `${pct}%` as any },
-                    isSelected && styles.barFillSelected,
-                  ]}
-                />
-              </View>
+              {/* ANIMATED PROGRESS BAR */}
+              <AnimatedBar pct={pct} isSelected={isSelected} />
 
               {/* VOTE COUNT */}
               <Text style={[styles.voteCount, isSelected && styles.voteCountSelected]}>
@@ -86,12 +120,23 @@ export const PriceSurvey = React.memo(function PriceSurvey({ voteTally, userVote
         })}
       </View>
 
+      {/* VOTED CONFIRMATION */}
+      {canVote && userVote && (
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: Spacing.md }}>
+          <Check size={16} color={Colors.success} style={{ marginRight: 6 }} />
+          <Text style={styles.votedConfirm}>{t.detailScreen.priceSurveyVoted}</Text>
+        </View>
+      )}
+
+
       {/* GATE HINT */}
       {!canVote && (
-        <Text style={styles.gateHint}>
-          {t.detailScreen.priceSurveyGateHint}
-        </Text>
+        <View style={styles.gateHintCard}>
+          <Utensils size={14} color={Colors.muted} style={{ marginBottom: 4 }} />
+          <Text style={styles.gateHint}>{t.detailScreen.priceSurveyGateHint}</Text>
+        </View>
       )}
+
     </View>
   );
 });
@@ -141,19 +186,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     backgroundColor: 'rgba(232, 168, 56, 0.06)',
   },
-  radio: {
-    width: 20,
-    height: 20,
-    borderRadius: Radius.full,
-    borderWidth: 2,
-    borderColor: Colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  radioSelected: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
-  },
   labelGroup: {
     flex: 1,
   },
@@ -171,7 +203,7 @@ const styles = StyleSheet.create({
     color: Colors.muted,
   },
   barTrack: {
-    width: 56,
+    width: 80,
     height: 6,
     backgroundColor: Colors.linen,
     borderRadius: Radius.full,
@@ -196,11 +228,25 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontFamily: FontFamily.bodyMedium,
   },
+  votedConfirm: {
+    fontFamily: FontFamily.bodyMedium,
+    fontSize: FontSize.sm,
+    color: Colors.success,
+    textAlign: 'center',
+  },
+
+  gateHintCard: {
+    marginTop: Spacing.md,
+    backgroundColor: Colors.linen,
+    borderRadius: Radius.md,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    alignItems: 'center',
+  },
   gateHint: {
     fontFamily: FontFamily.body,
     fontSize: FontSize.sm,
     color: Colors.muted,
     textAlign: 'center',
-    marginTop: Spacing.md,
   },
 });

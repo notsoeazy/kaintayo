@@ -1,3 +1,7 @@
+/*
+Usage:
+<HeroImage photoUrl={photoUrl} />
+*/
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';

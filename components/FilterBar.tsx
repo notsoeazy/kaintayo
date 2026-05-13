@@ -5,10 +5,12 @@ Usage:
 
 import React from 'react';
 import { ScrollView, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import { Globe } from 'lucide-react-native';
+
 import { FOOD_CATEGORIES } from '@/constants/categories';
 import { FilterChip } from './ui/FilterChip';
 import { useFeedStore } from '@/store/feed_store';
-import { Spacing } from '@/styles/theme';
+import { Colors, Spacing } from '@/styles/theme';
 import type { FoodCategory } from '@/types';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -39,7 +41,9 @@ export function FilterBar({ containerStyle }: FilterBarProps) {
         label={t.home.showAllFilter}
         isActive={filters.showAllDistances}
         onPress={handleShowAllPress}
+        icon={filters.showAllDistances ? <Globe size={14} color={Colors.white} /> : <Globe size={14} color={Colors.muted} />}
       />
+
       {FOOD_CATEGORIES.map((cat) => (
         <FilterChip
           key={cat.id}

@@ -10,7 +10,9 @@ Usage:
 import React, { useRef } from 'react';
 import { View, Text, TouchableWithoutFeedback, Animated, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
-import { FontAwesome } from '@expo/vector-icons';
+import { Heart, MapPin, CheckCircle2, Star } from 'lucide-react-native';
+
+
 import { CategoryChip } from './ui/CategoryChip';
 import { PriceBadge } from './ui/PriceBadge';
 import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
@@ -27,7 +29,7 @@ export interface FoodCardProps {
 
 const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
   const { user } = useAuthStore();
-  const { wishlistIds, addToWishlist, triedIds, addToTried } = useListStore();
+  const { wishlistIds, toggleWishlist, triedIds, toggleTried } = useListStore();
   const { t } = useTranslation();
   const { openDetailsForPlace } = useDetailsNavigation();
   
@@ -53,16 +55,14 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
   };
 
   const handleWishlistToggle = () => {
-    if (user && !isWishlisted) {
-      addToWishlist(user.uid, place.id);
-    }
+    if (user) toggleWishlist(user.uid, place.id);
   };
 
+
   const handleTriedToggle = () => {
-    if (user && !isTried) {
-      addToTried(user.uid, place.id);
-    }
+    if (user) toggleTried(user.uid, place.id);
   };
+
 
   return (
     <TouchableWithoutFeedback
@@ -92,15 +92,19 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
             <View style={styles.categoriesRow}>
               <CategoryChip category={place.categories[0]} />
               {place.categories.length > 1 && (
-                <Text style={styles.extraCategories}>
-                  +{place.categories.length - 1}
-                </Text>
+                <View style={styles.extraCategoriesPill}>
+                  <Text style={styles.extraCategoriesText}>
+                    +{place.categories.length - 1}
+                  </Text>
+                </View>
               )}
             </View>
             {!place.isSeeded && (
               <View style={styles.seedBadge}>
+                <Star size={10} color={Colors.primary} fill={Colors.primary} style={{ marginRight: 4 }} />
                 <Text style={styles.seedBadgeText}>{t.foodCard.communityAdded}</Text>
               </View>
+
             )}
           </View>
 
@@ -111,18 +115,23 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
           <View style={styles.detailsRow}>
             <PriceBadge priceMin={place.priceMin} priceMax={place.priceMax} />
             {distance !== undefined && (
-              <Text style={styles.distanceText}>📍 {distance.toFixed(1)} {t.foodCard.distanceAway}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <MapPin size={14} color={Colors.muted} style={{ marginRight: 4 }} />
+                <Text style={styles.distanceText}>{distance.toFixed(1)} {t.foodCard.distanceAway}</Text>
+              </View>
             )}
+
           </View>
 
           {/* FOOTER ACTIONS */}
           <View style={styles.footerRow}>
             <TouchableWithoutFeedback onPress={handleWishlistToggle}>
               <View style={styles.actionButton}>
-                <FontAwesome 
-                  name={isWishlisted ? "heart" : "heart-o"} 
-                  size={16} 
+                <Heart 
+                  size={18} 
                   color={isWishlisted ? Colors.secondary : Colors.muted} 
+                  fill={isWishlisted ? Colors.secondary : 'transparent'}
+                  strokeWidth={2}
                 />
                 <Text style={[styles.actionText, isWishlisted && styles.actionTextActive]}>
                   {place.likes + (isWishlisted ? 1 : 0)}
@@ -132,17 +141,18 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
 
             <TouchableWithoutFeedback onPress={handleTriedToggle}>
               <View style={styles.actionButton}>
-                <FontAwesome 
-                  name={isTried ? "check-circle" : "check-circle-o"} 
-                  size={16} 
+                <CheckCircle2 
+                  size={18} 
                   color={isTried ? Colors.success : Colors.muted} 
+                  strokeWidth={2}
                 />
-                <Text style={[styles.actionText, isTried && { color: Colors.success }]}>
+                <Text style={[styles.actionText, isTried && { color: Colors.success, fontFamily: FontFamily.bodyMedium }]}>
                   {isTried ? t.foodCard.triedItYes : t.foodCard.triedItNo}
                 </Text>
               </View>
             </TouchableWithoutFeedback>
           </View>
+
         </View>
       </Animated.View>
     </TouchableWithoutFeedback>
@@ -197,10 +207,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.xs,
   },
-  extraCategories: {
-    ...Typography.caption,
+  extraCategoriesPill: {
+    backgroundColor: Colors.accent,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.xs + 2,
+    paddingVertical: 1,
+  },
+  extraCategoriesText: {
     fontFamily: FontFamily.bodyMedium,
-    color: Colors.muted,
+    color: Colors.bg,
     fontSize: 11,
   },
   title: {
@@ -238,6 +253,8 @@ const styles = StyleSheet.create({
     color: Colors.secondary,
   },
   seedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: 'rgba(232, 168, 56, 0.1)',
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,

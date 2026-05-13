@@ -9,6 +9,7 @@ import {
   getPlacePhotos,
   addPlacePhoto,
   votePriceTier,
+  removePriceVote,
   getUserPriceVote,
   getPriceVoteTally,
 } from '@/lib/firestore_service';
@@ -19,7 +20,7 @@ import type { Place, PriceTier } from '@/types';
 export function useDetailScreen(placeId: string) {
   const { t } = useTranslation();
   const { user } = useAuthStore();
-  const { wishlistIds, triedIds, addToWishlist, addToTried } = useListStore();
+  const { wishlistIds, triedIds, toggleWishlist, toggleTried } = useListStore();
 
   const [place, setPlace] = useState<Place | null>(null);
   const [photos, setPhotos] = useState<string[]>([]);
@@ -124,15 +125,27 @@ export function useDetailScreen(placeId: string) {
     const prevVote = userVote;
     const prevTally = { ...voteTally };
 
+    // Toggling: If clicking the same tier, remove it
+    const isUnvoting = prevVote === tier;
+
     // Optimistic update
     const nextTally = { ...voteTally };
     if (prevVote) nextTally[prevVote] = Math.max(0, nextTally[prevVote] - 1);
-    nextTally[tier]++;
-    setUserVote(tier);
+    
+    if (isUnvoting) {
+      setUserVote(null);
+    } else {
+      nextTally[tier]++;
+      setUserVote(tier);
+    }
     setVoteTally(nextTally);
 
     try {
-      await votePriceTier(placeId, user.uid, tier);
+      if (isUnvoting) {
+        await removePriceVote(placeId, user.uid);
+      } else {
+        await votePriceTier(placeId, user.uid, tier);
+      }
       // Refresh from server to get accurate count
       const tally = await getPriceVoteTally(placeId);
       setVoteTally(tally);
@@ -150,12 +163,22 @@ export function useDetailScreen(placeId: string) {
   const canVote = !!user && isTried;
 
   const handleWishlist = useCallback(() => {
-    if (user) addToWishlist(user.uid, placeId);
-  }, [user, placeId, addToWishlist]);
+    if (user) toggleWishlist(user.uid, placeId);
+  }, [user, placeId, toggleWishlist]);
 
-  const handleTried = useCallback(() => {
-    if (user) addToTried(user.uid, placeId);
-  }, [user, placeId, addToTried]);
+  const handleTried = useCallback(async () => {
+    if (!user) return;
+    
+    const wasTried = triedIds.includes(placeId);
+    
+    // Toggle the tried state
+    await toggleTried(user.uid, placeId);
+
+    // If it was tried and is now NOT tried, and user has a vote, remove the vote
+    if (wasTried && userVote) {
+      await handleVote(userVote);
+    }
+  }, [user, placeId, triedIds, userVote, toggleTried, handleVote]);
 
   return {
     place,

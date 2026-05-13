@@ -1,3 +1,14 @@
+/*
+Usage:
+<ActionGrid
+  googleMapsUrl={googleMapsUrl}
+  placeName={placeName}
+  isWishlisted={isWishlisted}
+  isTried={isTried}
+  onWishlist={onWishlist}
+  onTried={onTried}
+/>
+*/
 import React from 'react';
 import { View, Linking, Share, StyleSheet } from 'react-native';
 import { Navigation, Heart, CheckCircle, Share2 } from 'lucide-react-native';

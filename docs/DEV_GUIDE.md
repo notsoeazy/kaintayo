@@ -53,11 +53,12 @@ kaintayo/
 │   ├── FilterBar.tsx             # Category + distance filter chips
 │   ├── SuccessFeedbackModal.tsx  # Post-submission success modal
 │   ├── detail/                   # Detail screen sub-components
-│   │   ├── HeroImage.tsx         # Aspect-ratio hero with back button overlay
-│   │   ├── InfoSection.tsx       # Name, categories, price badge, address, description
-│   │   ├── PhotoGallery.tsx      # Horizontal photo strip + full-screen viewer
-│   │   ├── PriceSurvey.tsx       # Crowdsourced price tier voting
-│   │   └── ActionGrid.tsx        # 2x2 grid: directions, wishlist, tried, share
+│   │   ├── HeroTopBar.tsx        # Full-bleed hero + frosted back/share/wishlist pills
+│   │   ├── InfoSection.tsx       # Name → desc → expandable tags → price/address
+│   │   ├── PhotoGallery.tsx      # Collage-style horizontal strip + swipeable fullscreen viewer
+│   │   ├── PriceSurvey.tsx       # Crowdsourced price tier voting (gated by isTried)
+│   │   ├── LocationMap.tsx       # Mini MapView + offline fallback + Get Directions button
+│   │   └── ActionRow.tsx         # 2 half-width pill buttons: I-save + Na-try Ko Na
 │   ├── form/                     # Form primitives for Add Spot
 │   │   ├── FormField.tsx         # Label + slip card wrapper
 │   │   ├── AppTextInput.tsx      # Standardized TextInput

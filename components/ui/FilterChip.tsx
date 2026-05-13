@@ -13,8 +13,10 @@ import {
   TouchableOpacity, 
   StyleSheet, 
   type StyleProp, 
-  type ViewStyle 
+  type ViewStyle,
+  View
 } from 'react-native';
+
 import { Colors, FontFamily, Radius, Spacing, Typography } from '@/styles/theme';
 
 export interface FilterChipProps {
@@ -22,14 +24,18 @@ export interface FilterChipProps {
   isActive?: boolean;
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
+  icon?: React.ReactNode;
 }
+
 
 export function FilterChip({
   label,
   isActive = false,
   onPress,
   style,
+  icon,
 }: FilterChipProps) {
+
   return (
     <TouchableOpacity
       style={[
@@ -40,9 +46,13 @@ export function FilterChip({
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <Text style={[styles.text, isActive && styles.textActive]}>
-        {label}
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        {icon && <View style={{ marginRight: 6 }}>{icon}</View>}
+        <Text style={[styles.text, isActive && styles.textActive]}>
+          {label}
+        </Text>
+      </View>
+
     </TouchableOpacity>
   );
 }

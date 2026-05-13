@@ -72,12 +72,13 @@ export const strings = {
       emptyStateDesc:
         "Maging lodi! Ikaw ang unang mag-add ng paborito mong kainan para dito.",
       emptyStateAction: "Mag-add ka!",
-      showAllFilter: "🌍 Show Anywhere",
+      showAllFilter: "Show Anywhere",
+
     },
     tabs: {
       home: "Home",
       map: "Mapa",
-      randomizer: "Kahit Saan",
+      randomizer: "Randomizer",
       profile: "Profile",
     },
     mapScreen: {
@@ -102,6 +103,7 @@ export const strings = {
       emptyDesc: "Wala pa munang randomizer idol.",
       comingSoon: "COMING SOON",
     },
+
     detailScreen: {
       loading: 'Loading...',
       notFound: "Sorry, we couldn't find this spot.",
@@ -116,18 +118,26 @@ export const strings = {
       priceSurveyTitle: 'Magkano daw?',
       priceSurveySubtitle: 'I-vote ang presyo ng spot na ito',
       priceSurveyNoVotes: 'Wala pang boto',
-      priceSurveyGateHint: 'Na-try mo na ba? Mark it to vote! 🍽',
+      priceSurveyGateHint: 'Na-try mo na ba? Mark it to vote!',
+      priceSurveyVoted: 'Na-vote mo na!',
+
       photosLabel: 'Mga Larawan',
-      directionsButton: 'Petiks Directions',
-      wishlistButton: 'I-save sa Wishlist',
-      wishlistDone: 'Na-save na!',
-      triedButton: 'Na-try ko na!',
-      triedDone: 'Na-try na!',
+      addPhotoButton: 'Add Photo',
+      noPhotosHint: 'Maging una! Mag-add ng photo.',
+      photoOf: (current: number, total: number) => `${current} / ${total}`,
+      directionsButton: 'Get Directions',
+      wishlistButton: 'Save',
+      wishlistDone: 'Saved',
+      triedButton: 'Tried it',
+      triedDone: 'Tried',
       shareButton: 'I-share sa tropa',
       shareMessage: 'Subukan mo na tong {{placeName}}! {{url}}',
       photoCount: '{{count}} photo{{s}}',
       noPhotos: 'Wala pa',
       priceSurveyCommunityVotes: 'Batay sa {{count}} boto ng komunidad',
+      locationLabel: 'LOKASYON',
+      offlineMapTitle: 'Map unavailable',
+      offlineMapHint: "You're offline. Connect to load the map.",
     },
     loginScreen: {
       appName: "KainTayo",
@@ -156,9 +166,10 @@ export const strings = {
       logout: "Log out",
     },
     foodCard: {
-      communityAdded: "Community Added ★",
+      communityAdded: "Community Added",
       distanceAway: "km away",
-      triedItYes: "Na-try Ko Na ✓",
+      triedItYes: "Na-try Ko Na",
+
       triedItNo: "Na-try mo na?",
     },
     spotCallout: {
@@ -240,12 +251,13 @@ export const strings = {
       emptyStateDesc:
         "Maging lodi! Ikaw ang unang mag-add ng paborito mong kainan para dito.",
       emptyStateAction: "Mag-add ka!",
-      showAllFilter: "🌍 Kahit Saan",
+      showAllFilter: "Kahit Saan",
+
     },
     tabs: {
       home: "Home",
       map: "Mapa",
-      randomizer: "Kahit Saan",
+      randomizer: "Randomizer",
       profile: "Profile",
     },
     mapScreen: {
@@ -270,6 +282,7 @@ export const strings = {
       emptyDesc: "Wala pa munang randomizer idol.",
       comingSoon: "COMING SOON",
     },
+
     detailScreen: {
       loading: 'Hintayin mo...',
       notFound: 'Ay, wala na yata. Baka tanggal na yung spot.',
@@ -284,18 +297,26 @@ export const strings = {
       priceSurveyTitle: 'Magkano daw?',
       priceSurveySubtitle: 'I-vote ang presyo ng spot na ito',
       priceSurveyNoVotes: 'Wala pang boto',
-      priceSurveyGateHint: 'Na-try mo na ba? I-mark para makaboto! 🍽',
+      priceSurveyGateHint: 'Na-try mo na ba? I-mark para makaboto!',
+      priceSurveyVoted: 'Na-vote mo na!',
+
       photosLabel: 'Mga Larawan',
-      directionsButton: 'Petiks Directions',
-      wishlistButton: 'I-save sa Wishlist',
-      wishlistDone: 'Na-save na!',
-      triedButton: 'Na-try ko na!',
-      triedDone: 'Na-try na!',
+      addPhotoButton: 'Add Photo',
+      noPhotosHint: 'Maging una! Mag-add ng photo.',
+      photoOf: (current: number, total: number) => `${current} / ${total}`,
+      directionsButton: 'Get Directions',
+      wishlistButton: 'Save',
+      wishlistDone: 'Saved',
+      triedButton: 'Tried it',
+      triedDone: 'Tried',
       shareButton: 'I-share sa tropa',
       shareMessage: 'Subukan mo na itong {{placeName}}! {{url}}',
       photoCount: '{{count}} larawan',
       noPhotos: 'Wala pa',
       priceSurveyCommunityVotes: 'Batay sa {{count}} boto ng komunidad',
+      locationLabel: 'LOKASYON',
+      offlineMapTitle: 'Map unavailable',
+      offlineMapHint: "You're offline. Connect to load the map.",
     },
     loginScreen: {
       appName: "KainTayo",
@@ -323,9 +344,10 @@ export const strings = {
       logout: "Mag-log out",
     },
     foodCard: {
-      communityAdded: "Dagdag ng Komunidad ★",
+      communityAdded: "Dagdag ng Komunidad",
       distanceAway: "km ang layo",
-      triedItYes: "Na-try Ko Na ✓",
+      triedItYes: "Na-try Ko Na",
+
       triedItNo: "Nasubukan mo na?",
     },
     spotCallout: {
