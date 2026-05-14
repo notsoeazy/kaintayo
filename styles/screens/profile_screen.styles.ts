@@ -1,75 +1,166 @@
 import { StyleSheet } from 'react-native';
-import { Colors, Spacing } from '../theme';
+import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.bg,
   },
+
+  // HEADER
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.xl,
+    paddingTop: Spacing.md,
     paddingBottom: Spacing.md,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '800',
+    fontFamily: FontFamily.display,
+    fontSize: FontSize.xl,
     color: Colors.text,
+    letterSpacing: 1,
   },
-  settingsSection: {
-    paddingHorizontal: Spacing.md,
-    marginTop: Spacing.lg,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  settingsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.linen,
     alignItems: 'center',
-    paddingVertical: Spacing.md,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.border,
-  },
-  settingLabel: {
-    fontSize: 16,
-    color: Colors.text,
-    fontWeight: '500',
-  },
-  langButtons: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-  },
-  langButton: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: 8,
+    justifyContent: 'center',
     borderWidth: 1,
     borderColor: Colors.border,
   },
-  langButtonActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+
+  // HERO SECTION (Task 3)
+  heroSection: {
+    alignItems: 'center',
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.md,
+    paddingHorizontal: Spacing.md,
   },
-  langButtonText: {
-    fontSize: 14,
+  avatarRing: {
+    width: 108,
+    height: 108,
+    borderRadius: 54,
+    borderWidth: 2.5,
+    borderColor: Colors.primary,
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.md,
+  },
+  avatarImage: {
+    width: 92,
+    height: 92,
+    borderRadius: 46,
+    backgroundColor: Colors.linen,
+  },
+  avatarPlaceholder: {
+    width: 92,
+    height: 92,
+    borderRadius: 46,
+    backgroundColor: Colors.linen,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  changePhotoLabel: {
+    ...Typography.caption,
+    color: Colors.primary,
+    marginTop: Spacing.xs,
+    marginBottom: Spacing.md,
+  },
+  usernameText: {
+    fontFamily: FontFamily.bodyMedium,
+    fontSize: FontSize.lg,
+    color: Colors.text,
+    marginBottom: Spacing.xs,
+  },
+  usernameHint: {
+    ...Typography.caption,
+  },
+  usernameEditRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  usernameInput: {
+    fontFamily: FontFamily.body,
+    fontSize: FontSize.md,
+    color: Colors.text,
+    borderBottomWidth: 1.5,
+    borderBottomColor: Colors.primary,
+    paddingBottom: Spacing.xs,
+    minWidth: 160,
+    textAlign: 'center',
+  },
+  saveButton: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    backgroundColor: Colors.primary,
+    borderRadius: Radius.sm,
+  },
+  saveButtonText: {
+    fontFamily: FontFamily.bodyMedium,
+    fontSize: FontSize.sm,
+    color: Colors.surface,
+  },
+  cancelButtonText: {
+    fontFamily: FontFamily.body,
+    fontSize: FontSize.sm,
+    color: Colors.muted,
+  },
+
+  // TAB BAR (Task 4)
+  tabBar: {
+    flexDirection: 'row',
+    marginHorizontal: Spacing.md,
+    marginBottom: Spacing.md,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.linen,
+    padding: 4,
+  },
+  tabItem: {
+    flex: 1,
+    paddingVertical: Spacing.sm,
+    alignItems: 'center',
+    borderRadius: Radius.full,
+  },
+  tabItemActive: {
+    backgroundColor: Colors.surface,
+    shadowColor: Colors.text,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  tabText: {
+    fontFamily: FontFamily.body,
+    fontSize: FontSize.sm,
+    color: Colors.muted,
+  },
+  tabTextActive: {
+    fontFamily: FontFamily.bodyMedium,
     color: Colors.text,
   },
-  langButtonTextActive: {
-    color: Colors.surface,
-    fontWeight: '600',
+
+  // GRID (Task 4)
+  gridContent: {
+    paddingHorizontal: Spacing.sm,
+    paddingBottom: 100,
   },
-  logoutButton: {
-    marginTop: Spacing.xl,
-    alignItems: 'center',
-    paddingVertical: Spacing.md,
+  gridColumn: {
+    flex: 1,
+    paddingHorizontal: Spacing.xs,
   },
-  logoutText: {
-    color: Colors.secondary,
-    fontSize: 16,
-    fontWeight: '600',
-  },
+
+  // EMPTY STATE
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: Spacing.xl,
-  }
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.xl,
+  },
 });
