@@ -14,7 +14,10 @@ export const Colors = {
   text:      '#2C1A0E', // Uling Deep Brown body text
   muted:     '#8A7060', // Abo Warm Grey for captions and placeholders
   border:    '#C9B49A', // Niyog Shell for dividers and card borders
+  white:     '#FFFFFF',
+  black:     '#000000',
 } as const;
+
 
 // SPACING SCALE
 export const Spacing = {
@@ -43,8 +46,8 @@ export const FontFamily = {
   mono:     'JetBrainsMono_400Regular', // Price displays in PHP amounts
 } as const;
 
-// FONT SIZE SCALE
 export const FontSize = {
+  xxs:  10,
   xs:   11,
   sm:   13,
   md:   15,
@@ -52,6 +55,7 @@ export const FontSize = {
   xl:   22,
   xxl:  28,
 } as const;
+
 
 // TYPOGRAPHY TOKENS
 export const Typography = {

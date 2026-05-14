@@ -12,7 +12,8 @@ import {
   type ViewStyle 
 } from 'react-native';
 import { FOOD_CATEGORIES } from '@/constants/categories';
-import { Colors, FontFamily, Radius, Spacing, Typography } from '@/styles/theme';
+import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
+
 import type { FoodCategory } from '@/types';
 
 export interface CategoryChipProps {
@@ -33,10 +34,9 @@ export function CategoryChip({ category, style }: CategoryChipProps) {
 
 const styles = StyleSheet.create({
   chip: {
-    backgroundColor: Colors.secondary,
-    borderWidth: 0,
+    backgroundColor: Colors.accent,
     borderRadius: Radius.full,
-    paddingVertical: Spacing.xs,
+    paddingVertical: Spacing.xs - 2,
     paddingHorizontal: Spacing.sm,
     alignItems: 'center',
     justifyContent: 'center',
@@ -45,8 +45,9 @@ const styles = StyleSheet.create({
   text: {
     ...Typography.caption,
     fontFamily: FontFamily.bodyMedium,
-    color: Colors.surface,
+    color: Colors.bg,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    fontSize: FontSize.sm,
   },
 });

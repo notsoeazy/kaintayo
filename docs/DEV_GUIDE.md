@@ -48,9 +48,17 @@ kaintayo/
 │   └── add_spot_screen.tsx       # Crowdsourced spot submission
 │
 ├── components/                   # Reusable UI components
-│   ├── FoodCard.tsx              # Feed card with distance + price badge
+│   ├── FoodCard.tsx              # Feed card — tap navigates via useDetailsNavigation
+│   ├── SpotCallout.tsx           # Map pin callout card — navigates to detail screen
 │   ├── FilterBar.tsx             # Category + distance filter chips
 │   ├── SuccessFeedbackModal.tsx  # Post-submission success modal
+│   ├── detail/                   # Detail screen sub-components
+│   │   ├── HeroTopBar.tsx        # Full-bleed hero + frosted back/share/wishlist pills
+│   │   ├── InfoSection.tsx       # Name → desc → expandable tags → price/address
+│   │   ├── PhotoGallery.tsx      # Collage-style horizontal strip + swipeable fullscreen viewer
+│   │   ├── PriceSurvey.tsx       # Crowdsourced price tier voting (gated by isTried)
+│   │   ├── LocationMap.tsx       # Mini MapView + offline fallback + Get Directions button
+│   │   └── ActionRow.tsx         # 2 half-width pill buttons: I-save + Na-try Ko Na
 │   ├── form/                     # Form primitives for Add Spot
 │   │   ├── FormField.tsx         # Label + slip card wrapper
 │   │   ├── AppTextInput.tsx      # Standardized TextInput
@@ -83,7 +91,9 @@ kaintayo/
 │   ├── location_hook.ts          # expo-location wrapper
 │   ├── nearby_places_hook.ts     # Distance filter + Show Anywhere toggle
 │   ├── map_screen_hook.ts        # Map screen state, effects, and handlers
-│   └── useTranslation.ts         # i18n hook (reads from settings_store)
+│   ├── useTranslation.ts         # i18n hook (reads from settings_store)
+│   ├── useDetailsNavigation.ts   # Open detail screen from anywhere in the app
+│   └── useDetailScreen.ts        # All state and logic for the detail screen
 │
 ├── constants/
 │   ├── categories.ts             # FOOD_CATEGORIES array
@@ -341,6 +351,15 @@ places/                         # Global places collection
         photoUrl?: string
         createdBy: string        # uid
         createdAt: Timestamp
+        photos/                 # Sub-collection: community gallery
+          └── {photoId}
+                url: string
+                uploadedBy: string
+                createdAt: Timestamp
+        priceVotes/             # Sub-collection: community price tier votes
+          └── {uid}             # one doc per user
+                tier: PriceTier
+                votedAt: Timestamp
 
 users/{uid}/tried/              # User-visited places
 users/{uid}/wishlist/           # User-saved places
