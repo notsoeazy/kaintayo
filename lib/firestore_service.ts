@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase_service";
-import type { LikeEntry, Place, PriceTier, TriedEntry, WishlistEntry } from "@/types";
+import type { LikeEntry, Place, PriceTier, TriedEntry, UserProfile, WishlistEntry } from "@/types";
 import {
   addDoc,
   collection,
@@ -73,6 +73,29 @@ export async function addPlacePhoto(
     userId,
     createdAt: Timestamp.now(),
   });
+}
+
+// USER LISTS
+
+// PROFILE
+
+// Fetch the user profile document from users/{uid}
+export async function getUserProfile(uid: string): Promise<UserProfile | null> {
+  const docSnap = await getDoc(doc(db, 'users', uid));
+  if (!docSnap.exists()) return null;
+  return { uid, ...docSnap.data() } as UserProfile;
+}
+
+// Create or update the user profile document at users/{uid}
+export async function updateUserProfile(
+  uid: string,
+  data: Partial<Pick<UserProfile, 'username' | 'photoUrl'>>,
+): Promise<void> {
+  await setDoc(
+    doc(db, 'users', uid),
+    { ...data, updatedAt: Timestamp.now() },
+    { merge: true },
+  );
 }
 
 // USER LISTS
