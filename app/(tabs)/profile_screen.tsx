@@ -103,17 +103,13 @@ export default function ProfileScreen() {
                 )}
               </TouchableOpacity>
 
-              {/* CHANGE PHOTO LABEL */}
-              {isSaving ? (
+              {/* SAVING INDICATOR */}
+              {isSaving && (
                 <ActivityIndicator
                   size="small"
                   color={Colors.primary}
                   style={styles.savingIndicator}
                 />
-              ) : (
-                <TouchableOpacity onPress={handlePickAvatar} activeOpacity={0.7}>
-                  <Text style={styles.changePhotoLabel}>{t.profileScreen.changePhoto}</Text>
-                </TouchableOpacity>
               )}
 
               {/* USERNAME */}
