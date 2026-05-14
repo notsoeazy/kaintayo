@@ -71,6 +71,11 @@ export const styles = StyleSheet.create({
     marginTop: Spacing.xs,
     marginBottom: Spacing.md,
   },
+  savingIndicator: {
+    marginTop: Spacing.xs,
+    marginBottom: Spacing.md,
+    height: 16,
+  },
   usernameText: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: FontSize.lg,
@@ -153,6 +158,12 @@ export const styles = StyleSheet.create({
   gridColumn: {
     flex: 1,
     paddingHorizontal: Spacing.xs,
+  },
+  gridColumnLeft: {
+    paddingRight: Spacing.xs / 2,
+  },
+  gridColumnRight: {
+    paddingLeft: Spacing.xs / 2,
   },
 
   // EMPTY STATE
