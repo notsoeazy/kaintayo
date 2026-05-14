@@ -78,7 +78,7 @@ export const styles = StyleSheet.create({
   },
   usernameText: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: FontSize.lg,
+    fontSize: FontSize.xl,
     color: Colors.text,
     marginBottom: Spacing.xs,
   },
