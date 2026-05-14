@@ -37,6 +37,14 @@ export interface Place {
   createdAt: Timestamp | null;
 }
 
+// User profile document stored at users/{uid}
+export interface UserProfile {
+  uid: string;
+  username: string;
+  photoUrl: string;            // Cloud Storage download URL
+  updatedAt: Timestamp | null;
+}
+
 export interface TriedEntry {
   placeId: string;
   triedAt: Timestamp | null;
