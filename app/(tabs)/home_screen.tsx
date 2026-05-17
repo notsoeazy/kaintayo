@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { FontAwesome } from '@expo/vector-icons';
 import { Coffee, Plus } from 'lucide-react-native';
 import { Colors } from '@/styles/theme';
 import { styles } from '@/styles/screens/home_screen.styles';
@@ -83,14 +82,6 @@ export default function HomeScreen() {
         />
       )}
 
-      {/* Floating Action Button */}
-      <TouchableOpacity 
-        style={styles.fab} 
-        activeOpacity={0.8}
-        onPress={() => router.push('/add_spot_screen')}
-      >
-        <FontAwesome name="plus" size={24} color={Colors.text} />
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
