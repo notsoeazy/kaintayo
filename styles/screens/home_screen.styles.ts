@@ -8,11 +8,17 @@ export const styles = StyleSheet.create({
   },
   headerContainer: {
     paddingHorizontal: Spacing.md,
-    paddingTop: 0,
-    paddingBottom: 0,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
+  },
+  greetingText: {
+    ...Typography.subtitle,
+    color: Colors.muted,
+    marginBottom: Spacing.xs,
   },
   heading: {
     ...Typography.heading,
+    marginBottom: Spacing.md,
   },
   listContent: {
     paddingHorizontal: Spacing.md,
