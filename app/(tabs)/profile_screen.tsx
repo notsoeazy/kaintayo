@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
-import { BookmarkX, Settings, UtensilsCrossed, User } from 'lucide-react-native';
+import { Heart, Settings, UtensilsCrossed, User } from 'lucide-react-native';
 import { Colors } from '@/styles/theme';
 import { styles } from '@/styles/screens/profile_screen.styles';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -42,10 +42,11 @@ export default function ProfileScreen() {
   } = useProfileScreen();
 
   const { places } = useFeedStore();
-  const { triedIds } = useListStore();
+  const { triedIds, wishlistIds } = useListStore();
 
-  // Filter global places feed to the user's tried list for the Na-try ko na grid
+  // Filter global places feed to the user's tried / wishlist lists
   const triedPlaces: Place[] = places.filter((p) => triedIds.includes(p.id));
+  const wishlistPlaces: Place[] = places.filter((p) => wishlistIds.includes(p.id));
 
   const renderGridItem = ({ item, index }: { item: Place; index: number }) => (
     <View style={[styles.gridColumn, index % 2 === 0 ? styles.gridColumnLeft : styles.gridColumnRight]}>
@@ -56,7 +57,7 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <FlatList
-        data={activeTab === 'tried' ? triedPlaces : []}
+        data={activeTab === 'tried' ? triedPlaces : wishlistPlaces}
         keyExtractor={(item) => item.id}
         numColumns={2}
         contentContainerStyle={styles.gridContent}
@@ -183,9 +184,9 @@ export default function ProfileScreen() {
           ) : (
             <View style={styles.emptyContainer}>
               <EmptyState
-                icon={<BookmarkX size={56} color={Colors.muted} strokeWidth={1.5} />}
-                title={t.profileScreen.wishlistComingSoon}
-                description={t.profileScreen.wishlistComingSoonDesc}
+                icon={<Heart size={56} color={Colors.muted} strokeWidth={1.5} />}
+                title={t.profileScreen.wishlistEmptyTitle}
+                description={t.profileScreen.wishlistEmptyDesc}
               />
             </View>
           )
