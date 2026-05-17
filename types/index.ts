@@ -22,8 +22,9 @@ export interface Place {
   id: string;
   name: string;
   categories: FoodCategory[];
-  priceMin: number;
-  priceMax: number;
+  priceTier: PriceTier;
+  priceMin?: number;
+  priceMax?: number;
   description: string;
   address?: string;
   latitude: number;
@@ -31,8 +32,8 @@ export interface Place {
   googleMapsUrl: string;
   photoUrl?: string;
   likes: number;
-  createdBy: string;           // Firebase user ID
-  isSeeded: boolean;           // Admin seeded or community added
+  createdBy: string;
+  isSeeded: boolean;
   createdAt: Timestamp | null;
 }
 

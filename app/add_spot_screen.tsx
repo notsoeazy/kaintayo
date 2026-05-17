@@ -26,10 +26,10 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { SuccessFeedbackModal } from '@/components/SuccessFeedbackModal';
 import { FormField } from '@/components/form/FormField';
 import { AppTextInput } from '@/components/form/AppTextInput';
-import { PriceRangeInput } from '@/components/form/PriceRangeInput';
+import { PriceTierPicker } from '@/components/form/PriceTierPicker';
 import { CategoryPicker } from '@/components/form/CategoryPicker';
 import { ImagePickerField } from '@/components/form/ImagePickerField';
-import type { FoodCategory } from '@/types';
+import type { FoodCategory, PriceTier } from '@/types';
 
 // NAGA CITY, CAMARINES SUR
 const NAGA_REGION = {
@@ -43,8 +43,7 @@ interface FormStep1 {
   name: string;
   description: string;
   categories: FoodCategory[];
-  priceMin: string;
-  priceMax: string;
+  priceTier: PriceTier | null;
   photoUri: string | null;
 }
 
@@ -70,8 +69,7 @@ export default function AddSpotScreen() {
     name: '',
     description: '',
     categories: [],
-    priceMin: '',
-    priceMax: '',
+    priceTier: null,
     photoUri: null,
   });
 
@@ -167,10 +165,7 @@ export default function AddSpotScreen() {
   const isStep1Valid =
     step1.name.trim().length > 0 &&
     step1.categories.length > 0 &&
-    step1.priceMin.length > 0 &&
-    step1.priceMax.length > 0 &&
-    Number(step1.priceMin) > 0 &&
-    Number(step1.priceMax) >= Number(step1.priceMin);
+    step1.priceTier !== null;
 
   // CENTER MARKER
   const onRegionChangeComplete = (region: Region) => {
@@ -211,8 +206,7 @@ export default function AddSpotScreen() {
         name: step1.name.trim(),
         description: step1.description.trim(),
         categories: step1.categories,
-        priceMin: Number(step1.priceMin),
-        priceMax: Number(step1.priceMax),
+        priceTier: step1.priceTier!,
         latitude: step2.latitude,
         longitude: step2.longitude,
         googleMapsUrl: `https://maps.google.com/?q=${step2.latitude},${step2.longitude}`,
@@ -294,13 +288,9 @@ export default function AddSpotScreen() {
             </FormField>
 
             <FormField label={t.addSpot.priceRangeLabel}>
-              <PriceRangeInput
-                minLabel={t.addSpot.priceMinLabel}
-                maxLabel={t.addSpot.priceMaxLabel}
-                minValue={step1.priceMin}
-                maxValue={step1.priceMax}
-                onMinChange={(v) => setStep1((s) => ({ ...s, priceMin: v }))}
-                onMaxChange={(v) => setStep1((s) => ({ ...s, priceMax: v }))}
+              <PriceTierPicker
+                selected={step1.priceTier}
+                onSelect={(tier) => setStep1((s) => ({ ...s, priceTier: tier }))}
               />
             </FormField>
           </ScrollView>

@@ -1,61 +1,106 @@
 /* 
 Usage: 
-<PriceBadge priceMin={50} priceMax={100} />
-<PriceBadge priceMin={50} priceMax={100} variant="pill" />
+<PriceBadge
+  tier={place.priceTier}
+  fallbackMin={place.priceMin}
+  variant="default" // or "pill"
+/>
 */
 
+import { deriveTierFromPriceMin, getTierMeta, getTierRangeLabel, TIER_COLORS, TIER_TEXT_COLORS } from '@/constants/price_ranges';
+import { Colors, FontFamily, FontSize, Radius, Spacing } from '@/styles/theme';
+import type { PriceTier } from '@/types';
 import React from 'react';
-import { Text, View, StyleSheet, type ViewStyle, type StyleProp } from 'react-native';
-import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
+import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 export interface PriceBadgeProps {
-  priceMin: number;
-  priceMax: number;
+  tier?: PriceTier;
+  fallbackMin?: number;
   variant?: 'default' | 'pill';
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-export function PriceBadge({ priceMin, priceMax, variant = 'default', containerStyle }: PriceBadgeProps) {
-  const formattedPrice = `₱${priceMin} - ₱${priceMax}`;
+
+export function PriceBadge({ tier, fallbackMin, variant = 'default', containerStyle }: PriceBadgeProps) {
+  // TODO: Para to sa old entries sa database-- ayusin nalang in the future para oks na pag nag seed data
+  const resolvedTier = tier ?? deriveTierFromPriceMin(fallbackMin);
+  
+  const meta = getTierMeta(resolvedTier);
+  const label = meta?.label ?? resolvedTier;
+  const range = getTierRangeLabel(resolvedTier);
 
   return (
-    <View style={[
-      styles.badge, 
-      variant === 'pill' && styles.pillBadge,
-      containerStyle
-    ]}>
-      <Text style={[
-        styles.text,
-        variant === 'pill' && styles.pillText
-      ]}>{formattedPrice}</Text>
+    <View
+      style={[
+        styles.badge,
+        variant === 'pill' && styles.pillBadge,
+        { backgroundColor: TIER_COLORS[resolvedTier] },
+        containerStyle,
+      ]}
+    >
+      {variant === 'pill' ? (
+        <Text style={[
+          styles.pillRange,
+          { color: TIER_TEXT_COLORS[resolvedTier] }
+        ]}>
+          {range}
+        </Text>
+      ) : (
+        <>
+          <Text style={[
+            styles.symbol,
+            { color: TIER_TEXT_COLORS[resolvedTier] }
+          ]}>
+            {meta?.symbol}
+          </Text>
+          <Text style={[
+            styles.label, 
+            { color: TIER_TEXT_COLORS[resolvedTier] }
+          ]}>
+            {label}
+          </Text>
+        </>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   badge: {
-    backgroundColor: Colors.linen,
-    borderRadius: Radius.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    borderRadius: Radius.full,
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.sm,
     alignSelf: 'flex-start',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   pillBadge: {
-    backgroundColor: Colors.primary,
-    borderRadius: Radius.full,
-    paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    gap: Spacing.sm,
   },
-  text: {
-    ...Typography.price,
-    fontSize: FontSize.sm,
-    color: Colors.text,
+  label: {
+    fontFamily: FontFamily.bodyMedium,
+    fontSize: FontSize.xs,
+    lineHeight: 16,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  pillText: {
-    color: Colors.white,
+  range: {
     fontFamily: FontFamily.mono,
-    fontSize: FontSize.md,
+    fontSize: FontSize.xs,
+    color: Colors.muted,
+  },
+  symbol: {
+    fontFamily: FontFamily.display,
+    fontSize: FontSize.xs,
+    lineHeight: 16,
+    fontWeight: '700',
+  },
+  pillRange: {
+    fontFamily: FontFamily.display,
+    fontSize: FontSize.sm,
+    fontWeight: '700',
   },
 });
