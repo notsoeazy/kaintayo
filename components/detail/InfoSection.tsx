@@ -41,7 +41,6 @@ export const InfoSection = React.memo(function InfoSection({ place }: InfoSectio
         <View style={styles.priceContainer}>
           <PriceBadge 
             tier={place.priceTier} 
-            fallbackMin={place.priceMin}
             variant="pill" 
           />
         </View>

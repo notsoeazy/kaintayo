@@ -36,7 +36,6 @@ export default function MapScreen() {
         provider={PROVIDER_GOOGLE}
         initialRegion={MAP_DEFAULT_REGION}
         customMapStyle={MAP_STYLE}
-        showsUserLocation
         showsMyLocationButton={false}
         showsCompass={false}
         showsScale

@@ -414,8 +414,7 @@ export default function AddSpotScreen() {
                   : NAGA_REGION
               }
               onRegionChangeComplete={onRegionChangeComplete}
-              showsUserLocation={true}
-              showsMyLocationButton={true}
+              showsMyLocationButton={false}
             />
 
             {/* FIXED CENTER PIN OVERLAY */}

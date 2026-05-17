@@ -54,11 +54,4 @@ export function getTierRangeLabel(id: PriceTier): string {
   return `₱${tier.min}–${max}`;
 }
 
-// Fallback for legacy database entries that only have priceMin -- may ganto kasi inayos ko yung voting 
-export function deriveTierFromPriceMin(priceMin?: number): PriceTier {
-  if (!priceMin) return 'affordable'; // safe fallback
-  if (priceMin < 100) return 'very-budget';
-  if (priceMin < 200) return 'affordable';
-  if (priceMin < 350) return 'moderate';
-  return 'expensive';
-}
+
