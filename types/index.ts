@@ -57,7 +57,7 @@ export interface LikeEntry {
 export interface FeedFilters {
   categories: FoodCategory[];  // multi-select; empty = show all
   priceTier: PriceTier | null;
-  showAllDistances?: boolean;
+  maxDistance?: number | null; // e.g. 3, 5, 10, or null for limitless
 }
 
 // GEOCODING
