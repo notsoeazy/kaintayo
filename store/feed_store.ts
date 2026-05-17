@@ -6,7 +6,7 @@ import type { FeedFilters, FoodCategory, Place } from '@/types';
 const defaultFilters: FeedFilters = {
   categories: [],
   priceTier: null,
-  showAllDistances: false,
+  maxDistance: 5, // Default to 5km
 };
 
 interface FeedState {

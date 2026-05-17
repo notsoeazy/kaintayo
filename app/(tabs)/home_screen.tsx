@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Coffee, Plus } from 'lucide-react-native';
@@ -8,12 +8,13 @@ import { styles } from '@/styles/screens/home_screen.styles';
 import { useFeedStore } from '@/store/feed_store';
 import { useLocation } from '@/hooks/location_hook';
 import { useNearbyPlaces } from '@/hooks/nearby_places_hook';
-import { FilterBar } from '@/components/FilterBar';
-import { FoodCard } from '@/components/FoodCard';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { FoodCard } from '@/components/FoodCard';
 import { KButton } from '@/components/ui/KButton';
 import { SearchBar } from '@/components/ui/SearchBar';
+import { FilterModal } from '@/components/ui/FilterModal';
 import { useTranslation } from '@/hooks/useTranslation';
+import { SlidersHorizontal } from 'lucide-react-native';
 
 export default function HomeScreen() {
   const { places, filters, isLoading, fetchPlaces } = useFeedStore();
@@ -21,6 +22,9 @@ export default function HomeScreen() {
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
+
+  const hasActiveFilters = filters.categories.length > 0 || filters.priceTier !== null || filters.maxDistance !== 5;
 
   const baseFilteredPlaces = useNearbyPlaces(places, filters, location);
 
@@ -56,13 +60,22 @@ export default function HomeScreen() {
       <View style={styles.headerContainer}>
         <Text style={styles.greetingText}>{getGreeting()}</Text>
         <Text style={styles.heading}>{t.home.title}</Text>
-        <SearchBar 
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
+        <View style={styles.searchRow}>
+          <View style={styles.searchBarWrapper}>
+            <SearchBar 
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+          <TouchableOpacity 
+            style={[styles.filterButton, hasActiveFilters && styles.filterButtonActive]}
+            onPress={() => setIsFilterModalVisible(true)}
+            activeOpacity={0.7}
+          >
+            <SlidersHorizontal size={20} color={hasActiveFilters ? Colors.bg : Colors.text} />
+          </TouchableOpacity>
+        </View>
       </View>
-      
-      <FilterBar containerStyle={{ marginBottom: 16 }} />
 
       {isLoading && !refreshing ? (
         <View style={styles.emptyContainer}>
@@ -106,6 +119,10 @@ export default function HomeScreen() {
         />
       )}
 
+      <FilterModal 
+        visible={isFilterModalVisible}
+        onClose={() => setIsFilterModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }

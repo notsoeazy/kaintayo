@@ -8,17 +8,39 @@ export const styles = StyleSheet.create({
   },
   headerContainer: {
     paddingHorizontal: Spacing.md,
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.md,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
   },
   greetingText: {
     ...Typography.subtitle,
     color: Colors.muted,
-    marginBottom: Spacing.xs,
+    marginBottom: 0,
   },
   heading: {
     ...Typography.heading,
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.sm,
+  },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  searchBarWrapper: {
+    flex: 1,
+  },
+  filterButton: {
+    width: 48,
+    height: 48,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterButtonActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
   },
   listContent: {
     paddingHorizontal: Spacing.md,
