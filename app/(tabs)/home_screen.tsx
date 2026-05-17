@@ -12,6 +12,7 @@ import { FilterBar } from '@/components/FilterBar';
 import { FoodCard } from '@/components/FoodCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { KButton } from '@/components/ui/KButton';
+import { SearchBar } from '@/components/ui/SearchBar';
 import { useTranslation } from '@/hooks/useTranslation';
 
 export default function HomeScreen() {
@@ -19,8 +20,26 @@ export default function HomeScreen() {
   const { location } = useLocation();
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredPlaces = useNearbyPlaces(places, filters, location);
+  const baseFilteredPlaces = useNearbyPlaces(places, filters, location);
+
+  const filteredPlaces = baseFilteredPlaces.filter(place => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      place.name?.toLowerCase().includes(query) ||
+      place.categories?.some((c: string) => c.toLowerCase().includes(query)) ||
+      place.description?.toLowerCase().includes(query)
+    );
+  });
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Magandang Umaga! ☀️";
+    if (hour < 18) return "Magandang Hapon! 🌤️";
+    return "Magandang Gabi! 🌙";
+  };
 
   useEffect(() => {
     fetchPlaces();
@@ -35,7 +54,12 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.headerContainer}>
+        <Text style={styles.greetingText}>{getGreeting()}</Text>
         <Text style={styles.heading}>{t.home.title}</Text>
+        <SearchBar 
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
       </View>
       
       <FilterBar containerStyle={{ marginBottom: 16 }} />
