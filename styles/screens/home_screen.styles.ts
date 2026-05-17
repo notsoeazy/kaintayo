@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: Spacing.md,
-    paddingBottom: 100, // Space for FAB
+    paddingBottom: 40,
     paddingTop: Spacing.md,
   },
   emptyContainer: {
@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.title,
-    color: Colors.muted, // Keep muted color for empty state
+    color: Colors.muted,
     textAlign: 'center',
   },
   emptyText: {
@@ -55,21 +55,5 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.md,
     color: Colors.bg,
     letterSpacing: 1,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: Spacing.lg,
-    right: Spacing.lg,
-    backgroundColor: Colors.primary,
-    width: 64,
-    height: 64,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
   },
 });
