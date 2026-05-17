@@ -7,7 +7,7 @@ Usage:
 />
 */
 
-import { deriveTierFromPriceMin, getTierMeta, getTierRangeLabel, TIER_COLORS, TIER_TEXT_COLORS } from '@/constants/price_ranges';
+import { getTierMeta, getTierRangeLabel, TIER_COLORS, TIER_TEXT_COLORS } from '@/constants/price_ranges';
 import { Colors, FontFamily, FontSize, Radius, Spacing } from '@/styles/theme';
 import type { PriceTier } from '@/types';
 import React from 'react';
@@ -15,15 +15,12 @@ import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-na
 
 export interface PriceBadgeProps {
   tier?: PriceTier;
-  fallbackMin?: number;
   variant?: 'default' | 'pill';
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-
-export function PriceBadge({ tier, fallbackMin, variant = 'default', containerStyle }: PriceBadgeProps) {
-  // TODO: Para to sa old entries sa database-- ayusin nalang in the future para oks na pag nag seed data
-  const resolvedTier = tier ?? deriveTierFromPriceMin(fallbackMin);
+export function PriceBadge({ tier, variant = 'default', containerStyle }: PriceBadgeProps) {
+  const resolvedTier = tier ?? 'very-budget';
   
   const meta = getTierMeta(resolvedTier);
   const label = meta?.label ?? resolvedTier;

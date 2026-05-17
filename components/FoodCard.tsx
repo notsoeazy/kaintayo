@@ -116,7 +116,6 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
           <View style={styles.detailsRow}>
             <PriceBadge 
               tier={place.priceTier} 
-              fallbackMin={place.priceMin}
             />
             {distance !== undefined && (
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
