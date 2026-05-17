@@ -54,9 +54,7 @@ export const strings = {
       descriptionHint: "What makes this place special?",
       foodCategoryLabel: "Food Type",
       foodCategoryHint: "(can choose multiple)",
-      priceRangeLabel: "Price (₱)",
-      priceMinLabel: "Minimum",
-      priceMaxLabel: "Maximum",
+      priceRangeLabel: "Price Range",
       mapInstruction:
         "Open the map and drag to your location. The pin stays in the center.",
       noPinnedLocation: "No location pinned yet",
@@ -118,7 +116,7 @@ export const strings = {
       priceSurveyTitle: 'Magkano daw?',
       priceSurveySubtitle: 'I-vote ang presyo ng spot na ito',
       priceSurveyNoVotes: 'Wala pang boto',
-      priceSurveyGateHint: 'Na-try mo na ba? Mark it to vote!',
+      priceSurveyGateHint: "You can only vote once you've tried it.",
       priceSurveyVoted: 'Na-vote mo na!',
 
       photosLabel: 'Mga Larawan',
@@ -233,9 +231,7 @@ export const strings = {
       descriptionHint: "Anong specialty nila? Bakit paborito mo?",
       foodCategoryLabel: "Klase ng Pagkain",
       foodCategoryHint: "(puwedeng marami)",
-      priceRangeLabel: "Presyo (₱)",
-      priceMinLabel: "Minimum",
-      priceMaxLabel: "Maximum",
+      priceRangeLabel: "Presyo",
       mapInstruction:
         "I-tap ang button sa ibaba para buksan ang buong mapa at i-drop ang pin.",
       noPinnedLocation: "Wala pang pinned location",
@@ -297,7 +293,7 @@ export const strings = {
       priceSurveyTitle: 'Magkano daw?',
       priceSurveySubtitle: 'I-vote ang presyo ng spot na ito',
       priceSurveyNoVotes: 'Wala pang boto',
-      priceSurveyGateHint: 'Na-try mo na ba? I-mark para makaboto!',
+      priceSurveyGateHint: 'Maka-vote ka lang kapag na-try mo na.',
       priceSurveyVoted: 'Na-vote mo na!',
 
       photosLabel: 'Mga Larawan',

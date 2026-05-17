@@ -90,7 +90,9 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
         <View style={styles.content}>
           <View style={styles.headerRow}>
             <View style={styles.categoriesRow}>
-              <CategoryChip category={place.categories[0]} />
+              {place.categories.length > 0 ? (
+                <CategoryChip category={place.categories[0]} />
+              ) : null}
               {place.categories.length > 1 && (
                 <View style={styles.extraCategoriesPill}>
                   <Text style={styles.extraCategoriesText}>
@@ -104,7 +106,6 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
                 <Star size={10} color={Colors.primary} fill={Colors.primary} style={{ marginRight: 4 }} />
                 <Text style={styles.seedBadgeText}>{t.foodCard.communityAdded}</Text>
               </View>
-
             )}
           </View>
 
@@ -113,14 +114,16 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
           </Text>
 
           <View style={styles.detailsRow}>
-            <PriceBadge priceMin={place.priceMin} priceMax={place.priceMax} />
+            <PriceBadge 
+              tier={place.priceTier} 
+              fallbackMin={place.priceMin}
+            />
             {distance !== undefined && (
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <MapPin size={14} color={Colors.muted} style={{ marginRight: 4 }} />
                 <Text style={styles.distanceText}>{distance.toFixed(1)} {t.foodCard.distanceAway}</Text>
               </View>
             )}
-
           </View>
 
           {/* FOOTER ACTIONS */}

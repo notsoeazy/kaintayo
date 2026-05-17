@@ -63,7 +63,7 @@ export const SpotCallout = ({ place, onPress, onClose }: SpotCalloutProps) => {
             ) : null}
 
             <View style={styles.footer}>
-              <PriceBadge priceMin={place.priceMin} priceMax={place.priceMax} />
+              <PriceBadge tier={place.priceTier} fallbackMin={place.priceMin} />
               <TouchableOpacity
                 style={styles.detailsButton}
                 activeOpacity={0.8}

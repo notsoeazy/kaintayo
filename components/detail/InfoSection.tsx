@@ -40,9 +40,9 @@ export const InfoSection = React.memo(function InfoSection({ place }: InfoSectio
 
         <View style={styles.priceContainer}>
           <PriceBadge 
-            priceMin={place.priceMin} 
-            priceMax={place.priceMax} 
-            variant="pill"
+            tier={place.priceTier} 
+            fallbackMin={place.priceMin}
+            variant="pill" 
           />
         </View>
       </View>
