@@ -34,10 +34,13 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   heading: {
-    fontFamily: FontFamily.display,
-    fontSize: FontSize.xxl,
-    color: Colors.text,
-    letterSpacing: 1,
+    ...Typography.heading,
+    marginBottom: 0,
+  },
+  pillAndSubtitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
   },
   spotCountPill: {
     backgroundColor: Colors.primary,
@@ -54,13 +57,11 @@ export const styles = StyleSheet.create({
   },
   subheading: {
     ...Typography.caption,
-    marginTop: 2,
   },
   headerLoadingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    marginTop: 2,
   },
   headerLoadingText: {
     ...Typography.caption,

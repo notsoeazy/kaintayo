@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { Compass, Locate, MapPin, SlidersHorizontal } from 'lucide-react-native';
-import { Colors } from '@/styles/theme';
-import { styles } from '@/styles/screens/map_screen.styles';
 import { SpotCallout } from '@/components/SpotCallout';
 import { FilterModal } from '@/components/ui/FilterModal';
-import { useTranslation } from '@/hooks/useTranslation';
-import { useMapScreen } from '@/hooks/map_screen_hook';
 import { MAP_DEFAULT_REGION, MAP_STYLE } from '@/constants/map_config';
+import { useMapScreen } from '@/hooks/map_screen_hook';
+import { useTranslation } from '@/hooks/useTranslation';
+import { styles } from '@/styles/screens/map_screen.styles';
+import { Colors } from '@/styles/theme';
+import { Compass, Locate, MapPin, SlidersHorizontal } from 'lucide-react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MapScreen() {
   const { t } = useTranslation();
@@ -67,24 +67,21 @@ export default function MapScreen() {
       <SafeAreaView style={styles.headerOverlay} edges={['top']}>
         <View style={styles.headerRow}>
           <Text style={styles.heading}>{t.mapScreen.title}</Text>
-          {/* TODO: nearbyCount uses the 5km radius rule from home screen — should instead
-              count spots currently visible within the map viewport using onRegionChange */}
-          {!isAnyLoading && (
-            <View style={styles.spotCountPill}>
-              <Text style={styles.spotCountText}>{nearbyCount}</Text>
+          {isAnyLoading ? (
+            <View style={styles.headerLoadingRow}>
+              <ActivityIndicator size="small" color={Colors.primary} />
+              <Text style={styles.headerLoadingText}>
+                {locationLoading ? t.mapScreen.loadingLocation : t.mapScreen.loadingSpots}
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.pillAndSubtitleRow}>
+              <View style={styles.spotCountPill}>
+                <Text style={styles.spotCountText}>{t.mapScreen.spotsCount(nearbyCount)}</Text>
+              </View>
             </View>
           )}
         </View>
-        {isAnyLoading ? (
-          <View style={styles.headerLoadingRow}>
-            <ActivityIndicator size="small" color={Colors.primary} />
-            <Text style={styles.headerLoadingText}>
-              {locationLoading ? t.mapScreen.loadingLocation : t.mapScreen.loadingSpots}
-            </Text>
-          </View>
-        ) : (
-          <Text style={styles.subheading}>{t.mapScreen.subtitle}</Text>
-        )}
       </SafeAreaView>
 
       {/* MY LOCATION BUTTON */}
@@ -121,13 +118,13 @@ export default function MapScreen() {
         </Text>
       </TouchableOpacity>
 
-      {/* FILTER BOTTOM SHEET — reuses the same FilterModal as the homescreen */}
+      {/* FILTER BOTTOM SHEET */}
       <FilterModal
         visible={filterVisible}
         onClose={() => setFilterVisible(false)}
       />
 
-      {/* SPOT DETAIL POPUP — centered Modal, dismisses on backdrop tap */}
+      {/* SPOT DETAIL POPUP */}
       <SpotCallout
         place={selectedPlace}
         onPress={handleSpotPress}

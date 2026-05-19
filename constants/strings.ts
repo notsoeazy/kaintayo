@@ -96,11 +96,11 @@ export const strings = {
       profile: "Profile",
     },
     mapScreen: {
-      title: "MAPA",
-      subtitle: "Spots on the map",
+      title: "Mapa",
+      subtitle: "spots on the map",
       emptyDesc: "Kalma kapatid, pagod pa si Google Maps eh.",
       comingSoon: "COMING SOON",
-      spotsCount: (n: number) => `${n} spot${n !== 1 ? "s" : ""} on map`,
+      spotsCount: (n: number) => `${n} Spot${n !== 1 ? "s" : ""}`,
       loadingSpots: "Searching for spots...",
       loadingLocation: "Finding your location...",
       filterFab: "Filter the Map",
@@ -304,7 +304,7 @@ export const strings = {
       profile: "Profile",
     },
     mapScreen: {
-      title: "MAPA",
+      title: "Mapa",
       subtitle: "Mga kainan sa mapa",
       emptyDesc: "Kalma kapatid, pagod pa si Google Maps eh.",
       comingSoon: "COMING SOON",
