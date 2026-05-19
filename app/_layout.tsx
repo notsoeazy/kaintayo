@@ -1,7 +1,8 @@
 import { Stack } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import { AnimatedSplash } from '@/components/AnimatedSplash';
 import {
   useFonts,
   BebasNeue_400Regular,
@@ -23,10 +24,10 @@ export const unstable_settings = {
   initialRouteName: '(tabs)',
 };
 
-
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const [splashDone, setSplashDone] = useState(false);
   const [fontsLoaded, fontError] = useFonts({
     BebasNeue_400Regular,
     DMSans_400Regular,
@@ -75,6 +76,12 @@ export default function RootLayout() {
           options={{ headerShown: false, animation: 'slide_from_bottom' }}
         />
       </Stack>
+      {!splashDone && (
+        <AnimatedSplash 
+          isAppReady={!authLoading} 
+          onDone={() => setSplashDone(true)} 
+        />
+      )}
     </>
   );
 }
