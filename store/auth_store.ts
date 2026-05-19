@@ -9,6 +9,8 @@ import {
 } from 'firebase/auth';
 import { create } from 'zustand';
 import { auth } from '@/lib/firebase_service';
+import { getUserProfile, updateUserProfile } from '@/lib/firestore_service';
+import { generateRandomUsername } from '@/lib/username_utils';
 
 // AUTH STORE
 interface AuthState {
@@ -30,12 +32,23 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signUpWithEmail: async (email, password) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    const credential = await createUserWithEmailAndPassword(auth, email, password);
+    // Seed a Firestore profile with a random placeholder username
+    await updateUserProfile(credential.user.uid, {
+      username: generateRandomUsername(),
+    });
   },
 
   signInWithGoogle: async (idToken) => {
-    const credential = GoogleAuthProvider.credential(idToken);
-    await signInWithCredential(auth, credential);
+    const firebaseCredential = GoogleAuthProvider.credential(idToken);
+    const result = await signInWithCredential(auth, firebaseCredential);
+    // Only seed a profile for brand-new Google sign-ins
+    const existing = await getUserProfile(result.user.uid);
+    if (!existing) {
+      await updateUserProfile(result.user.uid, {
+        username: generateRandomUsername(),
+      });
+    }
   },
 
   signOut: async () => {
