@@ -9,9 +9,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   icon: "./assets/images/icon.png",
   scheme: "kaintayo",
   userInterfaceStyle: "light",
+  backgroundColor: "#FAF3E8",
 
   splash: {
-    image: "./assets/images/splash-icon.png",
+    image: "./assets/images/transparent.png",
     resizeMode: "contain",
     backgroundColor: "#FAF3E8"
   },
@@ -26,8 +27,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: "./assets/images/adaptive-icon.png",
-      backgroundColor: "#FAF3E8"
+      foregroundImage: "./assets/images/adaptive-icon/foreground.png",
+      backgroundColor: "#FFFFFF"
     },
     package: "com.matteazy.kaintayo",
     googleServicesFile: "./google-services.json",
@@ -49,6 +50,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "react-native-maps",
       {
         androidGoogleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || ""
+      }
+    ],
+    [
+      "expo-splash-screen",
+      {
+        // This is just blank because we are using our own custom splash screen and di ko na alam papano ilagay dito 😭
+        backgroundColor: "#FAF3E8",
+        image: "./assets/images/transparent.png",
+        imageWidth: 200
       }
     ]
   ],
