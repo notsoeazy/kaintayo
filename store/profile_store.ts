@@ -43,7 +43,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         isSaving: false,
       }));
     } catch (err) {
-      set({ error: (err as Error).message, isSaving: false });
+      console.error("ZUSTAND ERROR:", err); set({ error: (err as Error).message, isSaving: false });
     }
   },
 
@@ -51,7 +51,13 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   saveAvatar: async (uid, localUri) => {
     set({ isSaving: true, error: null });
     try {
-      const photoUrl = await uploadAvatarToFirebase(localUri, uid);
+      let photoUrl = await uploadAvatarToFirebase(localUri, uid);
+      // Bypass cache by appending a timestamp
+      if (photoUrl.includes('?')) {
+        photoUrl += `&t=${Date.now()}`;
+      } else {
+        photoUrl += `?t=${Date.now()}`;
+      }
       await updateUserProfile(uid, { photoUrl });
       set((state) => ({
         profile: state.profile
@@ -60,7 +66,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         isSaving: false,
       }));
     } catch (err) {
-      set({ error: (err as Error).message, isSaving: false });
+      console.error("ZUSTAND ERROR:", err); set({ error: (err as Error).message, isSaving: false });
     }
   },
 

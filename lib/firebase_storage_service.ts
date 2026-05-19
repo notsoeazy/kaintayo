@@ -27,13 +27,13 @@ export async function uploadPlacePhoto(uri: string, placeId: string, uid: string
   return getDownloadURL(storageRef);
 }
 
-// Uploads a profile avatar to avatars/{uid}.jpg.
+// Uploads a profile avatar to places/avatars/{uid}.jpg.
 // Re-uploading overwrites the previous file in Storage.
 export async function uploadAvatarToFirebase(uri: string, uid: string): Promise<string> {
   const response = await fetch(uri);
   const blob = await response.blob();
 
-  const storageRef = ref(storage, `avatars/${uid}.jpg`);
+  const storageRef = ref(storage, `places/avatars/${uid}.jpg`);
 
   await uploadBytes(storageRef, blob);
 
