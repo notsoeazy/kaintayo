@@ -4,15 +4,23 @@ import MapView from 'react-native-maps';
 import { router } from 'expo-router';
 import { useFeedStore } from '@/store/feed_store';
 import { useLocation } from '@/hooks/location_hook';
-import { haversineKm } from '@/lib/geo_utils';
-import { MAP_NEARBY_RADIUS_KM, MAP_DEFAULT_DELTA } from '@/constants/map_config';
+import { useNearbyPlaces } from '@/hooks/nearby_places_hook';
+import { MAP_DEFAULT_DELTA } from '@/constants/map_config';
 import type { Place } from '@/types';
 
 export function useMapScreen() {
-  const { places, isLoading, fetchPlaces } = useFeedStore();
+  const { places: allPlaces, filters, isLoading, fetchPlaces } = useFeedStore();
   const { location, isLoading: locationLoading } = useLocation();
   const mapRef = useRef<MapView>(null);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+
+  // Apply the same filters used on the homescreen
+  const places = useNearbyPlaces(allPlaces, filters, location);
+
+  const hasActiveFilters =
+    filters.categories.length > 0 ||
+    filters.priceTier !== null ||
+    filters.maxDistance !== 5;
 
   useEffect(() => {
     fetchPlaces();
@@ -33,18 +41,8 @@ export function useMapScreen() {
     }
   }, [location]);
 
-  // Badge count: only spots within nearby radius
-  const nearbyCount = useMemo(() => {
-    if (!location) return places.length;
-    return places.filter((p) =>
-      haversineKm(
-        location.coords.latitude,
-        location.coords.longitude,
-        p.latitude,
-        p.longitude
-      ) <= MAP_NEARBY_RADIUS_KM
-    ).length;
-  }, [places, location]);
+  // Badge count: filtered spots currently visible
+  const nearbyCount = useMemo(() => places.length, [places]);
 
   const handleLocateMe = useCallback(() => {
     if (location && mapRef.current) {
@@ -95,6 +93,7 @@ export function useMapScreen() {
     places,
     nearbyCount,
     selectedPlace,
+    hasActiveFilters,
     isLoading,
     locationLoading,
     isAnyLoading: isLoading || locationLoading,

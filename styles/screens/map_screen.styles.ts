@@ -114,7 +114,9 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
     borderRadius: Radius.full,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm + 2,
@@ -130,43 +132,12 @@ export const styles = StyleSheet.create({
     color: Colors.text,
   },
 
-  // FILTER BOTTOM SHEET
-  bottomSheetBackdrop: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(44, 26, 14, 0.45)',
+  // FILTER FAB ACTIVE STATE
+  filterFabActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
   },
-  bottomSheet: {
-    backgroundColor: Colors.surface,
-    borderTopLeftRadius: Radius.lg,
-    borderTopRightRadius: Radius.lg,
-    paddingHorizontal: Spacing.md,
-    paddingBottom: Spacing.xl,
-    paddingTop: Spacing.sm,
-    minHeight: 300,
-  },
-  bottomSheetHandle: {
-    width: 40,
-    height: 4,
-    backgroundColor: Colors.border,
-    borderRadius: Radius.full,
-    alignSelf: 'center',
-    marginBottom: Spacing.md,
-  },
-  bottomSheetTitle: {
-    fontFamily: FontFamily.display,
-    fontSize: FontSize.xl,
-    color: Colors.text,
-    letterSpacing: 0.5,
-    marginBottom: Spacing.md,
-  },
-  bottomSheetPlaceholder: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.xl,
-    gap: Spacing.sm,
-  },
-  bottomSheetComingSoonText: {
-    ...Typography.caption,
+  filterFabLabelActive: {
+    color: Colors.bg,
   },
 });
