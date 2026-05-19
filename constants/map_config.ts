@@ -6,8 +6,8 @@ export const MAP_NEARBY_RADIUS_KM = 5;
 export const MAP_DEFAULT_DELTA = 0.02;
 
 export const MAP_DEFAULT_REGION = {
-  latitude: 13.1391,
-  longitude: 123.7438,
+  latitude: 13.6218,
+  longitude: 123.1948,
   latitudeDelta: 0.05,
   longitudeDelta: 0.05,
 };
