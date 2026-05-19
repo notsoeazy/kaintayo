@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Compass, Locate, MapPin, SlidersHorizontal } from 'lucide-react-native';
 import { Colors } from '@/styles/theme';
 import { styles } from '@/styles/screens/map_screen.styles';
 import { SpotCallout } from '@/components/SpotCallout';
+import { FilterModal } from '@/components/ui/FilterModal';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useMapScreen } from '@/hooks/map_screen_hook';
 import { MAP_DEFAULT_REGION, MAP_STYLE } from '@/constants/map_config';
@@ -18,6 +19,7 @@ export default function MapScreen() {
     places,
     nearbyCount,
     selectedPlace,
+    hasActiveFilters,
     isAnyLoading,
     locationLoading,
     handleLocateMe,
@@ -105,33 +107,25 @@ export default function MapScreen() {
 
       {/* FILTER FAB */}
       <TouchableOpacity
-        style={styles.filterFab}
+        style={[styles.filterFab, hasActiveFilters && styles.filterFabActive]}
         onPress={() => setFilterVisible(true)}
         activeOpacity={0.85}
       >
-        <SlidersHorizontal size={16} color={Colors.text} strokeWidth={2} />
-        <Text style={styles.filterFabLabel}>{t.mapScreen.filterFab}</Text>
+        <SlidersHorizontal
+          size={16}
+          color={hasActiveFilters ? Colors.bg : Colors.text}
+          strokeWidth={2}
+        />
+        <Text style={[styles.filterFabLabel, hasActiveFilters && styles.filterFabLabelActive]}>
+          {t.mapScreen.filterFab}
+        </Text>
       </TouchableOpacity>
 
-      {/* FILTER BOTTOM SHEET — placeholder, not implemented */}
-      <Modal
+      {/* FILTER BOTTOM SHEET — reuses the same FilterModal as the homescreen */}
+      <FilterModal
         visible={filterVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setFilterVisible(false)}
-      >
-        <Pressable style={styles.bottomSheetBackdrop} onPress={() => setFilterVisible(false)}>
-          <Pressable style={styles.bottomSheet} onPress={() => {}}>
-            <View style={styles.bottomSheetHandle} />
-            <Text style={styles.bottomSheetTitle}>{t.mapScreen.filterModalTitle}</Text>
-            {/* TODO: implement map filter — filter visible pins by category and price range */}
-            <View style={styles.bottomSheetPlaceholder}>
-              <SlidersHorizontal size={32} color={Colors.border} strokeWidth={1.5} />
-              <Text style={styles.bottomSheetComingSoonText}>{t.mapScreen.filterComingSoon}</Text>
-            </View>
-          </Pressable>
-        </Pressable>
-      </Modal>
+        onClose={() => setFilterVisible(false)}
+      />
 
       {/* SPOT DETAIL POPUP — centered Modal, dismisses on backdrop tap */}
       <SpotCallout
