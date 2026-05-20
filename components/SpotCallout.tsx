@@ -8,13 +8,13 @@ import { getEffectivePriceTier } from '@/lib/price_consensus_utils';
 import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
 import type { Place } from '@/types';
 import { Image } from 'expo-image';
+import { ChevronRight, MapPin, Navigation } from 'lucide-react-native';
 import React from 'react';
 import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { CategoryChip } from './ui/CategoryChip';
 import { PriceBadge } from './ui/PriceBadge';
 
 interface SpotCalloutProps {
-  place: Place | null;
+  place: (Place & { distance?: number }) | null;
   onPress?: (place: Place) => void;
   onClose?: () => void;
 }
@@ -33,53 +33,80 @@ export const SpotCallout = ({ place, onPress, onClose }: SpotCalloutProps) => {
       statusBarTranslucent
       onRequestClose={onClose}
     >
-      {/* BACKDROP — tap outside to dismiss */}
+      {/* BACKDROP */}
       <Pressable style={styles.backdrop} onPress={onClose}>
-        <Pressable style={styles.card} onPress={() => {}}>
+        <View style={styles.cardContainer}>
+          <Pressable style={styles.card} onPress={(e) => e.stopPropagation()}>
+            {/* IMAGE */}
+            <View style={styles.imageContainer}>
+              {place.photoUrl ? (
+                <Image
+                  source={{ uri: place.photoUrl }}
+                  style={styles.image}
+                  contentFit="cover"
+                  transition={200}
+                />
+              ) : (
+                <View style={styles.imagePlaceholder}>
+                  <MapPin size={36} color={Colors.muted} />
+                </View>
+              )}
 
-          {/* IMAGE */}
-          {place.photoUrl ? (
-            <Image
-              source={{ uri: place.photoUrl }}
-              style={styles.image}
-              contentFit="cover"
-            />
-          ) : (
-            <View style={[styles.image, styles.imagePlaceholder]} />
-          )}
-
-          {/* CONTENT */}
-          <View style={styles.content}>
-            <View style={styles.headerRow}>
-              <View style={styles.categoriesRow}>
-                <CategoryChip category={place.categories[0]} />
-                {place.categories.length > 1 && (
-                  <Text style={styles.extraCategories}>+{place.categories.length - 1}</Text>
-                )}
+              {/* PRICE BADGE OVERLAY */}
+              <View style={styles.priceBadgeOverlay}>
+                <PriceBadge tier={effectiveTier} variant="on-image" />
               </View>
             </View>
 
-            <Text style={styles.name} numberOfLines={1}>{place.name}</Text>
+            {/* CONTENT */}
+            <View style={styles.content}>
+              {/* NAME */}
+              <Text style={styles.name} numberOfLines={2}>
+                {place.name}
+              </Text>
 
-            {place.address ? (
-              <Text style={styles.address} numberOfLines={1}>📍 {place.address}</Text>
-            ) : null}
+              {/* DESCRIPTION */}
+              {place.description ? (
+                <Text style={styles.description} numberOfLines={3}>
+                  {place.description}
+                </Text>
+              ) : null}
 
-            <View style={styles.footer}>
-              <PriceBadge tier={effectiveTier} />
+              {/* ADDRESS */}
+              {place.address ? (
+                <View style={styles.metaRow}>
+                  <Navigation size={12} color={Colors.muted} style={styles.metaIcon} />
+                  <Text style={styles.metaText} numberOfLines={1}>
+                    {place.address}
+                  </Text>
+                </View>
+              ) : null}
+
+              {/* DISTANCE */}
+              {place.distance !== undefined ? (
+                <View style={styles.metaRow}>
+                  <MapPin size={12} color={Colors.muted} style={styles.metaIcon} />
+                  <Text style={styles.metaText}>
+                    {place.distance.toFixed(1)} {t.foodCard.distanceAway}
+                  </Text>
+                </View>
+              ) : null}
+
+              {/* DETAILS BUTTON */}
               <TouchableOpacity
                 style={styles.detailsButton}
                 activeOpacity={0.8}
                 onPress={() => onPress?.(place)}
               >
                 <Text style={styles.detailsButtonText}>{t.spotCallout.detailsButton}</Text>
+                <ChevronRight size={14} color={Colors.text} strokeWidth={2.5} />
               </TouchableOpacity>
             </View>
-          </View>
+          </Pressable>
 
           {/* CALLOUT ARROW */}
           <View style={styles.arrow} />
-        </Pressable>
+        </View>
       </Pressable>
     </Modal>
   );
@@ -92,43 +119,47 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
   },
+  cardContainer: {
+    width: 290,
+    alignItems: 'center',
+  },
   card: {
-    width: 280,
+    width: '100%',
     backgroundColor: Colors.surface,
     borderRadius: Radius.md,
     borderWidth: 1,
     borderColor: Colors.border,
-    overflow: 'hidden',
     shadowColor: Colors.text,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 6,
+    overflow: 'hidden',
+  },
+  imageContainer: {
+    position: 'relative',
+    width: '100%',
+    height: 120,
   },
   image: {
     width: '100%',
-    height: 110,
-    backgroundColor: Colors.linen,
+    height: '100%',
   },
   imagePlaceholder: {
+    width: '100%',
+    height: '100%',
     backgroundColor: Colors.linen,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  priceBadgeOverlay: {
+    position: 'absolute',
+    top: Spacing.sm,
+    right: Spacing.sm,
+    zIndex: 10,
   },
   content: {
     padding: Spacing.md,
-  },
-  headerRow: {
-    marginBottom: Spacing.xs,
-  },
-  categoriesRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  extraCategories: {
-    ...Typography.caption,
-    fontFamily: FontFamily.bodyMedium,
-    color: Colors.muted,
-    fontSize: FontSize.xs,
-    marginLeft: Spacing.xs,
   },
   name: {
     fontFamily: FontFamily.display,
@@ -137,24 +168,38 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     marginBottom: Spacing.xs,
   },
-  address: {
-    ...Typography.caption,
-    marginBottom: Spacing.sm,
-  },
-  footer: {
+  metaRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: Spacing.xs,
+  },
+  metaIcon: {
+    marginRight: 4,
+    flexShrink: 0,
+  },
+  metaText: {
+    ...Typography.caption,
+    flex: 1,
+  },
+  description: {
+    ...Typography.caption,
+    color: Colors.muted,
+    marginBottom: Spacing.md,
+    lineHeight: 16,
   },
   detailsButton: {
     backgroundColor: Colors.primary,
-    borderRadius: Radius.full,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
+    borderRadius: Radius.md,
+    paddingVertical: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    marginTop: Spacing.sm,
   },
   detailsButtonText: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: FontSize.xs,
+    fontSize: FontSize.sm,
     color: Colors.text,
   },
   arrow: {
@@ -170,3 +215,5 @@ const styles = StyleSheet.create({
     marginBottom: -1,
   },
 });
+
+
