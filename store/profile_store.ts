@@ -35,11 +35,12 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   saveUsername: async (uid, username) => {
     set({ isSaving: true, error: null });
     try {
-      await updateUserProfile(uid, { username });
+      const lowerUsername = username.trim().toLowerCase();
+      await updateUserProfile(uid, { username: lowerUsername });
       set((state) => ({
         profile: state.profile
-          ? { ...state.profile, username }
-          : { uid, username, photoUrl: '', updatedAt: null },
+          ? { ...state.profile, username: lowerUsername }
+          : { uid, username: lowerUsername, photoUrl: '', updatedAt: null },
         isSaving: false,
       }));
     } catch (err) {

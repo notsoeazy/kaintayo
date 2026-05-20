@@ -36,7 +36,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     const credential = await createUserWithEmailAndPassword(auth, email, password);
     // Seed a Firestore profile with a random placeholder username
     await updateUserProfile(credential.user.uid, {
-      username: generateRandomUsername(),
+      username: generateRandomUsername().toLowerCase(),
     });
   },
 
@@ -47,7 +47,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     const existing = await getUserProfile(result.user.uid);
     if (!existing) {
       await updateUserProfile(result.user.uid, {
-        username: generateRandomUsername(),
+        username: generateRandomUsername().toLowerCase(),
       });
     }
   },
