@@ -67,20 +67,25 @@ export default function MapScreen() {
       {/* HEADER */}
       <SafeAreaView style={styles.headerOverlay} edges={['top']}>
         <View style={styles.headerRow}>
-          <Text style={styles.heading}>{t.mapScreen.title}</Text>
-          {isAnyLoading ? (
-            <View style={styles.headerLoadingRow}>
-              <ActivityIndicator size="small" color={Colors.primary} />
-              <Text style={styles.headerLoadingText}>
-                {locationLoading ? t.mapScreen.loadingLocation : t.mapScreen.loadingSpots}
-              </Text>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.title}>{t.mapScreen.title}</Text>
+            <Text style={styles.subtitle} numberOfLines={1}>
+              {locationLoading
+                ? t.mapScreen.loadingLocation
+                : isAnyLoading
+                ? t.mapScreen.loadingSpots
+                : t.mapScreen.subtitle}
+            </Text>
+          </View>
+
+          {!isAnyLoading && (
+            <View style={styles.spotCountPill}>
+              <MapPin size={14} color={Colors.text} strokeWidth={2.5} style={styles.pillIcon} />
+              <Text style={styles.spotCountText}>{t.mapScreen.spotsCount(nearbyCount)}</Text>
             </View>
-          ) : (
-            <View style={styles.pillAndSubtitleRow}>
-              <View style={styles.spotCountPill}>
-                <Text style={styles.spotCountText}>{t.mapScreen.spotsCount(nearbyCount)}</Text>
-              </View>
-            </View>
+          )}
+          {isAnyLoading && (
+            <ActivityIndicator size="small" color={Colors.primary} style={styles.headerLoader} />
           )}
         </View>
       </SafeAreaView>
