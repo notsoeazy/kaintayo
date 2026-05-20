@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
 import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
+import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
@@ -54,6 +54,28 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
     marginBottom: Spacing.sm,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.linen,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginBottom: Spacing.sm,
+  },
+  passwordInput: {
+    flex: 1,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 14,
+    fontFamily: FontFamily.body,
+    fontSize: FontSize.md,
+    color: Colors.text,
+  },
+  eyeButton: {
+    paddingHorizontal: Spacing.md,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   errorText: {
     fontFamily: FontFamily.body,
