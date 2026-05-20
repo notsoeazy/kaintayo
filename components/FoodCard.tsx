@@ -13,7 +13,7 @@ import React, { useRef } from 'react';
 import { Animated, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 
 
-import { useDetailsNavigation } from '@/hooks/useDetailsNavigation';
+import { useDetailsNavigation } from '@/hooks/details_screen_hook';
 import { useTranslation } from '@/hooks/useTranslation';
 import { getEffectivePriceTier } from '@/lib/price_consensus_utils';
 import { useAuthStore } from '@/store/auth_store';

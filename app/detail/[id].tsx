@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView, ActivityIndicator, Text, Share, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import { useDetailScreen } from '@/hooks/useDetailScreen';
+import { useDetailScreen } from '@/hooks/details_screen_hook';
 import { HeroTopBar } from '@/components/detail/HeroTopBar';
 import { InfoSection } from '@/components/detail/InfoSection';
 import { PhotoGallery } from '@/components/detail/PhotoGallery';

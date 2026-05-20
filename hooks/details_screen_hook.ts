@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { router } from 'expo-router';
 import { useAuthStore } from '@/store/auth_store';
 import { useListStore } from '@/store/list_store';
 import { useFeedStore } from '@/store/feed_store';
@@ -60,7 +61,7 @@ export function useDetailScreen(placeId: string) {
           if (active) setUserVote(existingVote);
         }
       } catch (err) {
-        console.error('[useDetailScreen] Fetch failed:', err);
+        console.error('[details_screen_hook] Fetch failed:', err);
       } finally {
         if (active) setIsLoading(false);
       }
@@ -209,4 +210,16 @@ export function useDetailScreen(placeId: string) {
     handleWishlist,
     handleTried,
   };
+}
+
+export function useDetailsNavigation() {
+  const openDetails = (placeId: string) => {
+    router.push(`/detail/${placeId}`);
+  };
+
+  const openDetailsForPlace = (place: Place) => {
+    router.push(`/detail/${place.id}`);
+  };
+
+  return { openDetails, openDetailsForPlace };
 }
