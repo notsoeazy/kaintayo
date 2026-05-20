@@ -1,5 +1,6 @@
 import { db } from "@/lib/firebase_service";
-import type { LikeEntry, Place, PriceTier, TriedEntry, UserProfile, WishlistEntry } from "@/types";
+import { computeWinningTier } from "@/lib/price_consensus_utils";
+import type { Place, PriceTier, UserProfile } from "@/types";
 import {
   addDoc,
   collection,
@@ -39,9 +40,16 @@ export async function getPlaceById(id: string): Promise<Place | null> {
 }
 
 // Add a community submitted place to Firestore
-export async function addPlace(place: Omit<Place, "id" | "createdAt" | "likes">): Promise<string> {
+export async function addPlace(
+  place: Omit<
+    Place,
+    "id" | "createdAt" | "likes" | "communityPriceTier" | "totalVotes"
+  >,
+): Promise<string> {
   const docRef = await addDoc(collection(db, PLACES_COL), {
     ...place,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
     likes: 0,
   });
@@ -58,7 +66,10 @@ export async function likePlace(id: string): Promise<void> {
 // PHOTOS
 
 export async function getPlacePhotos(placeId: string): Promise<string[]> {
-  const q = query(collection(db, placePhotosCol(placeId)), orderBy("createdAt", "desc"));
+  const q = query(
+    collection(db, placePhotosCol(placeId)),
+    orderBy("createdAt", "desc"),
+  );
   const snapshot = await getDocs(q);
   return snapshot.docs.map((d) => d.data().url as string);
 }
@@ -81,7 +92,7 @@ export async function addPlacePhoto(
 
 // Fetch the user profile document from users/{uid}
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
-  const docSnap = await getDoc(doc(db, 'users', uid));
+  const docSnap = await getDoc(doc(db, "users", uid));
   if (!docSnap.exists()) return null;
   return { uid, ...docSnap.data() } as UserProfile;
 }
@@ -89,10 +100,10 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
 // Create or update the user profile document at users/{uid}
 export async function updateUserProfile(
   uid: string,
-  data: Partial<Pick<UserProfile, 'username' | 'photoUrl'>>,
+  data: Partial<Pick<UserProfile, "username" | "photoUrl">>,
 ): Promise<void> {
   await setDoc(
-    doc(db, 'users', uid),
+    doc(db, "users", uid),
     { ...data, updatedAt: Timestamp.now() },
     { merge: true },
   );
@@ -108,7 +119,10 @@ export async function addToTried(uid: string, placeId: string): Promise<void> {
   });
 }
 
-export async function removeFromTried(uid: string, placeId: string): Promise<void> {
+export async function removeFromTried(
+  uid: string,
+  placeId: string,
+): Promise<void> {
   await deleteDoc(doc(db, userTriedCol(uid), placeId));
 }
 
@@ -123,7 +137,10 @@ export async function addToWishlist(
   });
 }
 
-export async function removeFromWishlist(uid: string, placeId: string): Promise<void> {
+export async function removeFromWishlist(
+  uid: string,
+  placeId: string,
+): Promise<void> {
   await deleteDoc(doc(db, userWishlistCol(uid), placeId));
 }
 
@@ -151,6 +168,7 @@ export async function votePriceTier(
     tier,
     votedAt: Timestamp.now(),
   });
+  await refreshPlaceConsensus(placeId);
 }
 
 export async function removePriceVote(
@@ -158,6 +176,18 @@ export async function removePriceVote(
   uid: string,
 ): Promise<void> {
   await deleteDoc(doc(db, priceVotesCol(placeId), uid));
+  await refreshPlaceConsensus(placeId);
+}
+
+// Recomputes the winning tier from all votes and persists it to the Place doc
+async function refreshPlaceConsensus(placeId: string): Promise<void> {
+  const tally = await getPriceVoteTally(placeId);
+  const totalVotes = Object.values(tally).reduce((a, b) => a + b, 0);
+  const communityPriceTier = computeWinningTier(tally);
+  await updateDoc(doc(db, PLACES_COL, placeId), {
+    communityPriceTier: communityPriceTier ?? null,
+    totalVotes,
+  });
 }
 
 // Get the current vote
@@ -176,7 +206,7 @@ export async function getPriceVoteTally(
 ): Promise<Record<PriceTier, number>> {
   const snapshot = await getDocs(collection(db, priceVotesCol(placeId)));
   const tally: Record<PriceTier, number> = {
-    'very-budget': 0,
+    "very-budget": 0,
     affordable: 0,
     moderate: 0,
     expensive: 0,

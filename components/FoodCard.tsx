@@ -7,20 +7,21 @@ Usage:
 />
 */
 
-import React, { useRef } from 'react';
-import { View, Text, TouchableWithoutFeedback, Animated, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
-import { Heart, MapPin, CheckCircle2, Star } from 'lucide-react-native';
+import { CheckCircle2, Heart, MapPin, Star } from 'lucide-react-native';
+import React, { useRef } from 'react';
+import { Animated, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 
 
+import { useDetailsNavigation } from '@/hooks/useDetailsNavigation';
+import { useTranslation } from '@/hooks/useTranslation';
+import { getEffectivePriceTier } from '@/lib/price_consensus_utils';
+import { useAuthStore } from '@/store/auth_store';
+import { useListStore } from '@/store/list_store';
+import { Colors, FontFamily, Radius, Spacing, Typography } from '@/styles/theme';
+import type { Place } from '@/types';
 import { CategoryChip } from './ui/CategoryChip';
 import { PriceBadge } from './ui/PriceBadge';
-import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
-import { useListStore } from '@/store/list_store';
-import { useAuthStore } from '@/store/auth_store';
-import { useTranslation } from '@/hooks/useTranslation';
-import { useDetailsNavigation } from '@/hooks/useDetailsNavigation';
-import type { Place } from '@/types';
 
 export interface FoodCardProps {
   place: Place;
@@ -35,6 +36,7 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
   
   const isWishlisted = wishlistIds.includes(place.id);
   const isTried = triedIds.includes(place.id);
+  const { tier: effectiveTier } = getEffectivePriceTier(place);
   
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -115,7 +117,7 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
 
           <View style={styles.detailsRow}>
             <PriceBadge 
-              tier={place.priceTier} 
+              tier={effectiveTier}
             />
             {distance !== undefined && (
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>

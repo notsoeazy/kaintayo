@@ -23,6 +23,8 @@ export interface Place {
   name: string;
   categories: FoodCategory[];
   priceTier: PriceTier;
+  communityPriceTier: PriceTier | null;
+  totalVotes: number;
   priceMin?: number;
   priceMax?: number;
   description: string;

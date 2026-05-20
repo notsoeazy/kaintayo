@@ -6,7 +6,7 @@ service cloud.firestore {
       allow read: if true;
       allow create: if request.auth != null;
       allow update: if request.auth != null
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']);
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'communityPriceTier', 'totalVotes']);
       allow delete: if false;
 
       // Photo gallery for the place

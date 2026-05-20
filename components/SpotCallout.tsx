@@ -3,14 +3,15 @@ Usage:
 <SpotCallout place={place} onPress={(place) => router.push(`/detail/${place.id}`)} onClose={() => setSelected(null)} />
 */
 
-import React from 'react';
-import { View, Text, TouchableOpacity, Modal, Pressable, StyleSheet } from 'react-native';
+import { useTranslation } from '@/hooks/useTranslation';
+import { getEffectivePriceTier } from '@/lib/price_consensus_utils';
+import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
+import type { Place } from '@/types';
 import { Image } from 'expo-image';
+import React from 'react';
+import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CategoryChip } from './ui/CategoryChip';
 import { PriceBadge } from './ui/PriceBadge';
-import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
-import { useTranslation } from '@/hooks/useTranslation';
-import type { Place } from '@/types';
 
 interface SpotCalloutProps {
   place: Place | null;
@@ -21,6 +22,8 @@ interface SpotCalloutProps {
 export const SpotCallout = ({ place, onPress, onClose }: SpotCalloutProps) => {
   const { t } = useTranslation();
   if (!place) return null;
+
+  const { tier: effectiveTier } = getEffectivePriceTier(place);
 
   return (
     <Modal
@@ -63,7 +66,7 @@ export const SpotCallout = ({ place, onPress, onClose }: SpotCalloutProps) => {
             ) : null}
 
             <View style={styles.footer}>
-              <PriceBadge tier={place.priceTier} />
+              <PriceBadge tier={effectiveTier} />
               <TouchableOpacity
                 style={styles.detailsButton}
                 activeOpacity={0.8}

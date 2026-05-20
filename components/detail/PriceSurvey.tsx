@@ -85,7 +85,7 @@ export const PriceSurvey = React.memo(function PriceSurvey({
         {PRICE_TIERS.map((tier: PriceRangeMeta) => {
           const count = voteTally[tier.id] ?? 0;
           const pct = totalVotes > 0 ? (count / totalVotes) * 100 : 0;
-          const isSelected = userVote === tier.id;
+          const isSelected = canVote && userVote === tier.id;
 
           return (
             <TouchableOpacity
