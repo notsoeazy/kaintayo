@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
   },
   title: {
     fontFamily: FontFamily.display,
-    fontSize: FontSize.xl,
+    fontSize: FontSize.xxl,
     color: Colors.text,
     letterSpacing: 1,
   },
