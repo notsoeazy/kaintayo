@@ -17,6 +17,8 @@ import {
 } from '@expo-google-fonts/jetbrains-mono';
 import { useAuthStore } from '@/store/auth_store';
 import { useListStore } from '@/store/list_store';
+import { useProfileStore } from '@/store/profile_store';
+import { useNotifications } from '@/hooks/useNotifications';
 import { Colors } from '@/styles/theme';
 
 export { ErrorBoundary } from 'expo-router';
@@ -28,6 +30,7 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  useNotifications();
   const [splashDone, setSplashDone] = useState(false);
   const [fontsLoaded, fontError] = useFonts({
     BebasNeue_400Regular,
@@ -39,19 +42,22 @@ export default function RootLayout() {
 
   const { user, isLoading: authLoading, init } = useAuthStore();
   const { syncFromFirestore, clearLists } = useListStore();
+  const { fetchProfile, clearProfile } = useProfileStore();
 
-  // Start Firebase auth listener on mount
+  // AUTH LISTENERS
   useEffect(() => {
     const unsubscribe = init();
     return unsubscribe;
   }, []);
 
-  // Sync or clear lists based on auth state
+  // Sync or clear lists and profile based on auth state
   useEffect(() => {
     if (user) {
       syncFromFirestore(user.uid);
+      fetchProfile(user.uid);
     } else if (!authLoading) {
       clearLists();
+      clearProfile();
     }
   }, [user, authLoading]);
 
@@ -85,6 +91,10 @@ export default function RootLayout() {
         <Stack.Screen
           name="add_spot_screen"
           options={{ headerShown: false, animation: 'slide_from_bottom' }}
+        />
+        <Stack.Screen
+          name="friends_screen"
+          options={{ headerShown: false, animation: 'slide_from_right' }}
         />
       </Stack>
       {!splashDone && (
