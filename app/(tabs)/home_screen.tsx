@@ -65,6 +65,7 @@ export default function HomeScreen() {
             <SearchBar 
               value={searchQuery}
               onChangeText={setSearchQuery}
+              placeholder={t.home.searchPlaceholder}
             />
           </View>
           <TouchableOpacity 

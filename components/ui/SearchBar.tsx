@@ -17,7 +17,6 @@ export const SearchBar = (props: TextInputProps) => {
       <Search size={20} color={Colors.muted} style={styles.icon} />
       <TextInput
         style={styles.input}
-        placeholder="Maghanap ng kape, sisig, o spot..."
         placeholderTextColor={Colors.muted}
         testID="home-search-input"
         autoCapitalize="none"
