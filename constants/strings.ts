@@ -175,14 +175,14 @@ export const strings = {
     },
     randomizerScreen: {
       title: "Randomizer",
-      subtitle: "Hayaan ang tadhana mag-decide para sa iyo",
+      subtitle: "Tadhana mag-decide para sayo",
       kahitSaanButton: "Kahit Saan",
       pickAgainButton: "Ulit!",
       resultLabel: "Napili ng tadhana...",
       emptyTitle: "Wala pang spots",
       emptyDesc: "Mag-add muna ng kainan sa Home para gumana ang Randomizer.",
-      noResultsTitle: "Walang katugmang spots",
-      noResultsDesc: "Subukan i-adjust ang iyong filters para may mapili ang randomizer.",
+      noResultsTitle: "Walang pasok sa filter",
+      noResultsDesc: "Subukan i-adjust ang iyong filters.",
       filterHint: (count: number) => `${count} spot${count !== 1 ? 's' : ''} ang pwedeng mapili`,
     },
 
