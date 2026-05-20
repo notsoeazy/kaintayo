@@ -18,14 +18,16 @@ export const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.bg,
     paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
     shadowColor: Colors.text,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 4,
     zIndex: 10,
   },
   headerRow: {
@@ -33,38 +35,40 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  heading: {
-    ...Typography.heading,
-    marginBottom: 0,
+  headerTextContainer: {
+    flex: 1,
+    marginRight: Spacing.md,
   },
-  pillAndSubtitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
+  title: {
+    fontFamily: FontFamily.accent,
+    fontSize: FontSize.xxl + 2,
+    color: Colors.primary,
+  },
+  subtitle: {
+    fontFamily: FontFamily.body,
+    fontSize: FontSize.sm - 1,
+    color: Colors.muted,
+    marginTop: 2,
   },
   spotCountPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: Colors.primary,
     borderRadius: Radius.full,
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: Spacing.sm + 2,
     paddingVertical: Spacing.xs,
-    minWidth: 28,
-    alignItems: 'center',
+    gap: 4,
+  },
+  pillIcon: {
+    marginRight: 2,
   },
   spotCountText: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: FontSize.sm,
     color: Colors.text,
   },
-  subheading: {
-    ...Typography.caption,
-  },
-  headerLoadingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-  },
-  headerLoadingText: {
-    ...Typography.caption,
+  headerLoader: {
+    alignSelf: 'center',
   },
 
   // MY LOCATION BUTTON
