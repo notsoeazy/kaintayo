@@ -15,6 +15,6 @@ export const FOOD_CATEGORIES: CategoryMeta[] = [
   { id: "merienda",    label: "Merienda",         emoji: "🧁" },
   { id: "fastfood",    label: "Fast Food",        emoji: "🍔" },
   { id: "kape-inumin", label: "Kape & Inumin",    emoji: "☕" },
-  { id: "bakery",      label: "Tinapay & Pastry", emoji: "🥐" },
+  { id: "bakery",      label: "Tinapay",             emoji: "🍞" },
   { id: "seafood",     label: "Seafood",          emoji: "🦐" },
 ];

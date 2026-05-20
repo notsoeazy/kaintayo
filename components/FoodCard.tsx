@@ -113,23 +113,23 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
 
         {/* CONTENT SECTION */}
         <View style={styles.content}>
-          <View style={styles.headerRow}>
-            <Text style={[styles.title, { flex: 1, marginRight: Spacing.sm }]} numberOfLines={1}>
-              {place.name}
+          <Text style={styles.title} numberOfLines={2}>
+            {place.name}
+          </Text>
+
+          {place.description ? (
+            <Text style={styles.description} numberOfLines={2}>
+              {place.description}
             </Text>
+          ) : null}
+
+          {place.categories.length > 0 && (
             <View style={styles.categoriesRow}>
-              {place.categories.length > 0 ? (
-                <CategoryChip category={place.categories[0]} />
-              ) : null}
-              {place.categories.length > 1 && (
-                <View style={styles.extraCategoriesPill}>
-                  <Text style={styles.extraCategoriesText}>
-                    +{place.categories.length - 1}
-                  </Text>
-                </View>
-              )}
+              {place.categories.map((cat) => (
+                <CategoryChip key={cat} category={cat} />
+              ))}
             </View>
-          </View>
+          )}
 
           {/* FOOTER ACTIONS */}
           <View style={[styles.footerRow, { justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: Spacing.sm }]}>
@@ -190,27 +190,12 @@ const styles = StyleSheet.create({
   content: {
     padding: Spacing.md,
   },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
-  },
   categoriesRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    flexWrap: 'wrap',
     gap: Spacing.xs,
-  },
-  extraCategoriesPill: {
-    backgroundColor: Colors.accent,
-    borderRadius: Radius.full,
-    paddingHorizontal: Spacing.xs + 2,
-    paddingVertical: 1,
-  },
-  extraCategoriesText: {
-    fontFamily: FontFamily.bodyMedium,
-    color: Colors.bg,
-    fontSize: 11,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.sm,
   },
   topActionsRow: {
     position: 'absolute',
@@ -245,6 +230,12 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.title,
     letterSpacing: 1,
+    marginBottom: Spacing.xs,
+  },
+  description: {
+    ...Typography.caption,
+    color: Colors.muted,
+    lineHeight: 18,
   },
   distanceText: {
     ...Typography.caption,
