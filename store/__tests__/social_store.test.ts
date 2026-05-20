@@ -2,6 +2,7 @@ import { useSocialStore } from "../social_store";
 import {
   getFriends,
   getInvites,
+  getSentInvites,
   searchUsersByUsername,
   sendInvite,
   sendFriendRequest,
@@ -13,12 +14,16 @@ import {
 jest.mock("@/lib/social_service", () => ({
   getFriends: jest.fn(),
   getInvites: jest.fn(),
+  getSentInvites: jest.fn(),
   searchUsersByUsername: jest.fn(),
   sendFriendRequest: jest.fn(),
   acceptFriendRequest: jest.fn(),
   removeFriend: jest.fn(),
   sendInvite: jest.fn(),
   updateInviteStatus: jest.fn(),
+  subscribeToFriends: jest.fn(),
+  subscribeToInvites: jest.fn(),
+  subscribeToSentInvites: jest.fn(),
 }));
 
 describe("Social Store", () => {
@@ -89,7 +94,7 @@ describe("Social Store", () => {
 
     await useSocialStore
       .getState()
-      .inviteToPlace("user1", "adobo_master", "user2", "place_abc", "Jollibee");
+      .inviteToPlace("user1", "adobo_master", "user2", "sinigang_king", "place_abc", "Jollibee");
 
     const state = useSocialStore.getState();
     expect(state.isLoading).toBe(false);
@@ -98,6 +103,7 @@ describe("Social Store", () => {
       "user1",
       "adobo_master",
       "user2",
+      "sinigang_king",
       "place_abc",
       "Jollibee"
     );
@@ -136,5 +142,39 @@ describe("Social Store", () => {
     await useSocialStore.getState().unfriend("user1", "user2");
 
     expect(removeFriend).toHaveBeenCalledWith("user1", "user2");
+  });
+
+  it("should fetch received and sent invites successfully", async () => {
+    const mockReceivedInvites = [
+      { id: "inv1", fromUid: "user2", toUid: "user1", status: "pending", placeName: "Kainan" },
+    ];
+    const mockSentInvites = [
+      { id: "inv2", fromUid: "user1", toUid: "user2", status: "accepted", placeName: "Bakahan" },
+    ];
+    (getInvites as jest.Mock).mockResolvedValueOnce(mockReceivedInvites);
+    (getSentInvites as jest.Mock).mockResolvedValueOnce(mockSentInvites);
+
+    await useSocialStore.getState().fetchInvites("user1");
+
+    const state = useSocialStore.getState();
+    expect(state.isLoading).toBe(false);
+    expect(state.invites).toEqual(mockReceivedInvites);
+    expect(state.sentInvites).toEqual(mockSentInvites);
+    expect(getInvites).toHaveBeenCalledWith("user1");
+    expect(getSentInvites).toHaveBeenCalledWith("user1");
+  });
+
+  it("should fetch sent invites successfully", async () => {
+    const mockSentInvites = [
+      { id: "inv2", fromUid: "user1", toUid: "user2", status: "accepted", placeName: "Bakahan" },
+    ];
+    (getSentInvites as jest.Mock).mockResolvedValueOnce(mockSentInvites);
+
+    await useSocialStore.getState().fetchSentInvites("user1");
+
+    const state = useSocialStore.getState();
+    expect(state.isLoading).toBe(false);
+    expect(state.sentInvites).toEqual(mockSentInvites);
+    expect(getSentInvites).toHaveBeenCalledWith("user1");
   });
 });

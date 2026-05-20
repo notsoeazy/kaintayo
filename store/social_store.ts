@@ -3,12 +3,14 @@ import {
   acceptFriendRequest,
   getFriends,
   getInvites,
+  getSentInvites,
   removeFriend,
   searchUsersByUsername,
   sendFriendRequest,
   sendInvite,
   subscribeToFriends,
   subscribeToInvites,
+  subscribeToSentInvites,
   updateInviteStatus,
 } from "@/lib/social_service";
 import type { FriendEntry, InviteEntry, InviteStatus, UserProfile } from "@/types";
@@ -16,6 +18,7 @@ import type { FriendEntry, InviteEntry, InviteStatus, UserProfile } from "@/type
 interface SocialState {
   friends: FriendEntry[];
   invites: InviteEntry[];
+  sentInvites: InviteEntry[];
   searchResults: UserProfile[];
   isLoading: boolean;
   isSearching: boolean;
@@ -23,6 +26,7 @@ interface SocialState {
 
   fetchFriends: (userId: string) => Promise<void>;
   fetchInvites: (userId: string) => Promise<void>;
+  fetchSentInvites: (userId: string) => Promise<void>;
   searchUsers: (queryText: string, currentUid: string) => Promise<void>;
   clearSearchResults: () => void;
   sendRequest: (
@@ -36,6 +40,7 @@ interface SocialState {
     senderUid: string,
     senderUsername: string,
     receiverUid: string,
+    receiverUsername: string,
     placeId: string,
     placeName: string
   ) => Promise<void>;
@@ -47,10 +52,12 @@ interface SocialState {
 
 let unsubscribeFriends: (() => void) | null = null;
 let unsubscribeInvites: (() => void) | null = null;
+let unsubscribeSentInvites: (() => void) | null = null;
 
 export const useSocialStore = create<SocialState>((set, get) => ({
   friends: [],
   invites: [],
+  sentInvites: [],
   searchResults: [],
   isLoading: false,
   isSearching: false,
@@ -70,7 +77,18 @@ export const useSocialStore = create<SocialState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const invites = await getInvites(userId);
-      set({ invites, isLoading: false });
+      const sentInvites = await getSentInvites(userId);
+      set({ invites, sentInvites, isLoading: false });
+    } catch (err) {
+      set({ error: (err as Error).message, isLoading: false });
+    }
+  },
+
+  fetchSentInvites: async (userId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const sentInvites = await getSentInvites(userId);
+      set({ sentInvites, isLoading: false });
     } catch (err) {
       set({ error: (err as Error).message, isLoading: false });
     }
@@ -140,10 +158,10 @@ export const useSocialStore = create<SocialState>((set, get) => ({
     }
   },
 
-  inviteToPlace: async (senderUid, senderUsername, receiverUid, placeId, placeName) => {
+  inviteToPlace: async (senderUid, senderUsername, receiverUid, receiverUsername, placeId, placeName) => {
     set({ isLoading: true, error: null });
     try {
-      await sendInvite(senderUid, senderUsername, receiverUid, placeId, placeName);
+      await sendInvite(senderUid, senderUsername, receiverUid, receiverUsername, placeId, placeName);
       set({ isLoading: false });
     } catch (err) {
       set({ error: (err as Error).message, isLoading: false });
@@ -186,6 +204,16 @@ export const useSocialStore = create<SocialState>((set, get) => ({
         set({ error: err.message });
       }
     );
+
+    unsubscribeSentInvites = subscribeToSentInvites(
+      userId,
+      (sentInvites) => {
+        set({ sentInvites, error: null });
+      },
+      (err) => {
+        set({ error: err.message });
+      }
+    );
   },
 
   unsubscribeSocial: () => {
@@ -197,6 +225,10 @@ export const useSocialStore = create<SocialState>((set, get) => ({
       unsubscribeInvites();
       unsubscribeInvites = null;
     }
+    if (unsubscribeSentInvites) {
+      unsubscribeSentInvites();
+      unsubscribeSentInvites = null;
+    }
   },
 
   clearSocial: () => {
@@ -204,6 +236,7 @@ export const useSocialStore = create<SocialState>((set, get) => ({
     set({
       friends: [],
       invites: [],
+      sentInvites: [],
       searchResults: [],
       isLoading: false,
       isSearching: false,

@@ -17,7 +17,7 @@ import { useSocialStore } from '@/store/social_store';
 import { EmptyState } from '@/components/ui/EmptyState';
 import type { InviteEntry } from '@/types';
 
-type TabType = 'pending' | 'history';
+type TabType = 'inbox' | 'outbox';
 
 export default function InvitesScreen() {
   const { t } = useTranslation();
@@ -25,12 +25,13 @@ export default function InvitesScreen() {
   const { user } = useAuthStore();
   const {
     invites,
+    sentInvites,
     isLoading,
     fetchInvites,
     respondToInvite,
   } = useSocialStore();
 
-  const [activeTab, setActiveTab] = useState<TabType>('pending');
+  const [activeTab, setActiveTab] = useState<TabType>('inbox');
   const [refreshing, setRefreshing] = useState(false);
 
   // LIFECYCLE
@@ -59,9 +60,19 @@ export default function InvitesScreen() {
   };
 
   // DATA SELECTORS
-  const pendingInvites = invites.filter((inv) => inv.status === 'pending');
-  const historyInvites = invites.filter((inv) => inv.status === 'accepted' || inv.status === 'declined');
-  const pendingCount = pendingInvites.length;
+  const sortedIncoming = [...invites].sort((a, b) => {
+    const timeA = a.createdAt?.seconds || 0;
+    const timeB = b.createdAt?.seconds || 0;
+    return timeB - timeA;
+  });
+
+  const sortedSent = [...sentInvites].sort((a, b) => {
+    const timeA = a.createdAt?.seconds || 0;
+    const timeB = b.createdAt?.seconds || 0;
+    return timeB - timeA;
+  });
+
+  const pendingIncomingCount = invites.filter((inv) => inv.status === 'pending').length;
 
   const getInviteDateString = (createdAt: any) => {
     if (!createdAt) return '';
@@ -80,6 +91,7 @@ export default function InvitesScreen() {
 
   // RENDER
   const renderInviteItem = ({ item }: { item: InviteEntry }) => {
+    const isInbox = activeTab === 'inbox';
     const isPending = item.status === 'pending';
 
     return (
@@ -93,52 +105,87 @@ export default function InvitesScreen() {
             <Text style={styles.emoji}>🍽️</Text>
           </View>
           <View style={styles.cardInfo}>
-            <Text style={styles.senderText}>
-              Ininvite ka ni <Text style={styles.senderUsername}>@{item.fromUsername}</Text>
-            </Text>
+            {isInbox ? (
+              <Text style={styles.senderText}>
+                Ininvite ka ni <Text style={styles.senderUsername}>@{item.fromUsername}</Text>
+              </Text>
+            ) : (
+              <Text style={styles.senderText}>
+                {t.invitesScreen.invitedUser.replace('{{username}}', item.toUsername || 'Tropa')}
+              </Text>
+            )}
             <Text style={styles.placeName}>{item.placeName}</Text>
             <Text style={styles.timeText}>{getInviteDateString(item.createdAt)}</Text>
           </View>
         </TouchableOpacity>
 
         <View style={styles.cardBottom}>
-          {isPending ? (
-            <View style={styles.actionRow}>
-              <TouchableOpacity
-                style={[styles.actionButton, styles.declineButton]}
-                onPress={() => handleRespond(item.id, 'declined')}
-                activeOpacity={0.8}
-              >
-                <X size={16} color={Colors.muted} />
-                <Text style={styles.declineButtonText}>
-                  {t.invitesScreen.declineBtn}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.actionButton, styles.acceptButton]}
-                onPress={() => handleRespond(item.id, 'accepted')}
-                activeOpacity={0.8}
-              >
-                <Check size={16} color={Colors.white} />
-                <Text style={styles.acceptButtonText}>
-                  {t.invitesScreen.acceptBtn}
-                </Text>
-              </TouchableOpacity>
-            </View>
+          {isInbox ? (
+            isPending ? (
+              <View style={styles.actionRow}>
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.declineButton]}
+                  onPress={() => handleRespond(item.id, 'declined')}
+                  activeOpacity={0.8}
+                >
+                  <X size={16} color={Colors.muted} />
+                  <Text style={styles.declineButtonText}>
+                    {t.invitesScreen.declineBtn}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.acceptButton]}
+                  onPress={() => handleRespond(item.id, 'accepted')}
+                  activeOpacity={0.8}
+                >
+                  <Check size={16} color={Colors.white} />
+                  <Text style={styles.acceptButtonText}>
+                    {t.invitesScreen.acceptBtn}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.statusTextContainer}>
+                {item.status === 'accepted' ? (
+                  <>
+                    <Check size={14} color={Colors.success} />
+                    <Text style={[styles.statusText, styles.statusAccepted]}>
+                      {t.invitesScreen.statusAccepted}
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <X size={14} color={Colors.muted} />
+                    <Text style={[styles.statusText, styles.statusDeclined]}>
+                      {t.invitesScreen.statusDeclined}
+                    </Text>
+                  </>
+                )}
+              </View>
+            )
           ) : (
             <View style={styles.statusTextContainer}>
-              {item.status === 'accepted' ? (
+              {item.status === 'pending' && (
+                <>
+                  <Calendar size={14} color={Colors.primary} />
+                  <Text style={[styles.statusText, { color: Colors.primary }]}>
+                    {t.invitesScreen.sentPending}
+                  </Text>
+                </>
+              )}
+              {item.status === 'accepted' && (
                 <>
                   <Check size={14} color={Colors.success} />
                   <Text style={[styles.statusText, styles.statusAccepted]}>
-                    {t.invitesScreen.statusAccepted}
+                    {t.invitesScreen.sentAccepted}
                   </Text>
                 </>
-              ) : (
+              )}
+              {item.status === 'declined' && (
                 <>
-                  <X size={14} color={Colors.muted} />
-                  <Text style={[styles.statusText, styles.statusDeclined]}>
-                    {t.invitesScreen.statusDeclined}
+                  <X size={14} color={Colors.secondary} />
+                  <Text style={[styles.statusText, { color: Colors.secondary }]}>
+                    {t.invitesScreen.sentDeclined}
                   </Text>
                 </>
               )}
@@ -150,7 +197,7 @@ export default function InvitesScreen() {
   };
 
   const getFilteredData = () => {
-    return activeTab === 'pending' ? pendingInvites : historyInvites;
+    return activeTab === 'inbox' ? sortedIncoming : sortedSent;
   };
 
   return (
@@ -170,27 +217,27 @@ export default function InvitesScreen() {
       {/* TABS */}
       <View style={styles.tabBar}>
         <TouchableOpacity
-          style={[styles.tabItem, activeTab === 'pending' && styles.tabItemActive]}
-          onPress={() => setActiveTab('pending')}
+          style={[styles.tabItem, activeTab === 'inbox' && styles.tabItemActive]}
+          onPress={() => setActiveTab('inbox')}
           activeOpacity={0.7}
         >
-          <Text style={[styles.tabText, activeTab === 'pending' && styles.tabTextActive]}>
-            {t.invitesScreen.tabPending}
+          <Text style={[styles.tabText, activeTab === 'inbox' && styles.tabTextActive]}>
+            {t.invitesScreen.tabInbox}
           </Text>
-          {pendingCount > 0 && (
+          {pendingIncomingCount > 0 && (
             <View style={styles.tabBadge}>
-              <Text style={styles.tabBadgeText}>{pendingCount}</Text>
+              <Text style={styles.tabBadgeText}>{pendingIncomingCount}</Text>
             </View>
           )}
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.tabItem, activeTab === 'history' && styles.tabItemActive]}
-          onPress={() => setActiveTab('history')}
+          style={[styles.tabItem, activeTab === 'outbox' && styles.tabItemActive]}
+          onPress={() => setActiveTab('outbox')}
           activeOpacity={0.7}
         >
-          <Text style={[styles.tabText, activeTab === 'history' && styles.tabTextActive]}>
-            {t.invitesScreen.tabHistory}
+          <Text style={[styles.tabText, activeTab === 'outbox' && styles.tabTextActive]}>
+            {t.invitesScreen.tabOutbox}
           </Text>
         </TouchableOpacity>
       </View>
@@ -207,8 +254,8 @@ export default function InvitesScreen() {
           !isLoading ? (
             <EmptyState
               icon={<Calendar size={48} color={Colors.muted} />}
-              title={activeTab === 'pending' ? t.invitesScreen.pendingInvitesHeader : t.invitesScreen.pastInvitesHeader}
-              description={t.invitesScreen.emptyInvitesList}
+              title={t.invitesScreen.title}
+              description={activeTab === 'inbox' ? t.invitesScreen.emptyInvitesList : t.invitesScreen.emptySentList}
             />
           ) : (
             <ActivityIndicator

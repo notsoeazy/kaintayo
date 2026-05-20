@@ -77,7 +77,8 @@ kaintayo/
 │   ├── auth_store.ts             # Signed-in user
 │   ├── feed_store.ts             # Places feed + filter state
 │   ├── list_store.ts             # Tried list + Wishlist (persisted)
-│   └── settings_store.ts         # Language preference (persisted)
+│   ├── settings_store.ts         # Language preference (persisted)
+│   └── social_store.ts           # Friends list and invite tracker
 │
 ├── lib/                          # External service clients and pure logic
 │   ├── firebase_service.ts       # Firebase app init (Auth + Firestore + Storage)
@@ -85,7 +86,8 @@ kaintayo/
 │   ├── firestore_service.ts      # Firestore query helpers
 │   ├── geo_utils.ts              # Pure geographic math (haversine formula)
 │   ├── randomizer_service.ts     # Kahit Saan pick logic
-│   └── seed_service.ts           # Firestore seed data (dev only)
+│   ├── seed_service.ts           # Firestore seed data (dev only)
+│   └── social_service.ts         # Friends & invites Firestore queries
 │
 ├── hooks/                        # Custom React hooks
 │   ├── location_hook.ts          # expo-location wrapper
@@ -93,13 +95,15 @@ kaintayo/
 │   ├── map_screen_hook.ts        # Map screen state, effects, and handlers
 │   ├── useTranslation.ts         # i18n hook (reads from settings_store)
 │   ├── useDetailsNavigation.ts   # Open detail screen from anywhere in the app
-│   └── useDetailScreen.ts        # All state and logic for the detail screen
+│   ├── useDetailScreen.ts        # All state and logic for the detail screen
+│   └── useNotifications.ts       # Push/local notification listeners
 │
 ├── constants/
 │   ├── categories.ts             # FOOD_CATEGORIES array
 │   ├── map_config.ts             # Map constants (region, style, pin size, radius)
 │   ├── price_ranges.ts           # PRICE_TIERS with label + min/max
-│   └── strings.ts                # All UI strings — EN and TL translations
+│   ├── strings.ts                # All UI strings — EN and TL translations
+│   └── invite_states.ts          # Invite status constants
 │
 ├── styles/
 │   └── theme.ts                  # ALL design tokens: Colors, Spacing, Radius, FontFamily
