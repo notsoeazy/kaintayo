@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { Heart, Settings, UtensilsCrossed, User, Users } from 'lucide-react-native';
+import { Heart, Settings, UtensilsCrossed, User, Users, Mail } from 'lucide-react-native';
 import { Colors } from '@/styles/theme';
 import { styles } from '@/styles/screens/profile_screen.styles';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -47,9 +47,10 @@ export default function ProfileScreen() {
 
   const { places } = useFeedStore();
   const { triedIds, wishlistIds } = useListStore();
-  const { friends } = useSocialStore();
+  const { friends, invites } = useSocialStore();
 
   const pendingReceivedCount = friends.filter((f) => f.status === 'pending_received').length;
+  const pendingInvitesCount = invites.filter((i) => i.status === 'pending').length;
 
   // Filter global places feed to the user's tried / wishlist lists
   const triedPlaces: Place[] = places.filter((p) => triedIds.includes(p.id));
@@ -87,6 +88,19 @@ export default function ProfileScreen() {
                   {pendingReceivedCount > 0 && (
                     <View style={styles.headerBadge}>
                       <Text style={styles.headerBadgeText}>{pendingReceivedCount}</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.headerButton}
+                  onPress={() => router.push('/invites_screen')}
+                  activeOpacity={0.7}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Mail size={22} color={Colors.text} />
+                  {pendingInvitesCount > 0 && (
+                    <View style={styles.headerBadge}>
+                      <Text style={styles.headerBadgeText}>{pendingInvitesCount}</Text>
                     </View>
                   )}
                 </TouchableOpacity>
