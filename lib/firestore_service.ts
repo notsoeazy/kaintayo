@@ -46,7 +46,7 @@ export async function getPlaceById(id: string): Promise<Place | null> {
 export async function addPlace(
   place: Omit<
     Place,
-    "id" | "createdAt" | "likes" | "communityPriceTier" | "totalVotes"
+    "id" | "createdAt" | "likes" | "communityPriceTier" | "totalVotes" | "triedCount"
   >,
 ): Promise<string> {
   const docRef = await addDoc(collection(db, PLACES_COL), {
@@ -55,6 +55,7 @@ export async function addPlace(
     totalVotes: 0,
     createdAt: Timestamp.now(),
     likes: 0,
+    triedCount: 0,
   });
   return docRef.id;
 }
@@ -120,6 +121,9 @@ export async function addToTried(uid: string, placeId: string): Promise<void> {
     placeId,
     triedAt: Timestamp.now(),
   });
+  await updateDoc(doc(db, PLACES_COL, placeId), {
+    triedCount: increment(1),
+  });
 }
 
 export async function removeFromTried(
@@ -127,6 +131,9 @@ export async function removeFromTried(
   placeId: string,
 ): Promise<void> {
   await deleteDoc(doc(db, userTriedCol(uid), placeId));
+  await updateDoc(doc(db, PLACES_COL, placeId), {
+    triedCount: increment(-1),
+  });
 }
 
 // Add a place to the user's wishlist

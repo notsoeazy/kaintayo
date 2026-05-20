@@ -34,6 +34,7 @@ export interface Place {
   googleMapsUrl: string;
   photoUrl?: string;
   likes: number;
+  triedCount?: number;
   createdBy: string;
   isSeeded: boolean;
   createdAt: Timestamp | null;
