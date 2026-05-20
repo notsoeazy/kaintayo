@@ -175,8 +175,12 @@ export const strings = {
     },
     randomizerScreen: {
       title: "Randomizer",
-      emptyDesc: "Wala pa munang randomizer idol.",
-      comingSoon: "COMING SOON",
+      subtitle: "Hayaan ang tadhana mag-decide para sa iyo",
+      kahitSaanButton: "Kahit Saan",
+      pickAgainButton: "Ulit!",
+      resultLabel: "Napili ng tadhana...",
+      emptyTitle: "Wala pang spots",
+      emptyDesc: "Mag-add muna ng kainan sa Home para gumana ang Randomizer.",
     },
 
     detailScreen: {
@@ -437,8 +441,12 @@ export const strings = {
     },
     randomizerScreen: {
       title: "Randomizer",
-      emptyDesc: "Wala pa munang randomizer idol.",
-      comingSoon: "COMING SOON",
+      subtitle: "Hayaan ang tadhana mag-decide para sa iyo",
+      kahitSaanButton: "Kahit Saan",
+      pickAgainButton: "Ulit!",
+      resultLabel: "Napili ng tadhana...",
+      emptyTitle: "Wala pang spots",
+      emptyDesc: "Mag-add muna ng kainan sa Home para gumana ang Randomizer.",
     },
 
     detailScreen: {
