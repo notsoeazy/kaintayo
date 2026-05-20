@@ -161,11 +161,12 @@ export default function AddSpotScreen() {
     }));
   };
 
-  // VALIDATION for step 1
+  // VALIDATION FOR STEP 1
   const isStep1Valid =
     step1.name.trim().length > 0 &&
     step1.categories.length > 0 &&
-    step1.priceTier !== null;
+    step1.priceTier !== null &&
+    step1.photoUri !== null;
 
   // CENTER MARKER
   const onRegionChangeComplete = (region: Region) => {
@@ -192,14 +193,16 @@ export default function AddSpotScreen() {
     setError(null);
 
     try {
-      let photoUrl: string | undefined;
-      if (step1.photoUri) {
-        try {
-          photoUrl = await uploadPhoto(step1.photoUri, user.uid);
-        } catch (uploadErr) {
-          // Continue without photo
-          console.error('[AddSpot] Image upload failed:', uploadErr);
-        }
+      if (!step1.photoUri) {
+        throw new Error(t.addSpot.errorNoImage);
+      }
+
+      let photoUrl: string;
+      try {
+        photoUrl = await uploadPhoto(step1.photoUri, user.uid);
+      } catch (uploadErr) {
+        console.error('[AddSpot] Image upload failed:', uploadErr);
+        throw new Error(t.addSpot.genericError);
       }
 
       await addPlace({
@@ -218,9 +221,9 @@ export default function AddSpotScreen() {
 
       await fetchPlaces();
       setIsSuccessVisible(true);
-    } catch (err) {
+    } catch (err: any) {
       console.error('[AddSpot] Submit failed:', err);
-      setError(t.addSpot.genericError);
+      setError(err.message || t.addSpot.genericError);
     } finally {
       setIsSubmitting(false);
     }
