@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Shuffle, SlidersHorizontal } from 'lucide-react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { FoodCard } from '@/components/FoodCard';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -21,6 +22,15 @@ export default function RandomizerScreen() {
   const { t } = useTranslation();
   const [pickedPlace, setPickedPlace] = useState<Place | null>(null);
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
+
+  // Reset picked place to IDLE state when navigating away/back
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setPickedPlace(null);
+      };
+    }, [])
+  );
 
   const hasActiveFilters = filters.categories.length > 0 || filters.priceTier !== null || filters.maxDistance !== 5;
 
