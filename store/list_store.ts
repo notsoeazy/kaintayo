@@ -76,11 +76,15 @@ export const useListStore = create<ListState>()(
 
       // Pull current lists from Firestore on login and sync local state
       syncFromFirestore: async (uid) => {
-        const [triedIds, wishlistIds] = await Promise.all([
-          getUserTried(uid),
-          getUserWishlist(uid),
-        ]);
-        set({ triedIds, wishlistIds });
+        try {
+          const [triedIds, wishlistIds] = await Promise.all([
+            getUserTried(uid),
+            getUserWishlist(uid),
+          ]);
+          set({ triedIds, wishlistIds });
+        } catch (err) {
+          console.error('[list_store] syncFromFirestore failed:', err);
+        }
       },
 
       clearLists: () => set({ triedIds: [], wishlistIds: [] }),
