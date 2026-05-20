@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   Text,
   TextInput,
@@ -11,7 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/store/auth_store';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Colors } from '@/styles/theme';
@@ -27,6 +28,7 @@ export default function LoginScreen() {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError]       = useState('');
 
@@ -115,15 +117,28 @@ export default function LoginScreen() {
               keyboardType="email-address"
               autoComplete="email"
             />
-            <TextInput
-              style={styles.input}
-              placeholder={t.loginScreen.passwordPlaceholder}
-              placeholderTextColor={Colors.muted}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              autoComplete="password"
-            />
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder={t.loginScreen.passwordPlaceholder}
+                placeholderTextColor={Colors.muted}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                autoComplete="password"
+              />
+              <Pressable
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeButton}
+                hitSlop={8}
+              >
+                <Ionicons
+                  name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  size={22}
+                  color={Colors.muted}
+                />
+              </Pressable>
+            </View>
 
             {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
