@@ -1,7 +1,7 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Anyone can read places; only authenticated users can create
+    // PLACES
     match /places/{placeId} {
       allow read: if true;
       allow create: if request.auth != null;
@@ -9,25 +9,50 @@ service cloud.firestore {
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'communityPriceTier', 'totalVotes']);
       allow delete: if false;
 
-      // Photo gallery for the place
+      // PHOTOS
       match /photos/{photoId} {
         allow read: if true;
         allow create: if request.auth != null;
       }
 
-      // Community price survey votes
+      // PRICE SURVEY
       match /priceVotes/{userId} {
         allow read: if true;
         allow write: if request.auth != null && request.auth.uid == userId;
       }
     }
 
-    // Users can read/write their own profile and subcollections
+    // USERS
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
 
-      match /{subcollection}/{docId} {
+      // TRIED
+      match /tried/{docId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // WISHLIST
+      match /wishlist/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // LIKES
+      match /likes/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // FRIENDS
+      match /friends/{friendId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow write: if request.auth != null && (request.auth.uid == userId || request.auth.uid == friendId);
+      }
+
+      // INVITES
+      match /invites/{inviteId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null;
+        allow update, delete: if request.auth != null && request.auth.uid == userId;
       }
     }
   }
