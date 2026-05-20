@@ -6,55 +6,52 @@ Usage:
 />
 */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
+  Linking,
   Modal,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { X, Users, Mail } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
+import { X, Globe, LogOut, Info, ExternalLink } from 'lucide-react-native';
+import { Image } from 'expo-image';
 import { Colors, FontFamily, FontSize, Radius, Spacing } from '@/styles/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useSettingsStore } from '@/store/settings_store';
 import { useAuthStore } from '@/store/auth_store';
-import { useSocialStore } from '@/store/social_store';
 
 interface ProfileSidebarProps {
   visible: boolean;
   onClose: () => void;
 }
 
-const SIDEBAR_WIDTH = 280;
+const SIDEBAR_WIDTH = 310;
 
 export function ProfileSidebar({ visible, onClose }: ProfileSidebarProps) {
   const { t } = useTranslation();
-  const router = useRouter();
   const { language, setLanguage } = useSettingsStore();
   const { signOut } = useAuthStore();
-  const { invites } = useSocialStore();
 
-  const pendingCount = invites.filter((i) => i.status === 'pending').length;
-
+  const [internalVisible, setInternalVisible] = useState(visible);
   const slideAnim = useRef(new Animated.Value(SIDEBAR_WIDTH)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (visible) {
+      setInternalVisible(true);
       Animated.parallel([
-        Animated.spring(slideAnim, {
+        Animated.timing(slideAnim, {
           toValue: 0,
+          duration: 280,
           useNativeDriver: true,
-          bounciness: 0,
-          speed: 18,
         }),
         Animated.timing(backdropAnim, {
           toValue: 1,
-          duration: 220,
+          duration: 280,
           useNativeDriver: true,
         }),
       ]).start();
@@ -62,15 +59,15 @@ export function ProfileSidebar({ visible, onClose }: ProfileSidebarProps) {
       Animated.parallel([
         Animated.timing(slideAnim, {
           toValue: SIDEBAR_WIDTH,
-          duration: 200,
+          duration: 220,
           useNativeDriver: true,
         }),
         Animated.timing(backdropAnim, {
           toValue: 0,
-          duration: 200,
+          duration: 220,
           useNativeDriver: true,
         }),
-      ]).start();
+      ]).start(() => setInternalVisible(false));
     }
   }, [visible]);
 
@@ -81,18 +78,16 @@ export function ProfileSidebar({ visible, onClose }: ProfileSidebarProps) {
 
   return (
     <Modal
-      visible={visible}
+      visible={internalVisible}
       transparent
       animationType="none"
       statusBarTranslucent
       onRequestClose={onClose}
     >
       {/* BACKDROP */}
-      <TouchableWithoutFeedback onPress={onClose}>
-        <Animated.View
-          style={[styles.backdrop, { opacity: backdropAnim }]}
-        />
-      </TouchableWithoutFeedback>
+      <Animated.View style={[styles.backdrop, { opacity: backdropAnim }]}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+      </Animated.View>
 
       {/* SIDEBAR PANEL */}
       <Animated.View
@@ -101,109 +96,109 @@ export function ProfileSidebar({ visible, onClose }: ProfileSidebarProps) {
           { transform: [{ translateX: slideAnim }] },
         ]}
       >
-        {/* SIDEBAR HEADER */}
-        <View style={styles.sidebarHeader}>
-          <Text style={styles.sidebarTitle}>{t.profileScreen.sidebarTitle}</Text>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={onClose}
-            activeOpacity={0.7}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <X size={20} color={Colors.text} />
-          </TouchableOpacity>
-        </View>
-
-        {/* DIVIDER */}
-        <View style={styles.divider} />
-
-        {/* TROPA SECTION */}
-        <View style={styles.section}>
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => {
-              onClose();
-              router.push('/friends_screen');
-            }}
-            activeOpacity={0.7}
-          >
-            <View style={styles.menuItemContent}>
-              <View style={styles.menuItemLeft}>
-                <Users size={20} color={Colors.text} />
-                <Text style={styles.menuItemText}>{t.friendsScreen.title}</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.menuItem, { marginTop: Spacing.sm }]}
-            onPress={() => {
-              onClose();
-              router.push('/invites_screen');
-            }}
-            activeOpacity={0.7}
-          >
-            <View style={styles.menuItemContent}>
-              <View style={styles.menuItemLeft}>
-                <Mail size={20} color={Colors.text} />
-                <Text style={styles.menuItemText}>{t.invitesScreen.title}</Text>
-              </View>
-              {pendingCount > 0 && (
-                <View style={styles.badge}>
-                  <Text style={styles.badgeText}>{pendingCount}</Text>
-                </View>
-              )}
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* DIVIDER */}
-        <View style={styles.divider} />
-
-        {/* LANGUAGE SECTION */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>{t.settings.languageTitle}</Text>
-          <View style={styles.langButtons}>
+        <View style={styles.topContainer}>
+          {/* SIDEBAR HEADER */}
+          <View style={styles.sidebarHeader}>
+            <Text style={styles.sidebarTitle}>{t.profileScreen.sidebarTitle}</Text>
             <TouchableOpacity
-              style={[styles.langButton, language === 'en' && styles.langButtonActive]}
-              onPress={() => setLanguage('en')}
+              style={styles.closeButton}
+              onPress={onClose}
               activeOpacity={0.7}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Text
-                style={[
-                  styles.langButtonText,
-                  language === 'en' && styles.langButtonTextActive,
-                ]}
-              >
-                {t.settings.englishOption}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.langButton, language === 'tl' && styles.langButtonActive]}
-              onPress={() => setLanguage('tl')}
-              activeOpacity={0.7}
-            >
-              <Text
-                style={[
-                  styles.langButtonText,
-                  language === 'tl' && styles.langButtonTextActive,
-                ]}
-              >
-                {t.settings.tagalogOption}
-              </Text>
+              <X size={20} color={Colors.text} />
             </TouchableOpacity>
           </View>
-        </View>
 
-        {/* DIVIDER */}
-        <View style={styles.divider} />
+          {/* DIVIDER */}
+          <View style={styles.divider} />
+
+          {/* LANGUAGE SECTION */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Globe size={15} color={Colors.muted} />
+              <Text style={styles.sectionLabel}>{t.settings.languageTitle}</Text>
+            </View>
+            <View style={styles.langButtons}>
+              <TouchableOpacity
+                style={[styles.langButton, language === 'en' && styles.langButtonActive]}
+                onPress={() => setLanguage('en')}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.langButtonText,
+                    language === 'en' && styles.langButtonTextActive,
+                  ]}
+                >
+                  {t.settings.englishOption}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.langButton, language === 'tl' && styles.langButtonActive]}
+                onPress={() => setLanguage('tl')}
+                activeOpacity={0.7}
+              >
+                <Text
+                  style={[
+                    styles.langButtonText,
+                    language === 'tl' && styles.langButtonTextActive,
+                  ]}
+                >
+                  {t.settings.tagalogOption}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* ABOUT SECTION */}
+          <View style={styles.divider} />
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Info size={15} color={Colors.muted} />
+              <Text style={styles.sectionLabel}>About</Text>
+            </View>
+            <View style={styles.aboutCard}>
+              <View style={styles.aboutLogoWrap}>
+                <Image
+                  source={require('@/assets/images/splash-icon.png')}
+                  style={styles.aboutLogo}
+                  contentFit="contain"
+                />
+              </View>
+              <Text style={styles.aboutAppName}>KainTayo</Text>
+              <Text style={styles.aboutTagline}>{'Budget food discovery\nfor Filipino students 🇵🇭'}</Text>
+              <View style={styles.aboutDividerThin} />
+              <Text style={styles.aboutMadeByLabel}>Made with ❤️ by</Text>
+              <View style={styles.aboutContributors}>
+                <TouchableOpacity
+                  style={styles.aboutContributorPill}
+                  onPress={() => Linking.openURL('https://github.com/notsoeazy')}
+                  activeOpacity={0.7}
+                >
+                  <ExternalLink size={12} color={Colors.primary} />
+                  <Text style={styles.aboutLink}>notsoeazy</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.aboutContributorPill}
+                  onPress={() => Linking.openURL('https://github.com/MaTT-R4Yn0')}
+                  activeOpacity={0.7}
+                >
+                  <ExternalLink size={12} color={Colors.primary} />
+                  <Text style={styles.aboutLink}>MaTT-R4Yn0</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
 
         {/* LOGOUT */}
         <TouchableOpacity
           style={styles.logoutButton}
           onPress={handleSignOut}
-          activeOpacity={0.7}
+          activeOpacity={0.75}
         >
+          <LogOut size={15} color={Colors.surface} />
           <Text style={styles.logoutText}>{t.settings.logout}</Text>
         </TouchableOpacity>
       </Animated.View>
@@ -229,7 +224,10 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 16,
     paddingTop: 56,
+    paddingBottom: Spacing.xl,
+    justifyContent: 'space-between',
   },
+  topContainer: {},
   sidebarHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -260,85 +258,129 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
   sectionLabel: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: FontSize.sm,
     color: Colors.muted,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
-    marginBottom: Spacing.sm,
   },
   langButtons: {
-    gap: Spacing.sm,
+    flexDirection: 'column',
+    gap: Spacing.xs,
   },
   langButton: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 11,
+    paddingHorizontal: Spacing.sm,
     borderRadius: Radius.sm,
-    borderWidth: 1,
-    borderColor: Colors.border,
     backgroundColor: Colors.linen,
   },
   langButtonActive: {
     backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
   },
   langButtonText: {
     fontFamily: FontFamily.body,
     fontSize: FontSize.md,
-    color: Colors.text,
+    color: Colors.muted,
   },
   langButtonTextActive: {
     fontFamily: FontFamily.bodyMedium,
     color: Colors.surface,
   },
   logoutButton: {
-    marginHorizontal: Spacing.md,
-    marginTop: Spacing.md,
-    paddingVertical: Spacing.md,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    marginHorizontal: Spacing.md,
+    paddingVertical: 11,
     borderRadius: Radius.sm,
-    borderWidth: 1,
-    borderColor: Colors.secondary,
+    backgroundColor: Colors.secondary,
   },
   logoutText: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: FontSize.md,
-    color: Colors.secondary,
+    fontSize: FontSize.sm,
+    color: Colors.surface,
   },
-  menuItem: {
-    paddingVertical: Spacing.sm,
-  },
-  menuItemContent: {
-    flexDirection: 'row',
+  aboutCard: {
+    backgroundColor: Colors.linen,
+    borderRadius: Radius.md,
+    padding: Spacing.md,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
   },
-  menuItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-  },
-  menuItemText: {
-    fontFamily: FontFamily.bodyMedium,
-    fontSize: FontSize.md,
-    color: Colors.text,
-  },
-  badge: {
-    backgroundColor: Colors.secondary,
-    borderRadius: Radius.full,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    minWidth: 18,
-    height: 18,
+  aboutLogoWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: Colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: Spacing.sm,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 6,
   },
-  badgeText: {
+  aboutLogo: {
+    width: 52,
+    height: 52,
+  },
+  aboutAppName: {
+    fontFamily: FontFamily.display,
+    fontSize: FontSize.lg,
+    color: Colors.text,
+    marginBottom: 2,
+  },
+  aboutTagline: {
+    fontFamily: FontFamily.body,
+    fontSize: FontSize.xs,
+    color: Colors.muted,
+    textAlign: 'center',
+    lineHeight: 17,
+    marginBottom: Spacing.sm,
+  },
+  aboutDividerThin: {
+    height: 1,
+    width: '80%',
+    backgroundColor: Colors.border,
+    marginBottom: Spacing.sm,
+  },
+  aboutMadeByLabel: {
+    fontFamily: FontFamily.body,
+    fontSize: FontSize.xs,
+    color: Colors.muted,
+    marginBottom: 6,
+  },
+  aboutContributors: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  aboutContributorPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.primary + '40',
+  },
+  aboutLink: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 10,
-    color: Colors.white,
-    lineHeight: 14,
+    fontSize: FontSize.xs,
+    color: Colors.primary,
   },
 });
