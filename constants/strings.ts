@@ -181,6 +181,9 @@ export const strings = {
       resultLabel: "Napili ng tadhana...",
       emptyTitle: "Wala pang spots",
       emptyDesc: "Mag-add muna ng kainan sa Home para gumana ang Randomizer.",
+      noResultsTitle: "Walang katugmang spots",
+      noResultsDesc: "Subukan i-adjust ang iyong filters para may mapili ang randomizer.",
+      filterHint: (count: number) => `${count} spot${count !== 1 ? 's' : ''} ang pwedeng mapili`,
     },
 
     detailScreen: {
@@ -447,6 +450,9 @@ export const strings = {
       resultLabel: "Napili ng tadhana...",
       emptyTitle: "Wala pang spots",
       emptyDesc: "Mag-add muna ng kainan sa Home para gumana ang Randomizer.",
+      noResultsTitle: "Walang katugmang spots",
+      noResultsDesc: "Subukan i-adjust ang iyong filters para may mapili ang randomizer.",
+      filterHint: (count: number) => `${count} spot${count !== 1 ? 's' : ''} ang pwedeng mapili`,
     },
 
     detailScreen: {

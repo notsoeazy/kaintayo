@@ -9,6 +9,36 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.bg,
   },
 
+  // HEADER ROW (title + filter button)
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
+  },
+  headerTitle: {
+    fontFamily: FontFamily.display,
+    fontSize: FontSize.xxl,
+    color: Colors.text,
+    letterSpacing: 1,
+  },
+  filterButton: {
+    width: 48,
+    height: 48,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterButtonActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+
   // IDLE STATE (big button view)
   idleContainer: {
     flex: 1,
@@ -16,18 +46,17 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: Spacing.xl,
   },
-  idleTitle: {
-    fontFamily: FontFamily.display,
-    fontSize: FontSize.xxl + 6,
-    color: Colors.text,
-    letterSpacing: 2,
-    textAlign: 'center',
-    marginBottom: Spacing.xs,
-  },
   idleSubtitle: {
     fontFamily: FontFamily.body,
     fontSize: FontSize.md,
     color: Colors.muted,
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+  },
+  filterHint: {
+    fontFamily: FontFamily.bodyMedium,
+    fontSize: FontSize.sm,
+    color: Colors.primary,
     textAlign: 'center',
     marginBottom: Spacing.xl + Spacing.lg,
   },
@@ -46,6 +75,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 16,
     elevation: 8,
+    marginTop: Spacing.xl,
   },
   kahitSaanButtonText: {
     fontFamily: FontFamily.accent,
@@ -98,7 +128,7 @@ export const styles = StyleSheet.create({
     color: Colors.text,
   },
 
-  // EMPTY STATE
+  // EMPTY / NO-RESULTS STATE
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
