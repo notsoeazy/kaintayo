@@ -1,5 +1,5 @@
 import React from "react";
-import { filterPlaces, useNearbyPlaces } from "../nearby_places_hook";
+import { filterPlaces, useNearbyPlaces } from "@/hooks/nearby_places_hook";
 import type { Place, FeedFilters } from "@/types";
 import type { LocationObject } from "expo-location";
 

@@ -1,4 +1,4 @@
-import { useProfileStore } from "../profile_store";
+import { useProfileStore } from "@/store/profile_store";
 import { getUserProfile, updateUserProfile, isUsernameTaken } from "@/lib/firestore_service";
 import { uploadAvatarToFirebase } from "@/lib/firebase_storage_service";
 

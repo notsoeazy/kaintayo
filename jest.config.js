@@ -3,6 +3,7 @@ const { compilerOptions } = require("./tsconfig.json");
 
 module.exports = {
   preset: "jest-expo",
+  roots: ["<rootDir>/__tests__"],
   transform: {
     "^.+\\.(ts|tsx)$": ["ts-jest", {
       tsconfig: {

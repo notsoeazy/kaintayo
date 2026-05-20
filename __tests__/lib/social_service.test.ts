@@ -8,7 +8,7 @@ import {
   getInvites,
   getSentInvites,
   updateInviteStatus,
-} from "../social_service";
+} from "@/lib/social_service";
 import {
   getDocs,
   getDoc,

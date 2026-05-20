@@ -9,7 +9,7 @@ import {
   removeFromTried,
   isUsernameTaken,
   generateUniqueUsername,
-} from "../firestore_service";
+} from "@/lib/firestore_service";
 import {
   getDocs,
   getDoc,

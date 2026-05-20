@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import { FoodCard } from '../FoodCard';
+import { FoodCard } from '@/components/FoodCard';
 import type { Place } from '@/types';
 
 // MOCKS
 const mockOpenDetails = jest.fn();
-jest.mock('@/hooks/useDetailsNavigation', () => ({
+jest.mock('@/hooks/details_screen_hook', () => ({
   useDetailsNavigation: () => ({
     openDetailsForPlace: mockOpenDetails,
   }),

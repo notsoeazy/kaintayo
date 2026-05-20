@@ -1,4 +1,4 @@
-import { useSocialStore } from "../social_store";
+import { useSocialStore } from "@/store/social_store";
 import {
   getFriends,
   getInvites,

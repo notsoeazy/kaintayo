@@ -1,4 +1,4 @@
-import { pickRandomPlace, type RandomizerFilters } from "../randomizer_service";
+import { pickRandomPlace, type RandomizerFilters } from "@/lib/randomizer_service";
 import type { Place } from "@/types";
 
 const mockPlaces: Place[] = [
