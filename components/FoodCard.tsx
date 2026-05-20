@@ -8,7 +8,7 @@ Usage:
 */
 
 import { Image } from 'expo-image';
-import { CheckCircle2, Heart, MapPin, Star } from 'lucide-react-native';
+import { CheckCircle2, Heart, MapPin } from 'lucide-react-native';
 import React, { useRef } from 'react';
 import { Animated, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 
@@ -36,7 +36,11 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
   
   const isWishlisted = wishlistIds.includes(place.id);
   const isTried = triedIds.includes(place.id);
+  const initialIsTried = useRef(isTried).current;
   const { tier: effectiveTier } = getEffectivePriceTier(place);
+  
+  const baseTriedCount = Math.max(0, place.triedCount || 0);
+  const displayTriedCount = Math.max(0, baseTriedCount + (isTried && !initialIsTried ? 1 : (!isTried && initialIsTried ? -1 : 0)));
   
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -60,10 +64,10 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
     if (user) toggleWishlist(user.uid, place.id);
   };
 
-
   const handleTriedToggle = () => {
     if (user) toggleTried(user.uid, place.id);
   };
+
 
 
   return (
@@ -85,12 +89,33 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
           ) : (
             <View style={[styles.image, { backgroundColor: Colors.linen }]} />
           )}
-          <View style={styles.imageOverlay} />
+          
+          {/* TOP ACTIONS ROW */}
+          <View style={styles.topActionsRow}>
+            <TouchableWithoutFeedback onPress={handleWishlistToggle}>
+              <View style={styles.wishlistBadge}>
+                <Heart 
+                  size={18} 
+                  color={isWishlisted ? Colors.secondary : Colors.text} 
+                  fill={isWishlisted ? Colors.secondary : 'transparent'}
+                  strokeWidth={2}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+
+            <PriceBadge 
+              tier={effectiveTier}
+              containerStyle={styles.priceBadgeShadow}
+            />
+          </View>
         </View>
 
         {/* CONTENT SECTION */}
         <View style={styles.content}>
           <View style={styles.headerRow}>
+            <Text style={[styles.title, { flex: 1, marginRight: Spacing.sm }]} numberOfLines={1}>
+              {place.name}
+            </Text>
             <View style={styles.categoriesRow}>
               {place.categories.length > 0 ? (
                 <CategoryChip category={place.categories[0]} />
@@ -103,45 +128,18 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
                 </View>
               )}
             </View>
-            {!place.isSeeded && (
-              <View style={styles.seedBadge}>
-                <Star size={10} color={Colors.primary} fill={Colors.primary} style={{ marginRight: 4 }} />
-                <Text style={styles.seedBadgeText}>{t.foodCard.communityAdded}</Text>
-              </View>
-            )}
           </View>
 
-          <Text style={styles.title} numberOfLines={1}>
-            {place.name}
-          </Text>
-
-          <View style={styles.detailsRow}>
-            <PriceBadge 
-              tier={effectiveTier}
-            />
-            {distance !== undefined && (
+          {/* FOOTER ACTIONS */}
+          <View style={[styles.footerRow, { justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: Spacing.sm }]}>
+            {distance !== undefined ? (
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <MapPin size={14} color={Colors.muted} style={{ marginRight: 4 }} />
                 <Text style={styles.distanceText}>{distance.toFixed(1)} {t.foodCard.distanceAway}</Text>
               </View>
+            ) : (
+              <View />
             )}
-          </View>
-
-          {/* FOOTER ACTIONS */}
-          <View style={styles.footerRow}>
-            <TouchableWithoutFeedback onPress={handleWishlistToggle}>
-              <View style={styles.actionButton}>
-                <Heart 
-                  size={18} 
-                  color={isWishlisted ? Colors.secondary : Colors.muted} 
-                  fill={isWishlisted ? Colors.secondary : 'transparent'}
-                  strokeWidth={2}
-                />
-                <Text style={[styles.actionText, isWishlisted && styles.actionTextActive]}>
-                  {place.likes + (isWishlisted ? 1 : 0)}
-                </Text>
-              </View>
-            </TouchableWithoutFeedback>
 
             <TouchableWithoutFeedback onPress={handleTriedToggle}>
               <View style={styles.actionButton}>
@@ -151,12 +149,11 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
                   strokeWidth={2}
                 />
                 <Text style={[styles.actionText, isTried && { color: Colors.success, fontFamily: FontFamily.bodyMedium }]}>
-                  {isTried ? t.foodCard.triedItYes : t.foodCard.triedItNo}
+                  {isTried ? t.foodCard.triedItYes : t.foodCard.triedItNo} ({displayTriedCount})
                 </Text>
               </View>
             </TouchableWithoutFeedback>
           </View>
-
         </View>
       </Animated.View>
     </TouchableWithoutFeedback>
@@ -189,14 +186,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  imageOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 40,
-    backgroundColor: 'rgba(250, 243, 232, 0.4)', // Capiz Cream with opacity for signage effect
-  },
   content: {
     padding: Spacing.md,
   },
@@ -222,16 +211,39 @@ const styles = StyleSheet.create({
     color: Colors.bg,
     fontSize: 11,
   },
-  title: {
-    ...Typography.title,
-    marginBottom: Spacing.sm,
-    letterSpacing: 1,
-  },
-  detailsRow: {
+  topActionsRow: {
+    position: 'absolute',
+    top: Spacing.sm,
+    left: Spacing.sm,
+    right: Spacing.sm,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    zIndex: 10,
+  },
+  wishlistBadge: {
     alignItems: 'center',
-    marginBottom: Spacing.md,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    width: 32,
+    height: 32,
+    borderRadius: Radius.full,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: Radius.sm,
+    elevation: 2,
+  },
+  priceBadgeShadow: {
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: Radius.sm,
+    elevation: 2,
+  },
+  title: {
+    ...Typography.title,
+    letterSpacing: 1,
   },
   distanceText: {
     ...Typography.caption,
@@ -240,9 +252,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    paddingTop: Spacing.sm,
+    marginTop: Spacing.sm,
   },
   actionButton: {
     flexDirection: 'row',
