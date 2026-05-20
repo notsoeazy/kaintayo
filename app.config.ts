@@ -16,6 +16,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     resizeMode: "contain",
     backgroundColor: "#FAF3E8"
   },
+
   ios: {
     supportsTablet: false,
     bundleIdentifier: "com.matteazy.kaintayo",
@@ -62,6 +63,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         backgroundColor: "#FAF3E8",
         image: "./assets/images/transparent.png",
         imageWidth: 200
+      }
+    ],
+    [
+      "expo-notifications",
+      {
+        icon: "./assets/images/notification-icon.png",
+        color: "#E8A838"
       }
     ]
   ],

@@ -251,7 +251,7 @@ export const strings = {
     },
     settings: {
       languageTitle: "Language",
-      englishOption: "Taglish (Default)",
+      englishOption: "English",
       tagalogOption: "Tagalog",
       logout: "Log out",
     },
@@ -519,7 +519,7 @@ export const strings = {
     },
     settings: {
       languageTitle: "Wika (Language)",
-      englishOption: "Taglish (Default)",
+      englishOption: "English",
       tagalogOption: "Tagalog",
       logout: "Mag-log out",
     },
