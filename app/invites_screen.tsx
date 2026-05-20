@@ -74,10 +74,10 @@ export default function InvitesScreen() {
 
   const pendingIncomingCount = invites.filter((inv) => inv.status === 'pending').length;
 
-  const getInviteDateString = (createdAt: any) => {
+  const getInviteDateString = (createdAt: import('firebase/firestore').Timestamp | null | undefined) => {
     if (!createdAt) return '';
     try {
-      const date = createdAt.toDate ? createdAt.toDate() : new Date(createdAt);
+      const date = createdAt.toDate();
       return date.toLocaleDateString(undefined, {
         month: 'short',
         day: 'numeric',
@@ -107,7 +107,9 @@ export default function InvitesScreen() {
           <View style={styles.cardInfo}>
             {isInbox ? (
               <Text style={styles.senderText}>
-                Ininvite ka ni <Text style={styles.senderUsername}>@{item.fromUsername}</Text>
+                {t.invitesScreen.inviteBody
+                  .replace('{{username}}', item.fromUsername || '')
+                  .replace('{{placeName}}', item.placeName)}
               </Text>
             ) : (
               <Text style={styles.senderText}>
@@ -254,7 +256,7 @@ export default function InvitesScreen() {
           !isLoading ? (
             <EmptyState
               icon={<Calendar size={48} color={Colors.muted} />}
-              title={t.invitesScreen.title}
+              title={activeTab === 'inbox' ? t.invitesScreen.tabInbox : t.invitesScreen.tabOutbox}
               description={activeTab === 'inbox' ? t.invitesScreen.emptyInvitesList : t.invitesScreen.emptySentList}
             />
           ) : (

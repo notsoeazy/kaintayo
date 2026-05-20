@@ -157,10 +157,6 @@ export const strings = {
     },
     invitesScreen: {
       title: "Invites",
-      tabPending: "Pending",
-      tabHistory: "History",
-      pendingInvitesHeader: "Pending Invites",
-      pastInvitesHeader: "Past Invites",
       emptyInvitesList: "No invites yet. When your friends invite you to eat, they'll show up here!",
       inviteBody: "@{{username}} invited you to eat at {{placeName}}",
       acceptBtn: "G!",
@@ -423,10 +419,6 @@ export const strings = {
     },
     invitesScreen: {
       title: "Mga Imbitasyon",
-      tabPending: "Pending",
-      tabHistory: "History",
-      pendingInvitesHeader: "Mga Pending na Imbitasyon",
-      pastInvitesHeader: "Mga Nakalipas na Imbitasyon",
       emptyInvitesList: "Wala pang imbitasyon. Kapag ininvite ka ng mga tropa mo kumain, dito makikita!",
       inviteBody: "Ininvite ka ni @{{username}} kumain sa {{placeName}}",
       acceptBtn: "G!",

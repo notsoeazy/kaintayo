@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Colors, FontFamily, Radius, Spacing } from '@/styles/theme';
+import { Colors, FontFamily, FontSize, Radius, Spacing } from '@/styles/theme';
 
 export const styles = StyleSheet.create({
   container: {
@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
   },
   title: {
     fontFamily: FontFamily.display,
-    fontSize: 24,
+    fontSize: FontSize.xl,
     color: Colors.text,
     letterSpacing: 1,
   },
@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
   },
   tabText: {
     fontFamily: FontFamily.body,
-    fontSize: 14,
+    fontSize: FontSize.sm,
     color: Colors.muted,
   },
   tabTextActive: {
@@ -120,7 +120,7 @@ export const styles = StyleSheet.create({
   },
   senderText: {
     fontFamily: FontFamily.body,
-    fontSize: 14,
+    fontSize: FontSize.sm,
     color: Colors.muted,
     marginBottom: 2,
   },
@@ -130,13 +130,13 @@ export const styles = StyleSheet.create({
   },
   placeName: {
     fontFamily: FontFamily.display,
-    fontSize: 18,
+    fontSize: FontSize.lg,
     color: Colors.text,
     marginVertical: 2,
   },
   timeText: {
     fontFamily: FontFamily.body,
-    fontSize: 11,
+    fontSize: FontSize.xs,
     color: Colors.muted,
     marginTop: 2,
   },
@@ -173,12 +173,12 @@ export const styles = StyleSheet.create({
   },
   acceptButtonText: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 13,
+    fontSize: FontSize.sm,
     color: Colors.white,
   },
   declineButtonText: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 13,
+    fontSize: FontSize.sm,
     color: Colors.muted,
   },
   statusTextContainer: {
@@ -188,7 +188,7 @@ export const styles = StyleSheet.create({
   },
   statusText: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 13,
+    fontSize: FontSize.sm,
   },
   statusAccepted: {
     color: Colors.success,

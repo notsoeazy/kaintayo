@@ -62,11 +62,12 @@ export function useNotifications() {
     const maxRetries = 5;
     let timeoutId: any;
     let isUnsubscribed = false;
+    const uid = user.uid;
 
     function start() {
       if (isUnsubscribed) return;
       const invitesRef = collection(db, "invites");
-      const q = query(invitesRef, where("toUid", "==", user.uid));
+      const q = query(invitesRef, where("toUid", "==", uid));
       unsubscribe = onSnapshot(
         q,
         (snapshot) => {
@@ -90,7 +91,9 @@ export function useNotifications() {
                   Notifications.scheduleNotificationAsync({
                     content: {
                       title: "Kain Tayo! 🍽️",
-                      body: `@${data.fromUsername} invited you to eat at ${data.placeName}!`,
+                      body: t.invitesScreen.inviteBody
+                        .replace('{{username}}', data.fromUsername || '')
+                        .replace('{{placeName}}', data.placeName || ''),
                       data: {
                         url: `/detail/${data.placeId}?invitedBy=${data.fromUsername}`,
                       },
@@ -138,11 +141,12 @@ export function useNotifications() {
     const maxRetries = 5;
     let timeoutId: any;
     let isUnsubscribed = false;
+    const uid = user.uid;
 
     function start() {
       if (isUnsubscribed) return;
       const invitesRef = collection(db, "invites");
-      const q = query(invitesRef, where("fromUid", "==", user.uid));
+      const q = query(invitesRef, where("fromUid", "==", uid));
       unsubscribe = onSnapshot(
         q,
         (snapshot) => {
@@ -219,10 +223,11 @@ export function useNotifications() {
     const maxRetries = 5;
     let timeoutId: any;
     let isUnsubscribed = false;
+    const uid = user.uid;
 
     function start() {
       if (isUnsubscribed) return;
-      const friendsRef = collection(db, `users/${user.uid}/friends`);
+      const friendsRef = collection(db, `users/${uid}/friends`);
       unsubscribe = onSnapshot(
         friendsRef,
         (snapshot) => {

@@ -23,6 +23,11 @@ import type { FriendEntry, UserProfile } from '@/types';
 
 type TabType = 'my_friends' | 'requests';
 
+type RequestListItem =
+  | { type: 'header'; title: string; item?: undefined }
+  | { type: 'received'; item: FriendEntry }
+  | { type: 'sent'; item: FriendEntry };
+
 export default function FriendsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -368,7 +373,7 @@ export default function FriendsScreen() {
           }
         />
       ) : (
-        <FlatList<any>
+        <FlatList<RequestListItem>
           data={getRequestsListData()}
           keyExtractor={(item, index) => item.item?.uid || `header-${index}`}
           renderItem={({ item }) => {

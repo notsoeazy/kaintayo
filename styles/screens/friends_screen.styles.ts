@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Colors, FontFamily, Radius, Spacing, Typography } from '@/styles/theme';
+import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
 
 export const styles = StyleSheet.create({
   container: {
@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
   },
   title: {
     fontFamily: FontFamily.display,
-    fontSize: 24,
+    fontSize: FontSize.xl,
     color: Colors.text,
     letterSpacing: 1,
   },
@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
   },
   tabText: {
     fontFamily: FontFamily.body,
-    fontSize: 14,
+    fontSize: FontSize.sm,
     color: Colors.muted,
   },
   tabTextActive: {
@@ -117,7 +117,7 @@ export const styles = StyleSheet.create({
   },
   searchButtonText: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 14,
+    fontSize: FontSize.sm,
     color: Colors.surface,
   },
   searchIndicator: {
@@ -163,12 +163,12 @@ export const styles = StyleSheet.create({
   },
   searchResultUsername: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 16,
+    fontSize: FontSize.md,
     color: Colors.text,
   },
   statusLabel: {
     fontFamily: FontFamily.body,
-    fontSize: 12,
+    fontSize: FontSize.xxs,
     color: Colors.muted,
   },
   addButton: {
@@ -197,7 +197,7 @@ export const styles = StyleSheet.create({
   },
   actionButtonText: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 12,
+    fontSize: FontSize.xxs,
     color: Colors.surface,
   },
 
@@ -212,7 +212,7 @@ export const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontFamily: FontFamily.display,
-    fontSize: 16,
+    fontSize: FontSize.md,
     color: Colors.text,
     letterSpacing: 0.5,
     marginTop: Spacing.sm,
@@ -248,7 +248,7 @@ export const styles = StyleSheet.create({
   },
   friendUsername: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 16,
+    fontSize: FontSize.md,
     color: Colors.text,
   },
   unfriendButton: {
@@ -269,7 +269,7 @@ export const styles = StyleSheet.create({
   },
   requestUsername: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 16,
+    fontSize: FontSize.md,
     color: Colors.text,
   },
 
@@ -283,7 +283,7 @@ export const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontFamily: FontFamily.bodyMedium,
-    fontSize: 18,
+    fontSize: FontSize.lg,
     color: Colors.text,
     textAlign: 'center',
   },
@@ -300,7 +300,7 @@ export const styles = StyleSheet.create({
   },
   noResultsText: {
     fontFamily: FontFamily.body,
-    fontSize: 14,
+    fontSize: FontSize.sm,
     color: Colors.muted,
   },
 });
