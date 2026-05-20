@@ -9,11 +9,27 @@ export const TIER_COLORS: Record<PriceTier, string> = {
   'expensive':   'rgba(194, 91, 78, 0.15)',    // Ribbon Red tint
 };
 
+// Solid opaque colors for use on-image overlays
+export const TIER_SOLID_COLORS: Record<PriceTier, string> = {
+  'very-budget': '#4a8a58',
+  'affordable':  '#2e7d78',
+  'moderate':    '#b87d10',
+  'expensive':   '#a83828',
+};
+
 export const TIER_TEXT_COLORS: Record<PriceTier, string> = {
   'very-budget': Colors.success,
   'affordable':  Colors.accent,
   'moderate':    Colors.primary,
   'expensive':   Colors.secondary,
+};
+
+// White text for all tiers on dark solid backgrounds
+export const TIER_SOLID_TEXT_COLORS: Record<PriceTier, string> = {
+  'very-budget': '#ffffff',
+  'affordable':  '#ffffff',
+  'moderate':    '#ffffff',
+  'expensive':   '#ffffff',
 };
 
 export interface PriceRangeMeta {

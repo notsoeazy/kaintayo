@@ -7,7 +7,7 @@ Usage:
 />
 */
 
-import { getTierMeta, getTierRangeLabel, TIER_COLORS, TIER_TEXT_COLORS } from '@/constants/price_ranges';
+import { getTierMeta, getTierRangeLabel, TIER_COLORS, TIER_SOLID_COLORS, TIER_SOLID_TEXT_COLORS, TIER_TEXT_COLORS } from '@/constants/price_ranges';
 import { Colors, FontFamily, FontSize, Radius, Spacing } from '@/styles/theme';
 import type { PriceTier } from '@/types';
 import React from 'react';
@@ -15,30 +15,34 @@ import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-na
 
 export interface PriceBadgeProps {
   tier?: PriceTier;
-  variant?: 'default' | 'pill';
+  variant?: 'default' | 'pill' | 'on-image';
   containerStyle?: StyleProp<ViewStyle>;
 }
 
 export function PriceBadge({ tier, variant = 'default', containerStyle }: PriceBadgeProps) {
   const resolvedTier = tier ?? 'very-budget';
-  
+
   const meta = getTierMeta(resolvedTier);
   const label = meta?.label ?? resolvedTier;
   const range = getTierRangeLabel(resolvedTier);
+
+  const isOnImage = variant === 'on-image';
+  const bgColor = isOnImage ? TIER_SOLID_COLORS[resolvedTier] : TIER_COLORS[resolvedTier];
+  const textColor = isOnImage ? TIER_SOLID_TEXT_COLORS[resolvedTier] : TIER_TEXT_COLORS[resolvedTier];
 
   return (
     <View
       style={[
         styles.badge,
         variant === 'pill' && styles.pillBadge,
-        { backgroundColor: TIER_COLORS[resolvedTier] },
+        { backgroundColor: bgColor },
         containerStyle,
       ]}
     >
       {variant === 'pill' ? (
         <Text style={[
           styles.pillRange,
-          { color: TIER_TEXT_COLORS[resolvedTier] }
+          { color: textColor }
         ]}>
           {range}
         </Text>
@@ -46,13 +50,13 @@ export function PriceBadge({ tier, variant = 'default', containerStyle }: PriceB
         <>
           <Text style={[
             styles.symbol,
-            { color: TIER_TEXT_COLORS[resolvedTier] }
+            { color: textColor }
           ]}>
             {meta?.symbol}
           </Text>
           <Text style={[
-            styles.label, 
-            { color: TIER_TEXT_COLORS[resolvedTier] }
+            styles.label,
+            { color: textColor }
           ]}>
             {label}
           </Text>
