@@ -16,6 +16,7 @@ import {
   JetBrainsMono_400Regular,
 } from '@expo-google-fonts/jetbrains-mono';
 import { useAuthStore } from '@/store/auth_store';
+import { useListStore } from '@/store/list_store';
 import { Colors } from '@/styles/theme';
 
 export { ErrorBoundary } from 'expo-router';
@@ -37,12 +38,22 @@ export default function RootLayout() {
   });
 
   const { user, isLoading: authLoading, init } = useAuthStore();
+  const { syncFromFirestore, clearLists } = useListStore();
 
   // Start Firebase auth listener on mount
   useEffect(() => {
     const unsubscribe = init();
     return unsubscribe;
   }, []);
+
+  // Sync or clear lists based on auth state
+  useEffect(() => {
+    if (user) {
+      syncFromFirestore(user.uid);
+    } else if (!authLoading) {
+      clearLists();
+    }
+  }, [user, authLoading]);
 
   useEffect(() => {
     if (fontError) throw fontError;
