@@ -16,7 +16,8 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { X } from 'lucide-react-native';
+import { X, Users } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 import { Colors, FontFamily, FontSize, Radius, Spacing } from '@/styles/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useSettingsStore } from '@/store/settings_store';
@@ -31,6 +32,7 @@ const SIDEBAR_WIDTH = 280;
 
 export function ProfileSidebar({ visible, onClose }: ProfileSidebarProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const { language, setLanguage } = useSettingsStore();
   const { signOut } = useAuthStore();
 
@@ -105,6 +107,26 @@ export function ProfileSidebar({ visible, onClose }: ProfileSidebarProps) {
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <X size={20} color={Colors.text} />
+          </TouchableOpacity>
+        </View>
+
+        {/* DIVIDER */}
+        <View style={styles.divider} />
+
+        {/* TROPA SECTION */}
+        <View style={styles.section}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => {
+              onClose();
+              router.push('/friends_screen');
+            }}
+            activeOpacity={0.7}
+          >
+            <View style={styles.menuItemContent}>
+              <Users size={20} color={Colors.text} />
+              <Text style={styles.menuItemText}>{t.friendsScreen.title}</Text>
+            </View>
           </TouchableOpacity>
         </View>
 
@@ -256,5 +278,18 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.bodyMedium,
     fontSize: FontSize.md,
     color: Colors.secondary,
+  },
+  menuItem: {
+    paddingVertical: Spacing.sm,
+  },
+  menuItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  menuItemText: {
+    fontFamily: FontFamily.bodyMedium,
+    fontSize: FontSize.md,
+    color: Colors.text,
   },
 });

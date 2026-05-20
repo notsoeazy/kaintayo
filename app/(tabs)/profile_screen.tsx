@@ -9,13 +9,15 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
-import { Heart, Settings, UtensilsCrossed, User } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { Heart, Settings, UtensilsCrossed, User, Users } from 'lucide-react-native';
 import { Colors } from '@/styles/theme';
 import { styles } from '@/styles/screens/profile_screen.styles';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useProfileScreen } from '@/hooks/profile_screen_hook';
 import { useFeedStore } from '@/store/feed_store';
 import { useListStore } from '@/store/list_store';
+import { useSocialStore } from '@/store/social_store';
 import { ProfileSidebar } from '@/components/ProfileSidebar';
 import { SpotGridCard } from '@/components/SpotGridCard';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -23,6 +25,8 @@ import type { Place } from '@/types';
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
+
   const {
     profile,
     isLoading,
@@ -43,11 +47,15 @@ export default function ProfileScreen() {
 
   const { places } = useFeedStore();
   const { triedIds, wishlistIds } = useListStore();
+  const { friends } = useSocialStore();
+
+  const pendingReceivedCount = friends.filter((f) => f.status === 'pending_received').length;
 
   // Filter global places feed to the user's tried / wishlist lists
   const triedPlaces: Place[] = places.filter((p) => triedIds.includes(p.id));
   const wishlistPlaces: Place[] = places.filter((p) => wishlistIds.includes(p.id));
 
+  // RENDERERS
   const renderGridItem = ({ item, index }: { item: Place; index: number }) => (
     <View style={[styles.gridColumn, index % 2 === 0 ? styles.gridColumnLeft : styles.gridColumnRight]}>
       <SpotGridCard place={item} />
@@ -56,7 +64,8 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <FlatList
+      <FlatList<Place>
+        key="grid"
         data={activeTab === 'tried' ? triedPlaces : wishlistPlaces}
         keyExtractor={(item) => item.id}
         numColumns={2}
@@ -67,14 +76,29 @@ export default function ProfileScreen() {
             {/* HEADER */}
             <View style={styles.header}>
               <Text style={styles.title}>{t.tabs.profile}</Text>
-              <TouchableOpacity
-                style={styles.settingsButton}
-                onPress={handleOpenSidebar}
-                activeOpacity={0.7}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <Settings size={22} color={Colors.text} />
-              </TouchableOpacity>
+              <View style={styles.headerButtons}>
+                <TouchableOpacity
+                  style={styles.headerButton}
+                  onPress={() => router.push('/friends_screen')}
+                  activeOpacity={0.7}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Users size={22} color={Colors.text} />
+                  {pendingReceivedCount > 0 && (
+                    <View style={styles.headerBadge}>
+                      <Text style={styles.headerBadgeText}>{pendingReceivedCount}</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.headerButton}
+                  onPress={handleOpenSidebar}
+                  activeOpacity={0.7}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Settings size={22} color={Colors.text} />
+                </TouchableOpacity>
+              </View>
             </View>
 
             {/* HERO SECTION */}
@@ -140,7 +164,7 @@ export default function ProfileScreen() {
               ) : (
                 <TouchableOpacity onPress={handleStartEditUsername} activeOpacity={0.8}>
                   {profile?.username ? (
-                    <Text style={styles.usernameText}>{profile.username}</Text>
+                    <Text style={styles.usernameText}>@{profile.username}</Text>
                   ) : (
                     <Text style={styles.usernameHint}>{t.profileScreen.usernamePlaceholder}</Text>
                   )}
@@ -194,10 +218,7 @@ export default function ProfileScreen() {
       />
 
       {/* SIDEBAR */}
-      <ProfileSidebar
-        visible={sidebarOpen}
-        onClose={handleCloseSidebar}
-      />
+      <ProfileSidebar visible={sidebarOpen} onClose={handleCloseSidebar} />
     </SafeAreaView>
   );
 }

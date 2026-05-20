@@ -4,22 +4,26 @@ import { Alert } from 'react-native';
 import { useAuthStore } from '@/store/auth_store';
 import { useProfileStore } from '@/store/profile_store';
 
+import { useSocialStore } from '@/store/social_store';
+
 // PROFILE SCREEN HOOK
-// Manages avatar upload, username editing, sidebar, and tab state for ProfileScreen.
 export function useProfileScreen() {
   const { user } = useAuthStore();
   const { profile, isLoading, isSaving, fetchProfile, saveUsername, saveAvatar } =
     useProfileStore();
+  const { fetchFriends, fetchInvites } = useSocialStore();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'tried' | 'wishlist'>('tried');
   const [editingUsername, setEditingUsername] = useState(false);
   const [usernameInput, setUsernameInput] = useState('');
 
-  // Load the profile when the screen mounts or the user changes
+  // Load profile and social data on mount
   useEffect(() => {
     if (user) {
       fetchProfile(user.uid);
+      fetchFriends(user.uid);
+      fetchInvites(user.uid);
     }
   }, [user?.uid]);
 
