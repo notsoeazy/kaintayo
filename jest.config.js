@@ -5,7 +5,9 @@ module.exports = {
   preset: "jest-expo",
   transform: {
     "^.+\\.(ts|tsx)$": ["ts-jest", {
-      tsconfig: "tsconfig.json",
+      tsconfig: {
+        jsx: "react-jsx",
+      },
       isolatedModules: true,
     }],
   },

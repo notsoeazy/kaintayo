@@ -4,6 +4,9 @@ import {
   getInvites,
   searchUsersByUsername,
   sendInvite,
+  sendFriendRequest,
+  acceptFriendRequest,
+  removeFriend,
 } from "@/lib/social_service";
 
 // MOCKS
@@ -98,5 +101,40 @@ describe("Social Store", () => {
       "place_abc",
       "Jollibee"
     );
+  });
+
+  it("should send friend request successfully", async () => {
+    (sendFriendRequest as jest.Mock).mockResolvedValueOnce(undefined);
+
+    const sender = { uid: "user1", username: "sender1", photoUrl: "" };
+    const receiver = { uid: "user2", username: "receiver1", photoUrl: "" };
+
+    await useSocialStore.getState().sendRequest(sender, receiver);
+
+    expect(sendFriendRequest).toHaveBeenCalledWith(sender, receiver);
+  });
+
+  it("should accept friend request successfully", async () => {
+    (acceptFriendRequest as jest.Mock).mockResolvedValueOnce(undefined);
+
+    await useSocialStore.getState().acceptRequest("user1", "user2");
+
+    expect(acceptFriendRequest).toHaveBeenCalledWith("user1", "user2");
+  });
+
+  it("should decline friend request successfully", async () => {
+    (removeFriend as jest.Mock).mockResolvedValueOnce(undefined);
+
+    await useSocialStore.getState().declineRequest("user1", "user2");
+
+    expect(removeFriend).toHaveBeenCalledWith("user1", "user2");
+  });
+
+  it("should remove friend successfully", async () => {
+    (removeFriend as jest.Mock).mockResolvedValueOnce(undefined);
+
+    await useSocialStore.getState().unfriend("user1", "user2");
+
+    expect(removeFriend).toHaveBeenCalledWith("user1", "user2");
   });
 });
