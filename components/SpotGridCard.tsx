@@ -4,8 +4,9 @@ Usage:
 */
 
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import { Colors, FontFamily, FontSize, Radius, Spacing } from '@/styles/theme';
 import type { Place } from '@/types';
 
@@ -14,8 +15,14 @@ interface SpotGridCardProps {
 }
 
 export function SpotGridCard({ place }: SpotGridCardProps) {
+  const router = useRouter();
+
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.85}
+      onPress={() => router.push(`/detail/${place.id}`)}
+    >
       {place.photoUrl ? (
         <Image
           source={place.photoUrl}
@@ -32,7 +39,7 @@ export function SpotGridCard({ place }: SpotGridCardProps) {
           {place.name}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
