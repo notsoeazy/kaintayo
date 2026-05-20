@@ -96,6 +96,7 @@ export interface InviteEntry {
   fromUid: string;
   fromUsername: string;
   toUid: string;
+  toUsername: string;
   placeId: string;
   placeName: string;
   status: InviteStatus;

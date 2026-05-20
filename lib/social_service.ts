@@ -102,18 +102,47 @@ export function subscribeToFriends(
   onUpdate: (friends: FriendEntry[]) => void,
   onError?: (error: Error) => void
 ): () => void {
-  const friendsColRef = collection(db, `users/${userId}/friends`);
-  return onSnapshot(
-    friendsColRef,
-    (snapshot) => {
-      const friends: FriendEntry[] = [];
-      snapshot.forEach((docSnap) => {
-        friends.push(docSnap.data() as FriendEntry);
-      });
-      onUpdate(friends);
-    },
-    onError
-  );
+  let unsubscribe: (() => void) | null = null;
+  let retryCount = 0;
+  const maxRetries = 5;
+  let timeoutId: any;
+  let isUnsubscribed = false;
+
+  function start() {
+    if (isUnsubscribed) return;
+    const friendsColRef = collection(db, `users/${userId}/friends`);
+    unsubscribe = onSnapshot(
+      friendsColRef,
+      (snapshot) => {
+        const friends: FriendEntry[] = [];
+        snapshot.forEach((docSnap) => {
+          friends.push(docSnap.data() as FriendEntry);
+        });
+        onUpdate(friends);
+      },
+      (error) => {
+        if (
+          (error.code === "permission-denied" || error.message?.includes("permission")) &&
+          retryCount < maxRetries &&
+          !isUnsubscribed
+        ) {
+          retryCount++;
+          const delay = retryCount * 1000;
+          timeoutId = setTimeout(start, delay);
+        } else if (onError) {
+          onError(error);
+        }
+      }
+    );
+  }
+
+  start();
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) unsubscribe();
+    if (timeoutId) clearTimeout(timeoutId);
+  };
 }
 
 // INVITES
@@ -122,14 +151,45 @@ export async function sendInvite(
   senderUid: string,
   senderUsername: string,
   receiverUid: string,
+  toUsername: string,
   placeId: string,
   placeName: string
 ): Promise<string> {
-  const inviteColRef = collection(db, `users/${receiverUid}/invites`);
+  const inviteColRef = collection(db, "invites");
+
+  // Prevent spamming multiple invites to the same place/friend within 24 hours
+  const q = query(
+    inviteColRef,
+    where("fromUid", "==", senderUid),
+    where("toUid", "==", receiverUid),
+    where("placeId", "==", placeId)
+  );
+
+  const snap = await getDocs(q);
+  const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  let hasRecentInvite = false;
+
+  snap.forEach((docSnap) => {
+    const data = docSnap.data();
+    if (data.createdAt) {
+      const createdAtMs = data.createdAt.toMillis
+        ? data.createdAt.toMillis()
+        : new Date(data.createdAt).getTime();
+      if (createdAtMs > oneDayAgo) {
+        hasRecentInvite = true;
+      }
+    }
+  });
+
+  if (hasRecentInvite) {
+    throw new Error("ALREADY_INVITED");
+  }
+
   const docRef = await addDoc(inviteColRef, {
     fromUid: senderUid,
     fromUsername: senderUsername,
     toUid: receiverUid,
+    toUsername,
     placeId,
     placeName,
     status: "pending",
@@ -139,7 +199,9 @@ export async function sendInvite(
 }
 
 export async function getInvites(userId: string): Promise<InviteEntry[]> {
-  const snap = await getDocs(collection(db, `users/${userId}/invites`));
+  const invitesCol = collection(db, "invites");
+  const q = query(invitesCol, where("toUid", "==", userId));
+  const snap = await getDocs(q);
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as InviteEntry);
 }
 
@@ -148,18 +210,104 @@ export function subscribeToInvites(
   onUpdate: (invites: InviteEntry[]) => void,
   onError?: (error: Error) => void
 ): () => void {
-  const invitesColRef = collection(db, `users/${userId}/invites`);
-  return onSnapshot(
-    invitesColRef,
-    (snapshot) => {
-      const invites: InviteEntry[] = [];
-      snapshot.forEach((docSnap) => {
-        invites.push({ id: docSnap.id, ...docSnap.data() } as InviteEntry);
-      });
-      onUpdate(invites);
-    },
-    onError
-  );
+  let unsubscribe: (() => void) | null = null;
+  let retryCount = 0;
+  const maxRetries = 5;
+  let timeoutId: any;
+  let isUnsubscribed = false;
+
+  function start() {
+    if (isUnsubscribed) return;
+    const invitesCol = collection(db, "invites");
+    const q = query(invitesCol, where("toUid", "==", userId));
+    unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const invites: InviteEntry[] = [];
+        snapshot.forEach((docSnap) => {
+          invites.push({ id: docSnap.id, ...docSnap.data() } as InviteEntry);
+        });
+        onUpdate(invites);
+      },
+      (error) => {
+        if (
+          (error.code === "permission-denied" || error.message?.includes("permission")) &&
+          retryCount < maxRetries &&
+          !isUnsubscribed
+        ) {
+          retryCount++;
+          const delay = retryCount * 1000;
+          timeoutId = setTimeout(start, delay);
+        } else if (onError) {
+          onError(error);
+        }
+      }
+    );
+  }
+
+  start();
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) unsubscribe();
+    if (timeoutId) clearTimeout(timeoutId);
+  };
+}
+
+export async function getSentInvites(userId: string): Promise<InviteEntry[]> {
+  const invitesCol = collection(db, "invites");
+  const q = query(invitesCol, where("fromUid", "==", userId));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as InviteEntry);
+}
+
+export function subscribeToSentInvites(
+  userId: string,
+  onUpdate: (invites: InviteEntry[]) => void,
+  onError?: (error: Error) => void
+): () => void {
+  let unsubscribe: (() => void) | null = null;
+  let retryCount = 0;
+  const maxRetries = 5;
+  let timeoutId: any;
+  let isUnsubscribed = false;
+
+  function start() {
+    if (isUnsubscribed) return;
+    const invitesCol = collection(db, "invites");
+    const q = query(invitesCol, where("fromUid", "==", userId));
+    unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const invites: InviteEntry[] = [];
+        snapshot.forEach((docSnap) => {
+          invites.push({ id: docSnap.id, ...docSnap.data() } as InviteEntry);
+        });
+        onUpdate(invites);
+      },
+      (error) => {
+        if (
+          (error.code === "permission-denied" || error.message?.includes("permission")) &&
+          retryCount < maxRetries &&
+          !isUnsubscribed
+        ) {
+          retryCount++;
+          const delay = retryCount * 1000;
+          timeoutId = setTimeout(start, delay);
+        } else if (onError) {
+          onError(error);
+        }
+      }
+    );
+  }
+
+  start();
+
+  return () => {
+    isUnsubscribed = true;
+    if (unsubscribe) unsubscribe();
+    if (timeoutId) clearTimeout(timeoutId);
+  };
 }
 
 export async function updateInviteStatus(
@@ -167,6 +315,6 @@ export async function updateInviteStatus(
   inviteId: string,
   status: InviteStatus
 ): Promise<void> {
-  const inviteRef = doc(db, `users/${userId}/invites/${inviteId}`);
+  const inviteRef = doc(db, `invites/${inviteId}`);
   await updateDoc(inviteRef, { status });
 }
