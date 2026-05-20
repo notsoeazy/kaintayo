@@ -35,7 +35,7 @@ export function InviteFriendsModal({ visible, placeId, placeName, onClose }: Inv
   const insets = useSafeAreaInsets();
   const { user } = useAuthStore();
   const { profile } = useProfileStore();
-  const { friends, inviteToPlace, fetchFriends } = useSocialStore();
+  const { friends, inviteToPlace, fetchFriends, sentInvites } = useSocialStore();
   
   const [sendingId, setSendingId] = useState<string | null>(null);
   const [internalVisible, setInternalVisible] = useState(visible);
@@ -81,14 +81,32 @@ export function InviteFriendsModal({ visible, placeId, placeName, onClose }: Inv
 
   const acceptedFriends = friends.filter((f) => f.status === 'accepted');
 
+  const isAlreadyInvited = (friendId: string) => {
+    const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+    return sentInvites.some((invite) => {
+      if (invite.toUid !== friendId || invite.placeId !== placeId) return false;
+      if (!invite.createdAt) return false;
+      const createdAtMs = invite.createdAt.toMillis
+        ? invite.createdAt.toMillis()
+        : new Date(invite.createdAt).getTime();
+      return createdAtMs > oneDayAgo;
+    });
+  };
+
   const handleSendInvite = async (friendId: string, friendUsername: string) => {
     if (!user || !profile?.username) return;
     setSendingId(friendId);
     try {
-      await inviteToPlace(user.uid, profile.username, friendId, placeId, placeName);
+      await inviteToPlace(user.uid, profile.username, friendId, friendUsername, placeId, placeName);
       Alert.alert('Na-invite na!', `Napadalhan na natin ng notification si @${friendUsername}.`);
-    } catch (err) {
-      Alert.alert('Ops!', 'Failed to send invite. Please try again.');
+    } catch (err: any) {
+      console.error('Send invite error:', err);
+      if (err?.message === 'ALREADY_INVITED') {
+        const msg = t.detailScreen.inviteAlreadySent.replace('{{username}}', friendUsername);
+        Alert.alert('Ops!', msg);
+      } else {
+        Alert.alert('Ops!', 'Failed to send invite. Please try again.');
+      }
     } finally {
       setSendingId(null);
     }
@@ -132,35 +150,43 @@ export function InviteFriendsModal({ visible, placeId, placeName, onClose }: Inv
                 <Text style={styles.emptyText}>{t.profileScreen.emptyFriendsList}</Text>
               </View>
             ) : (
-              acceptedFriends.map((friend) => (
-                <View key={friend.uid} style={styles.friendRow}>
-                  <View style={styles.userInfo}>
-                    {friend.photoUrl ? (
-                      <Image source={friend.photoUrl} style={styles.avatar} />
-                    ) : (
-                      <View style={styles.avatarPlaceholder}>
-                        <User size={20} color={Colors.muted} />
-                      </View>
-                    )}
-                    <Text style={styles.username}>@{friend.username}</Text>
+              acceptedFriends.map((friend) => {
+                const invited = isAlreadyInvited(friend.uid);
+                return (
+                  <View key={friend.uid} style={styles.friendRow}>
+                    <View style={styles.userInfo}>
+                      {friend.photoUrl ? (
+                        <Image source={friend.photoUrl} style={styles.avatar} />
+                      ) : (
+                        <View style={styles.avatarPlaceholder}>
+                          <User size={20} color={Colors.muted} />
+                        </View>
+                      )}
+                      <Text style={styles.username}>@{friend.username}</Text>
+                    </View>
+                    <TouchableOpacity
+                      style={[
+                        styles.sendButton,
+                        (sendingId === friend.uid || invited) && styles.sendButtonDisabled,
+                      ]}
+                      onPress={() => handleSendInvite(friend.uid, friend.username)}
+                      disabled={sendingId === friend.uid || invited}
+                      activeOpacity={0.7}
+                    >
+                      {sendingId === friend.uid ? (
+                        <ActivityIndicator size="small" color={Colors.white} />
+                      ) : invited ? (
+                        <Text style={styles.sendButtonText}>{t.detailScreen.invitedButton}</Text>
+                      ) : (
+                        <>
+                          <Text style={styles.sendButtonText}>Aya!</Text>
+                          <Send size={14} color={Colors.white} />
+                        </>
+                      )}
+                    </TouchableOpacity>
                   </View>
-                  <TouchableOpacity
-                    style={[styles.sendButton, sendingId === friend.uid && styles.sendButtonDisabled]}
-                    onPress={() => handleSendInvite(friend.uid, friend.username)}
-                    disabled={sendingId === friend.uid}
-                    activeOpacity={0.7}
-                  >
-                    {sendingId === friend.uid ? (
-                      <ActivityIndicator size="small" color={Colors.white} />
-                    ) : (
-                      <>
-                        <Text style={styles.sendButtonText}>Aya!</Text>
-                        <Send size={14} color={Colors.white} />
-                      </>
-                    )}
-                  </TouchableOpacity>
-                </View>
-              ))
+                );
+              })
             )}
           </ScrollView>
         </Animated.View>
