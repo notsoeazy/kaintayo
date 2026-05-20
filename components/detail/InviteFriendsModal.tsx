@@ -1,3 +1,13 @@
+/*
+Usage:
+<InviteFriendsModal
+  visible={showInviteModal}
+  placeId={place.id}
+  placeName={place.name}
+  onClose={() => setShowInviteModal(false)}
+/>
+*/
+
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -36,10 +46,10 @@ export function InviteFriendsModal({ visible, placeId, placeName, onClose }: Inv
   const { user } = useAuthStore();
   const { profile } = useProfileStore();
   const { friends, inviteToPlace, fetchFriends, sentInvites } = useSocialStore();
-  
+
   const [sendingId, setSendingId] = useState<string | null>(null);
   const [internalVisible, setInternalVisible] = useState(visible);
-  
+
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
@@ -86,9 +96,7 @@ export function InviteFriendsModal({ visible, placeId, placeName, onClose }: Inv
     return sentInvites.some((invite) => {
       if (invite.toUid !== friendId || invite.placeId !== placeId) return false;
       if (!invite.createdAt) return false;
-      const createdAtMs = invite.createdAt.toMillis
-        ? invite.createdAt.toMillis()
-        : new Date(invite.createdAt).getTime();
+      const createdAtMs = invite.createdAt.toMillis();
       return createdAtMs > oneDayAgo;
     });
   };
