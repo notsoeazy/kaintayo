@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { Animated, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Shuffle, SlidersHorizontal } from 'lucide-react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -16,6 +16,8 @@ import { styles } from '@/styles/screens/randomizer_screen.styles';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { Place } from '@/types';
 
+const { width } = Dimensions.get('window');
+
 export default function RandomizerScreen() {
   const { places, filters } = useFeedStore();
   const { location } = useLocation();
@@ -23,11 +25,15 @@ export default function RandomizerScreen() {
   const [pickedPlace, setPickedPlace] = useState<Place | null>(null);
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
 
+  // Horizontal card animation ref
+  const cardTranslateXAnim = useRef(new Animated.Value(0)).current;
+
   // Reset picked place to IDLE state when navigating away/back
   useFocusEffect(
     useCallback(() => {
       return () => {
         setPickedPlace(null);
+        cardTranslateXAnim.setValue(0);
       };
     }, [])
   );
@@ -39,8 +45,6 @@ export default function RandomizerScreen() {
 
   // Animation refs for button press feedback and card entrance
   const buttonScaleAnim = useRef(new Animated.Value(1)).current;
-  const cardFadeAnim = useRef(new Animated.Value(0)).current;
-  const cardSlideAnim = useRef(new Animated.Value(30)).current;
 
   const animateButtonPress = (cb: () => void) => {
     Animated.sequence([
@@ -57,31 +61,49 @@ export default function RandomizerScreen() {
     ]).start(cb);
   };
 
-  const animateCardIn = () => {
-    cardFadeAnim.setValue(0);
-    cardSlideAnim.setValue(30);
-    Animated.parallel([
-      Animated.timing(cardFadeAnim, {
-        toValue: 1,
-        duration: 350,
-        useNativeDriver: true,
-      }),
-      Animated.spring(cardSlideAnim, {
-        toValue: 0,
-        speed: 14,
-        bounciness: 6,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
   const handlePick = useCallback(() => {
     animateButtonPress(() => {
-      const result = pickRandomPlace(filteredPlaces, { priceTier: null, excludeTriedIds: [] });
-      setPickedPlace(result);
-      if (result) animateCardIn();
+      // If a card is already visible, slide it out to the left first
+      if (pickedPlace) {
+        Animated.timing(cardTranslateXAnim, {
+          toValue: -width,
+          duration: 200,
+          useNativeDriver: true,
+        }).start(() => {
+          const result = pickRandomPlace(filteredPlaces, { priceTier: null, excludeTriedIds: [] });
+          setPickedPlace(result);
+          
+          if (result) {
+            // Position the new card instantly off-screen to the right
+            cardTranslateXAnim.setValue(width);
+            // Slide the new card in from the right
+            Animated.spring(cardTranslateXAnim, {
+              toValue: 0,
+              speed: 13,
+              bounciness: 5,
+              useNativeDriver: true,
+            }).start();
+          }
+        });
+      } else {
+        // First selection (IDLE state to RESULT state transition)
+        const result = pickRandomPlace(filteredPlaces, { priceTier: null, excludeTriedIds: [] });
+        setPickedPlace(result);
+        
+        if (result) {
+          // Position the new card instantly off-screen to the right
+          cardTranslateXAnim.setValue(width);
+          // Slide the new card in from the right
+          Animated.spring(cardTranslateXAnim, {
+            toValue: 0,
+            speed: 13,
+            bounciness: 5,
+            useNativeDriver: true,
+          }).start();
+        }
+      }
     });
-  }, [filteredPlaces]);
+  }, [filteredPlaces, pickedPlace]);
 
   // EMPTY STATE — no spots at all
   if (places.length === 0) {
@@ -195,8 +217,7 @@ export default function RandomizerScreen() {
           style={[
             styles.cardWrapper,
             {
-              opacity: cardFadeAnim,
-              transform: [{ translateY: cardSlideAnim }],
+              transform: [{ translateX: cardTranslateXAnim }],
             },
           ]}
         >
