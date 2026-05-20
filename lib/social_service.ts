@@ -5,6 +5,7 @@ import {
   collection,
   doc,
   getDocs,
+  onSnapshot,
   query,
   Timestamp,
   updateDoc,
@@ -20,16 +21,16 @@ export async function searchUsersByUsername(
 ): Promise<UserProfile[]> {
   const usersRef = collection(db, "users");
   const cleanQuery = queryText.trim().toLowerCase();
-  const q = query(
-    usersRef,
-    where("username", ">=", cleanQuery),
-    where("username", "<=", cleanQuery + "\uf8ff")
-  );
-  const snap = await getDocs(q);
+  if (!cleanQuery) return [];
+  const snap = await getDocs(usersRef);
   const results: UserProfile[] = [];
   snap.forEach((docSnap) => {
     if (docSnap.id !== currentUid) {
-      results.push({ uid: docSnap.id, ...docSnap.data() } as UserProfile);
+      const data = docSnap.data();
+      const username = (data.username || "").toLowerCase();
+      if (username.includes(cleanQuery)) {
+        results.push({ uid: docSnap.id, ...data } as UserProfile);
+      }
     }
   });
   return results;
@@ -46,7 +47,7 @@ export async function sendFriendRequest(
   batch.set(senderDocRef, {
     uid: receiver.uid,
     username: receiver.username,
-    photoUrl: receiver.photoUrl,
+    photoUrl: receiver.photoUrl || "",
     status: "pending_sent",
     updatedAt: Timestamp.now(),
   });
@@ -54,7 +55,7 @@ export async function sendFriendRequest(
   batch.set(receiverDocRef, {
     uid: sender.uid,
     username: sender.username,
-    photoUrl: sender.photoUrl,
+    photoUrl: sender.photoUrl || "",
     status: "pending_received",
     updatedAt: Timestamp.now(),
   });
@@ -96,6 +97,25 @@ export async function getFriends(userId: string): Promise<FriendEntry[]> {
   return snap.docs.map((d) => d.data() as FriendEntry);
 }
 
+export function subscribeToFriends(
+  userId: string,
+  onUpdate: (friends: FriendEntry[]) => void,
+  onError?: (error: Error) => void
+): () => void {
+  const friendsColRef = collection(db, `users/${userId}/friends`);
+  return onSnapshot(
+    friendsColRef,
+    (snapshot) => {
+      const friends: FriendEntry[] = [];
+      snapshot.forEach((docSnap) => {
+        friends.push(docSnap.data() as FriendEntry);
+      });
+      onUpdate(friends);
+    },
+    onError
+  );
+}
+
 // INVITES
 
 export async function sendInvite(
@@ -121,6 +141,25 @@ export async function sendInvite(
 export async function getInvites(userId: string): Promise<InviteEntry[]> {
   const snap = await getDocs(collection(db, `users/${userId}/invites`));
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as InviteEntry);
+}
+
+export function subscribeToInvites(
+  userId: string,
+  onUpdate: (invites: InviteEntry[]) => void,
+  onError?: (error: Error) => void
+): () => void {
+  const invitesColRef = collection(db, `users/${userId}/invites`);
+  return onSnapshot(
+    invitesColRef,
+    (snapshot) => {
+      const invites: InviteEntry[] = [];
+      snapshot.forEach((docSnap) => {
+        invites.push({ id: docSnap.id, ...docSnap.data() } as InviteEntry);
+      });
+      onUpdate(invites);
+    },
+    onError
+  );
 }
 
 export async function updateInviteStatus(

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getUserProfile, updateUserProfile } from '@/lib/firestore_service';
+import { getUserProfile, updateUserProfile, isUsernameTaken } from '@/lib/firestore_service';
 import { uploadAvatarToFirebase } from '@/lib/firebase_storage_service';
 import type { UserProfile } from '@/types';
 
@@ -36,6 +36,21 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     set({ isSaving: true, error: null });
     try {
       const lowerUsername = username.trim().toLowerCase();
+      
+      if (lowerUsername.length < 3) {
+        throw new Error("username_too_short");
+      }
+      
+      const validUsernameRegex = /^[a-zA-Z0-9_]+$/;
+      if (!validUsernameRegex.test(lowerUsername)) {
+        throw new Error("username_invalid_chars");
+      }
+
+      const taken = await isUsernameTaken(lowerUsername, uid);
+      if (taken) {
+        throw new Error("username_taken");
+      }
+
       await updateUserProfile(uid, { username: lowerUsername });
       set((state) => ({
         profile: state.profile
@@ -44,7 +59,9 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         isSaving: false,
       }));
     } catch (err) {
-      console.error("ZUSTAND ERROR:", err); set({ error: (err as Error).message, isSaving: false });
+      console.error("ZUSTAND ERROR:", err);
+      set({ error: (err as Error).message, isSaving: false });
+      throw err;
     }
   },
 

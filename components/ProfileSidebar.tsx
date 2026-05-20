@@ -16,12 +16,13 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { X, Users } from 'lucide-react-native';
+import { X, Users, Mail } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { Colors, FontFamily, FontSize, Radius, Spacing } from '@/styles/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useSettingsStore } from '@/store/settings_store';
 import { useAuthStore } from '@/store/auth_store';
+import { useSocialStore } from '@/store/social_store';
 
 interface ProfileSidebarProps {
   visible: boolean;
@@ -35,6 +36,9 @@ export function ProfileSidebar({ visible, onClose }: ProfileSidebarProps) {
   const router = useRouter();
   const { language, setLanguage } = useSettingsStore();
   const { signOut } = useAuthStore();
+  const { invites } = useSocialStore();
+
+  const pendingCount = invites.filter((i) => i.status === 'pending').length;
 
   const slideAnim = useRef(new Animated.Value(SIDEBAR_WIDTH)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
@@ -124,8 +128,31 @@ export function ProfileSidebar({ visible, onClose }: ProfileSidebarProps) {
             activeOpacity={0.7}
           >
             <View style={styles.menuItemContent}>
-              <Users size={20} color={Colors.text} />
-              <Text style={styles.menuItemText}>{t.friendsScreen.title}</Text>
+              <View style={styles.menuItemLeft}>
+                <Users size={20} color={Colors.text} />
+                <Text style={styles.menuItemText}>{t.friendsScreen.title}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.menuItem, { marginTop: Spacing.sm }]}
+            onPress={() => {
+              onClose();
+              router.push('/invites_screen');
+            }}
+            activeOpacity={0.7}
+          >
+            <View style={styles.menuItemContent}>
+              <View style={styles.menuItemLeft}>
+                <Mail size={20} color={Colors.text} />
+                <Text style={styles.menuItemText}>{t.invitesScreen.title}</Text>
+              </View>
+              {pendingCount > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{pendingCount}</Text>
+                </View>
+              )}
             </View>
           </TouchableOpacity>
         </View>
@@ -285,11 +312,33 @@ const styles = StyleSheet.create({
   menuItemContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  menuItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.md,
   },
   menuItemText: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: FontSize.md,
     color: Colors.text,
+  },
+  badge: {
+    backgroundColor: Colors.secondary,
+    borderRadius: Radius.full,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    minWidth: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeText: {
+    fontFamily: FontFamily.bodyMedium,
+    fontSize: 10,
+    color: Colors.white,
+    lineHeight: 14,
   },
 });

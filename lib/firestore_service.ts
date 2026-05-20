@@ -1,6 +1,7 @@
 import { db } from "@/lib/firebase_service";
 import { computeWinningTier } from "@/lib/price_consensus_utils";
 import type { Place, PriceTier, UserProfile } from "@/types";
+import { generateRandomUsername } from "@/lib/username_utils";
 import {
   addDoc,
   collection,
@@ -9,11 +10,13 @@ import {
   getDoc,
   getDocs,
   increment,
+  limit,
   orderBy,
   query,
   setDoc,
   Timestamp,
   updateDoc,
+  where,
 } from "firebase/firestore";
 
 // COLLECTION REFERENCES
@@ -216,4 +219,42 @@ export async function getPriceVoteTally(
     if (tier in tally) tally[tier]++;
   });
   return tally;
+}
+
+// Check if a username is already taken
+export async function isUsernameTaken(
+  username: string,
+  excludeUid?: string
+): Promise<boolean> {
+  const cleanUsername = username.trim().toLowerCase();
+  if (!cleanUsername) return false;
+
+  const usersRef = collection(db, "users");
+  const snap = await getDocs(usersRef);
+
+  let taken = false;
+  snap.forEach((docSnap) => {
+    if (docSnap.id !== excludeUid) {
+      const data = docSnap.data();
+      const existingUsername = (data.username || "").toLowerCase();
+      if (existingUsername === cleanUsername) {
+        taken = true;
+      }
+    }
+  });
+  return taken;
+}
+
+// Generate a unique random username
+export async function generateUniqueUsername(): Promise<string> {
+  let attempts = 0;
+  while (attempts < 10) {
+    const candidate = generateRandomUsername().toLowerCase();
+    const taken = await isUsernameTaken(candidate);
+    if (!taken) {
+      return candidate;
+    }
+    attempts++;
+  }
+  return `user_${Date.now()}`;
 }

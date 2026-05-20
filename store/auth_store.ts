@@ -9,9 +9,9 @@ import {
 } from 'firebase/auth';
 import { create } from 'zustand';
 import { auth } from '@/lib/firebase_service';
-import { getUserProfile, updateUserProfile } from '@/lib/firestore_service';
-import { generateRandomUsername } from '@/lib/username_utils';
+import { getUserProfile, updateUserProfile, generateUniqueUsername } from '@/lib/firestore_service';
 import { useListStore } from '@/store/list_store';
+import { useSocialStore } from '@/store/social_store';
 
 // AUTH STORE
 interface AuthState {
@@ -34,9 +34,10 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   signUpWithEmail: async (email, password) => {
     const credential = await createUserWithEmailAndPassword(auth, email, password);
-    // Seed a Firestore profile with a random placeholder username
+    const uniqueUsername = await generateUniqueUsername();
+    // Seed a Firestore profile with a unique placeholder username
     await updateUserProfile(credential.user.uid, {
-      username: generateRandomUsername().toLowerCase(),
+      username: uniqueUsername,
     });
   },
 
@@ -46,8 +47,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     // Only seed a profile for brand-new Google sign-ins
     const existing = await getUserProfile(result.user.uid);
     if (!existing) {
+      const uniqueUsername = await generateUniqueUsername();
       await updateUserProfile(result.user.uid, {
-        username: generateRandomUsername().toLowerCase(),
+        username: uniqueUsername,
       });
     }
   },
@@ -55,6 +57,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   signOut: async () => {
     // Clear user-specific lists before signing out so the next user starts fresh
     useListStore.getState().clearLists();
+    useSocialStore.getState().clearSocial();
     await firebaseSignOut(auth);
   },
 
@@ -67,6 +70,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       } else {
         // User signed out — clear persisted lists so the next account starts clean
         useListStore.getState().clearLists();
+        useSocialStore.getState().clearSocial();
       }
     });
     return unsubscribe;

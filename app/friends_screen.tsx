@@ -91,24 +91,36 @@ export default function FriendsScreen() {
 
   const handleSendRequest = async (receiver: UserProfile) => {
     if (!profile || !user) return;
-    await sendRequest(
-      { uid: user.uid, username: profile.username, photoUrl: profile.photoUrl },
-      { uid: receiver.uid, username: receiver.username, photoUrl: receiver.photoUrl }
-    );
-    setSearchQuery('');
-    setHasSearched(false);
-    clearSearchResults();
-    Alert.alert('Success!', t.profileScreen.friendRequestSent);
+    try {
+      await sendRequest(
+        { uid: user.uid, username: profile.username, photoUrl: profile.photoUrl },
+        { uid: receiver.uid, username: receiver.username, photoUrl: receiver.photoUrl }
+      );
+      setSearchQuery('');
+      setHasSearched(false);
+      clearSearchResults();
+      Alert.alert('Success!', t.profileScreen.friendRequestSent);
+    } catch (err) {
+      Alert.alert('Error', (err as Error).message);
+    }
   };
 
   const handleAcceptRequest = async (friendId: string) => {
     if (!user) return;
-    await acceptRequest(user.uid, friendId);
+    try {
+      await acceptRequest(user.uid, friendId);
+    } catch (err) {
+      Alert.alert('Error', (err as Error).message);
+    }
   };
 
   const handleDeclineRequest = async (friendId: string) => {
     if (!user) return;
-    await declineRequest(user.uid, friendId);
+    try {
+      await declineRequest(user.uid, friendId);
+    } catch (err) {
+      Alert.alert('Error', (err as Error).message);
+    }
   };
 
   const handleUnfriend = async (friendId: string) => {
@@ -122,7 +134,13 @@ export default function FriendsScreen() {
         {
           text: t.friendsScreen.unfriendButton,
           style: 'destructive',
-          onPress: () => unfriend(user.uid, friendId),
+          onPress: async () => {
+            try {
+              await unfriend(user.uid, friendId);
+            } catch (err) {
+              Alert.alert('Error', (err as Error).message);
+            }
+          },
         },
       ]
     );
@@ -170,7 +188,7 @@ export default function FriendsScreen() {
             onPress={() => handleAcceptRequest(item.uid)}
             activeOpacity={0.8}
           >
-            <Text style={styles.actionButtonText}>G!</Text>
+            <Check size={16} color={Colors.white} />
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.actionButton, styles.declineBtn]}
@@ -218,7 +236,7 @@ export default function FriendsScreen() {
         <View style={styles.searchRow}>
           <TextInput
             style={styles.searchInput}
-            placeholder={t.profileScreen.addFriendPlaceholder}
+            placeholder={t.friendsScreen.searchPlaceholder}
             placeholderTextColor={Colors.muted}
             value={searchQuery}
             onChangeText={handleSearchChange}
@@ -233,7 +251,7 @@ export default function FriendsScreen() {
               onPress={handleSearchSubmit}
               activeOpacity={0.8}
             >
-              <Text style={styles.searchButtonText}>{t.profileScreen.addFriendButton}</Text>
+              <Text style={styles.searchButtonText}>{t.friendsScreen.searchButton}</Text>
             </TouchableOpacity>
           )}
         </View>

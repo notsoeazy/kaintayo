@@ -5,9 +5,11 @@ import { useAuthStore } from '@/store/auth_store';
 import { useProfileStore } from '@/store/profile_store';
 
 import { useSocialStore } from '@/store/social_store';
+import { useTranslation } from '@/hooks/useTranslation';
 
 // PROFILE SCREEN HOOK
 export function useProfileScreen() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const { profile, isLoading, isSaving, fetchProfile, saveUsername, saveAvatar } =
     useProfileStore();
@@ -50,9 +52,23 @@ export function useProfileScreen() {
     if (!user) return;
     const trimmed = usernameInput.trim();
     if (!trimmed) return;
-    await saveUsername(user.uid, trimmed);
-    setEditingUsername(false);
-  }, [user, usernameInput, saveUsername]);
+    try {
+      await saveUsername(user.uid, trimmed);
+      setEditingUsername(false);
+      Alert.alert(t.profileScreen.title, t.profileScreen.saveSuccess);
+    } catch (err) {
+      const msg = (err as Error).message;
+      let alertMsg = t.profileScreen.saveError;
+      if (msg === 'username_too_short') {
+        alertMsg = t.profileScreen.usernameTooShort;
+      } else if (msg === 'username_invalid_chars') {
+        alertMsg = t.profileScreen.usernameInvalidChars;
+      } else if (msg === 'username_taken') {
+        alertMsg = t.profileScreen.usernameTaken;
+      }
+      Alert.alert(t.profileScreen.title, alertMsg);
+    }
+  }, [user, usernameInput, saveUsername, t]);
 
   const handlePickAvatar = useCallback(async () => {
     if (!user) return;

@@ -18,6 +18,7 @@ import {
 import { useAuthStore } from '@/store/auth_store';
 import { useListStore } from '@/store/list_store';
 import { useProfileStore } from '@/store/profile_store';
+import { useSocialStore } from '@/store/social_store';
 import { useNotifications } from '@/hooks/useNotifications';
 import { Colors } from '@/styles/theme';
 
@@ -55,9 +56,11 @@ export default function RootLayout() {
     if (user) {
       syncFromFirestore(user.uid);
       fetchProfile(user.uid);
+      useSocialStore.getState().subscribeSocial(user.uid);
     } else if (!authLoading) {
       clearLists();
       clearProfile();
+      useSocialStore.getState().clearSocial();
     }
   }, [user, authLoading]);
 
@@ -94,6 +97,10 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="friends_screen"
+          options={{ headerShown: false, animation: 'slide_from_right' }}
+        />
+        <Stack.Screen
+          name="invites_screen"
           options={{ headerShown: false, animation: 'slide_from_right' }}
         />
       </Stack>
