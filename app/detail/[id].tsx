@@ -16,7 +16,7 @@ import { Colors, FontFamily, FontSize, Spacing } from '@/styles/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 
 export default function DetailScreen() {
-  const { id, invitedBy } = useLocalSearchParams<{ id: string; invitedBy?: string }>();
+  const { id, invitedBy, inviteStatus } = useLocalSearchParams<{ id: string; invitedBy?: string; inviteStatus?: string }>();
   const { t } = useTranslation();
   const { profile } = useProfileStore();
 
@@ -37,15 +37,16 @@ export default function DetailScreen() {
     handleTried,
   } = useDetailScreen(id);
 
-  const [isInviteModalVisible, setIsInviteModalVisible] = React.useState(!!invitedBy);
+  const [isInviteModalVisible, setIsInviteModalVisible] = React.useState(
+    !!invitedBy && inviteStatus !== 'accepted' && inviteStatus !== 'declined'
+  );
   const [isInviteFriendsVisible, setIsInviteFriendsVisible] = React.useState(false);
 
-  // Show invite modal on mount if invitedBy is present
   React.useEffect(() => {
-    if (invitedBy) {
+    if (invitedBy && inviteStatus !== 'accepted' && inviteStatus !== 'declined') {
       setIsInviteModalVisible(true);
     }
-  }, [invitedBy]);
+  }, [invitedBy, inviteStatus]);
 
   const handleAcceptInvite = () => {
     setIsInviteModalVisible(false);

@@ -99,7 +99,13 @@ export default function InvitesScreen() {
         <TouchableOpacity
           style={styles.cardTop}
           activeOpacity={0.7}
-          onPress={() => router.push(`/detail/${item.placeId}`)}
+          onPress={() => {
+            if (isInbox) {
+              router.push(`/detail/${item.placeId}?invitedBy=${item.fromUsername}&inviteStatus=${item.status}`);
+            } else {
+              router.push(`/detail/${item.placeId}`);
+            }
+          }}
         >
           <View style={styles.emojiContainer}>
             <Text style={styles.emoji}>🍽️</Text>
