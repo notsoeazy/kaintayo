@@ -133,13 +133,6 @@ export default function RandomizerScreen() {
         </View>
 
         <View style={styles.idleContainer}>
-          <Text style={styles.idleSubtitle}>{t.randomizerScreen.subtitle}</Text>
-          {hasActiveFilters && (
-            <Text style={styles.filterHint}>
-              {t.randomizerScreen.filterHint(filteredPlaces.length)}
-            </Text>
-          )}
-
           <Animated.View style={{ transform: [{ scale: buttonScaleAnim }] }}>
             <TouchableOpacity
               style={styles.kahitSaanButton}
@@ -154,6 +147,13 @@ export default function RandomizerScreen() {
               </Text>
             </TouchableOpacity>
           </Animated.View>
+
+          <Text style={styles.idleSubtitle}>{t.randomizerScreen.subtitle}</Text>
+          {hasActiveFilters && (
+            <Text style={styles.filterHint}>
+              {t.randomizerScreen.filterHint(filteredPlaces.length)}
+            </Text>
+          )}
         </View>
 
         <FilterModal

@@ -51,14 +51,16 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.md,
     color: Colors.muted,
     textAlign: 'center',
-    marginBottom: Spacing.sm,
+    marginTop: Spacing.xl,
+    marginBottom: Spacing.xs,
   },
   filterHint: {
     fontFamily: FontFamily.bodyMedium,
     fontSize: FontSize.sm,
     color: Colors.primary,
     textAlign: 'center',
-    marginBottom: Spacing.xl + Spacing.lg,
+    marginTop: Spacing.xs,
+    marginBottom: 0,
   },
 
   // BIG KAHIT SAAN BUTTON
@@ -75,7 +77,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 16,
     elevation: 8,
-    marginTop: Spacing.xl,
+    marginBottom: Spacing.md,
   },
   kahitSaanButtonText: {
     fontFamily: FontFamily.accent,
