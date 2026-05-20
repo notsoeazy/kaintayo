@@ -76,3 +76,29 @@ export interface Coordinates {
   latitude: number;
   longitude: number;
 }
+
+// SOCIAL
+
+export type FriendStatus = 'pending_sent' | 'pending_received' | 'accepted';
+
+export interface FriendEntry {
+  uid: string;
+  username: string;
+  photoUrl: string;
+  status: FriendStatus;
+  updatedAt: Timestamp | null;
+}
+
+export type InviteStatus = 'pending' | 'accepted' | 'declined';
+
+export interface InviteEntry {
+  id: string;
+  fromUid: string;
+  fromUsername: string;
+  toUid: string;
+  placeId: string;
+  placeName: string;
+  status: InviteStatus;
+  createdAt: Timestamp | null;
+}
+

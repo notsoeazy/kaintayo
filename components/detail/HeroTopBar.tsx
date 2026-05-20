@@ -10,7 +10,7 @@ Usage:
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
-import { ChevronLeft, Share2 } from 'lucide-react-native';
+import { ChevronLeft, Share2, Users } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Radius, Spacing } from '@/styles/theme';
@@ -19,12 +19,14 @@ interface HeroTopBarProps {
   photoUrl?: string;
   placeName: string;
   onShare: () => void;
+  onInvite: () => void;
 }
 
 export const HeroTopBar = React.memo(function HeroTopBar({
   photoUrl,
   placeName,
   onShare,
+  onInvite,
 }: HeroTopBarProps) {
   const insets = useSafeAreaInsets();
 
@@ -51,13 +53,23 @@ export const HeroTopBar = React.memo(function HeroTopBar({
           <ChevronLeft size={22} color={Colors.text} strokeWidth={2.5} />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.actionPill}
-          onPress={onShare}
-          activeOpacity={0.8}
-        >
-          <Share2 size={18} color={Colors.text} strokeWidth={2} />
-        </TouchableOpacity>
+        <View style={styles.rightActions}>
+          <TouchableOpacity
+            style={styles.actionPill}
+            onPress={onInvite}
+            activeOpacity={0.8}
+          >
+            <Users size={18} color={Colors.text} strokeWidth={2} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.actionPill}
+            onPress={onShare}
+            activeOpacity={0.8}
+          >
+            <Share2 size={18} color={Colors.text} strokeWidth={2} />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -86,6 +98,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.md,
     alignItems: 'center',
+  },
+  rightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
   },
   backButton: {
     backgroundColor: 'rgba(250, 243, 232, 0.88)',

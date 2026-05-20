@@ -9,12 +9,16 @@ import { PhotoGallery } from '@/components/detail/PhotoGallery';
 import { PriceSurvey } from '@/components/detail/PriceSurvey';
 import { LocationMap } from '@/components/detail/LocationMap';
 import { ActionRow } from '@/components/detail/ActionRow';
+import { InviteModal } from '@/components/detail/InviteModal';
+import { InviteFriendsModal } from '@/components/detail/InviteFriendsModal';
+import { useProfileStore } from '@/store/profile_store';
 import { Colors, FontFamily, FontSize, Spacing } from '@/styles/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 
 export default function DetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, invitedBy } = useLocalSearchParams<{ id: string; invitedBy?: string }>();
   const { t } = useTranslation();
+  const { profile } = useProfileStore();
 
   const {
     place,
@@ -33,11 +37,30 @@ export default function DetailScreen() {
     handleTried,
   } = useDetailScreen(id);
 
+  const [isInviteModalVisible, setIsInviteModalVisible] = React.useState(!!invitedBy);
+  const [isInviteFriendsVisible, setIsInviteFriendsVisible] = React.useState(false);
+
+  // Show invite modal on mount if invitedBy is present
+  React.useEffect(() => {
+    if (invitedBy) {
+      setIsInviteModalVisible(true);
+    }
+  }, [invitedBy]);
+
+  const handleAcceptInvite = () => {
+    setIsInviteModalVisible(false);
+    if (!isWishlisted) {
+      handleWishlist();
+    }
+  };
+
   const handleShare = async () => {
     if (!place) return;
-    const msg = t.detailScreen.shareMessage
+    const username = profile?.username || '';
+    const deepLink = `kaintayo://detail/${place.id}${username ? `?invitedBy=${username}` : ''}`;
+    const msg = (t.detailScreen.shareMessageScheme || "Tara kain sa {{placeName}}! Open this in KainTayo: {{url}}")
       .replace('{{placeName}}', place.name)
-      .replace('{{url}}', place.googleMapsUrl ?? '');
+      .replace('{{url}}', deepLink);
     await Share.share({ message: msg });
   };
 
@@ -70,6 +93,7 @@ export default function DetailScreen() {
           photoUrl={place.photoUrl}
           placeName={place.name}
           onShare={handleShare}
+          onInvite={() => setIsInviteFriendsVisible(true)}
         />
 
         {/* 2. CORE INFO: NAME → DESC → TAGS → PRICE/ADDRESS */}
@@ -114,6 +138,21 @@ export default function DetailScreen() {
         {/* BOTTOM SPACER */}
         <View style={{ height: Spacing.xl }} />
       </ScrollView>
+
+      <InviteModal
+        visible={isInviteModalVisible}
+        invitedBy={invitedBy || ''}
+        placeName={place.name}
+        onAccept={handleAcceptInvite}
+        onClose={() => setIsInviteModalVisible(false)}
+      />
+
+      <InviteFriendsModal
+        visible={isInviteFriendsVisible}
+        placeId={place.id}
+        placeName={place.name}
+        onClose={() => setIsInviteFriendsVisible(false)}
+      />
     </SafeAreaView>
   );
 }
