@@ -11,6 +11,7 @@ import { create } from 'zustand';
 import { auth } from '@/lib/firebase_service';
 import { getUserProfile, updateUserProfile } from '@/lib/firestore_service';
 import { generateRandomUsername } from '@/lib/username_utils';
+import { useListStore } from '@/store/list_store';
 
 // AUTH STORE
 interface AuthState {
@@ -52,12 +53,21 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signOut: async () => {
+    // Clear user-specific lists before signing out so the next user starts fresh
+    useListStore.getState().clearLists();
     await firebaseSignOut(auth);
   },
 
   init: () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       set({ user, isLoading: false });
+      if (user) {
+        // Sync this user's lists from Firestore, overwriting any stale cached data
+        useListStore.getState().syncFromFirestore(user.uid);
+      } else {
+        // User signed out — clear persisted lists so the next account starts clean
+        useListStore.getState().clearLists();
+      }
     });
     return unsubscribe;
   },
