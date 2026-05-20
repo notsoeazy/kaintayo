@@ -19,6 +19,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: false,
     bundleIdentifier: "com.matteazy.kaintayo",
+    googleServicesFile: process.env.GOOGLE_SERVICES_INFO_PLIST || "./GoogleService-Info.plist",
     infoPlist: {
       NSCameraUsageDescription: "We need access to your camera to take a picture of your food spot.",
       NSPhotoLibraryUsageDescription: "We need access to your photo library to select a picture of your food spot.",
@@ -31,7 +32,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#FFFFFF"
     },
     package: "com.matteazy.kaintayo",
-    googleServicesFile: "./google-services.json",
+    googleServicesFile: process.env.GOOGLE_SERVICES_JSON || "./google-services.json",
     config: {
       googleMaps: {
         apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || ""
@@ -46,6 +47,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     "expo-router",
     "@react-native-google-signin/google-signin",
+    "expo-image",
+    "expo-web-browser",
     [
       "react-native-maps",
       {
@@ -64,5 +67,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ],
   experiments: {
     typedRoutes: true
+  },
+  extra: {
+    eas: {
+      projectId: "48141b21-4d1d-4c1f-b8cb-2fd579fa38f9"
+    }
   }
 });

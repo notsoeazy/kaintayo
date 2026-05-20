@@ -338,6 +338,42 @@ You only need to run `npx expo run:android` again if you:
 
 ---
 
+## 6c. EAS Build (Cloud Builds & Secrets)
+
+EAS Build compiles the native app in the cloud, allowing the generation of installable `.apk` files for Android and simulator builds for iOS.
+
+### Configuration (`eas.json`)
+The project contains configured profiles:
+- **`development`**: Builds a dev client profile (`expo-dev-client`) for debugging.
+- **`preview`**: Builds an installable `.apk` for Android and a simulator build for iOS for team-wide preview.
+- **`production`**: Builds standard releases (`.aab` for Play Store, App Store builds).
+
+### Managing Environment Variables & Secrets
+Since build credentials and API keys are ignored by Git, EAS Build retrieves them from **EAS Secrets**:
+1. **String Secrets:** Set using `--visibility sensitive` (or `--visibility plaintext`) for variables prefixed with `EXPO_PUBLIC_`.
+2. **File Secrets:** Configured as `--type file` and referenced dynamically in `app.config.ts`.
+
+#### File-based configuration in `app.config.ts`:
+```ts
+ios: {
+  googleServicesFile: process.env.GOOGLE_SERVICES_INFO_PLIST || "./GoogleService-Info.plist",
+},
+android: {
+  googleServicesFile: process.env.GOOGLE_SERVICES_JSON || "./google-services.json",
+}
+```
+
+### Useful EAS Commands
+```bash
+# Build Android APK (Preview)
+npx eas-cli@latest build -p android --profile preview
+
+# Build iOS Simulator (Preview)
+npx eas-cli@latest build -p ios --profile preview
+```
+
+---
+
 ## 7. Firestore Data Schema
 
 ```
