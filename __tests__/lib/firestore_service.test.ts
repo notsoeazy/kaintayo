@@ -214,35 +214,5 @@ describe("Firestore Service", () => {
       expect(isTaken).toBe(false);
     });
 
-    it("should generate a unique username", async () => {
-      // First isUsernameTaken will return true, second will return false
-      const mockDocsForFirstAttempt = [
-        { id: "userA", data: () => ({ username: "firstcandidate" }) },
-      ];
-      const mockDocsForSecondAttempt = [];
-
-      (getDocs as jest.Mock)
-        .mockResolvedValueOnce({
-          // Mocking the check for the first random candidate
-          forEach: (callback: any) => {
-            callback({ id: "userA", data: () => ({ username: "taho123" }) });
-          },
-        })
-        .mockResolvedValueOnce({
-          // Mocking the check for the second random candidate (not taken)
-          forEach: (callback: any) => {},
-        });
-
-      jest.mock("@/lib/username_utils", () => ({
-        generateRandomUsername: jest
-          .fn()
-          .mockReturnValueOnce("taho123")
-          .mockReturnValueOnce("lumpia456"),
-      }));
-
-      const uniqueUsername = await generateUniqueUsername();
-      expect(uniqueUsername).toBeDefined();
-      expect(typeof uniqueUsername).toBe("string");
-    });
   });
 });

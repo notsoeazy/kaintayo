@@ -164,17 +164,4 @@ describe("Social Store", () => {
     expect(getSentInvites).toHaveBeenCalledWith("user1");
   });
 
-  it("should fetch sent invites successfully", async () => {
-    const mockSentInvites = [
-      { id: "inv2", fromUid: "user1", toUid: "user2", status: "accepted", placeName: "Bakahan" },
-    ];
-    (getSentInvites as jest.Mock).mockResolvedValueOnce(mockSentInvites);
-
-    await useSocialStore.getState().fetchSentInvites("user1");
-
-    const state = useSocialStore.getState();
-    expect(state.isLoading).toBe(false);
-    expect(state.sentInvites).toEqual(mockSentInvites);
-    expect(getSentInvites).toHaveBeenCalledWith("user1");
-  });
 });

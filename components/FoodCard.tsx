@@ -92,7 +92,7 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
           
           {/* TOP ACTIONS ROW */}
           <View style={styles.topActionsRow}>
-            <TouchableWithoutFeedback onPress={handleWishlistToggle}>
+            <TouchableWithoutFeedback testID="wishlist-button" onPress={handleWishlistToggle}>
               <View style={styles.wishlistBadge}>
                 <Heart 
                   size={18} 
@@ -142,7 +142,7 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
               <View />
             )}
 
-            <TouchableWithoutFeedback onPress={handleTriedToggle}>
+            <TouchableWithoutFeedback testID="tried-button" onPress={handleTriedToggle}>
               <View style={styles.actionButton}>
                 <CheckCircle2 
                   size={18} 

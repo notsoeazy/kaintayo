@@ -14,6 +14,15 @@ jest.mock("@/lib/firebase_storage_service", () => ({
 }));
 
 describe("Profile Store", () => {
+  beforeAll(() => {
+    // Suppress expected console.error from the store's internal error logging
+    jest.spyOn(console, "error").mockImplementation(() => {});
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     useProfileStore.setState({

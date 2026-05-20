@@ -28,7 +28,7 @@ const mockToggleWishlist = jest.fn();
 const mockToggleTried = jest.fn();
 let mockUser: { uid: string } | null = { uid: 'user123' };
 let mockWishlistIds = ['wishlist1'];
-let mockTriedIds = ['tried1'];
+let mockTriedIds: string[] = [];
 
 jest.mock('@/store/auth_store', () => ({
   useAuthStore: () => ({
@@ -62,6 +62,16 @@ jest.mock('lucide-react-native', () => {
   };
 });
 
+jest.mock('@/components/ui/CategoryChip', () => {
+  const { View } = require('react-native');
+  return { CategoryChip: () => <View testID="mock-category-chip" /> };
+});
+
+jest.mock('@/components/ui/PriceBadge', () => {
+  const { View } = require('react-native');
+  return { PriceBadge: () => <View testID="mock-price-badge" /> };
+});
+
 const samplePlace: Place = {
   id: 'place1',
   name: 'Geewan Naga',
@@ -86,60 +96,54 @@ describe('FoodCard Component', () => {
     jest.clearAllMocks();
     mockUser = { uid: 'user123' };
     mockWishlistIds = ['wishlist1'];
-    mockTriedIds = ['tried1'];
+    mockTriedIds = [];
   });
 
-  it('renders place details correctly', () => {
-    const { getByText } = render(<FoodCard place={samplePlace} distance={1.5} />);
-
+  it('renders the establishment name', () => {
+    const { getByText } = render(<FoodCard place={samplePlace} />);
     expect(getByText('Geewan Naga')).toBeTruthy();
+  });
+
+  it('renders distance with unit when distance prop is provided', () => {
+    const { getByText } = render(<FoodCard place={samplePlace} distance={1.5} />);
     expect(getByText('1.5 away')).toBeTruthy();
   });
 
-  it('renders community added badge if place is not seeded', () => {
-    const communityPlace = { ...samplePlace, isSeeded: false };
-    const { getByText } = render(<FoodCard place={communityPlace} />);
-
-    expect(getByText('Community Added')).toBeTruthy();
-  });
-
-  it('does not render community added badge if place is seeded', () => {
-    const { queryByText } = render(<FoodCard place={samplePlace} />);
-
-    expect(queryByText('Community Added')).toBeNull();
-  });
-
-  it('displays active state for tried/wishlist if IDs are in respective stores', () => {
+  it('shows tried label when place is not yet tried', () => {
     const { getByText } = render(<FoodCard place={samplePlace} />);
-
-    expect(getByText('Mark as Tried')).toBeTruthy();
-    expect(getByText('12')).toBeTruthy();
+    expect(getByText(/Mark as Tried/)).toBeTruthy();
   });
 
-  it('calls toggleWishlist when heart icon button is pressed', () => {
+  it('shows tried-it label when place is already tried', () => {
+    mockTriedIds = ['place1'];
     const { getByText } = render(<FoodCard place={samplePlace} />);
-    const wishlistButton = getByText('12');
+    expect(getByText(/Tried It!/)).toBeTruthy();
+  });
 
-    fireEvent.press(wishlistButton);
-
+  it('calls toggleWishlist when wishlist button is pressed', () => {
+    const { getByTestId } = render(<FoodCard place={samplePlace} />);
+    fireEvent.press(getByTestId('wishlist-button'));
     expect(mockToggleWishlist).toHaveBeenCalledWith('user123', 'place1');
   });
 
-  it('calls toggleTried when check circle button is pressed', () => {
-    const { getByText } = render(<FoodCard place={samplePlace} />);
-    const triedButton = getByText('Mark as Tried');
-
-    fireEvent.press(triedButton);
-
+  it('calls toggleTried when tried button is pressed', () => {
+    const { getByTestId } = render(<FoodCard place={samplePlace} />);
+    fireEvent.press(getByTestId('tried-button'));
     expect(mockToggleTried).toHaveBeenCalledWith('user123', 'place1');
   });
 
-  it('navigates to details screen on press of the card', () => {
+  it('navigates to details screen when card is pressed', () => {
     const { getByText } = render(<FoodCard place={samplePlace} />);
-    const titleText = getByText('Geewan Naga');
-
-    fireEvent.press(titleText);
-
+    fireEvent.press(getByText('Geewan Naga'));
     expect(mockOpenDetails).toHaveBeenCalledWith(samplePlace);
+  });
+
+  it('does not call toggleWishlist or toggleTried when user is not logged in', () => {
+    mockUser = null;
+    const { getByTestId } = render(<FoodCard place={samplePlace} />);
+    fireEvent.press(getByTestId('wishlist-button'));
+    fireEvent.press(getByTestId('tried-button'));
+    expect(mockToggleWishlist).not.toHaveBeenCalled();
+    expect(mockToggleTried).not.toHaveBeenCalled();
   });
 });

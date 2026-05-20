@@ -45,6 +45,7 @@ yarn-error.*
 docs/*
 !docs/DEV_GUIDE.md
 !docs/AI_USAGE.md
+!docs/TESTING_GUIDE.md
 .env
 .agents/
 
