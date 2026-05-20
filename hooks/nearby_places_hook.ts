@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
-import type { Place, FeedFilters } from '@/types';
-import type { LocationObject } from 'expo-location';
-import { haversineKm } from '@/lib/geo_utils';
+import { haversineKm } from "@/lib/geo_utils";
+import { getEffectivePriceTier } from "@/lib/price_consensus_utils";
+import type { FeedFilters, Place } from "@/types";
+import type { LocationObject } from "expo-location";
+import { useMemo } from "react";
 
 export interface PlaceWithDistance extends Place {
   distance?: number;
@@ -10,7 +11,7 @@ export interface PlaceWithDistance extends Place {
 export function filterPlaces(
   places: Place[],
   filters: FeedFilters,
-  userLocation: { latitude: number; longitude: number } | null
+  userLocation: { latitude: number; longitude: number } | null,
 ): PlaceWithDistance[] {
   let result: PlaceWithDistance[] = places.map((place) => {
     if (!userLocation) return { ...place };
@@ -20,7 +21,7 @@ export function filterPlaces(
         userLocation.latitude,
         userLocation.longitude,
         place.latitude,
-        place.longitude
+        place.longitude,
       ),
     };
   });
@@ -36,12 +37,15 @@ export function filterPlaces(
 
   if (filters.categories.length > 0) {
     result = result.filter((place) =>
-      place.categories.some((c) => filters.categories.includes(c))
+      place.categories.some((c) => filters.categories.includes(c)),
     );
   }
 
   if (filters.priceTier !== null) {
-    result = result.filter((place) => place.priceTier === filters.priceTier);
+    result = result.filter((place) => {
+      const { tier } = getEffectivePriceTier(place);
+      return tier === filters.priceTier;
+    });
   }
 
   return result;
@@ -50,11 +54,14 @@ export function filterPlaces(
 export function useNearbyPlaces(
   places: Place[],
   filters: FeedFilters,
-  userLocation: LocationObject | null
+  userLocation: LocationObject | null,
 ) {
   return useMemo(() => {
     const coords = userLocation
-      ? { latitude: userLocation.coords.latitude, longitude: userLocation.coords.longitude }
+      ? {
+          latitude: userLocation.coords.latitude,
+          longitude: userLocation.coords.longitude,
+        }
       : null;
     return filterPlaces(places, filters, coords);
   }, [places, filters, userLocation]);

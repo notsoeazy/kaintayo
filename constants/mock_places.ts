@@ -16,6 +16,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 24,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -32,6 +34,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 18,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -48,6 +52,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 41,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -64,6 +70,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 33,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -80,6 +88,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 56,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -96,6 +106,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 29,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -112,6 +124,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 22,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -128,6 +142,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 67,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -144,6 +160,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 38,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -160,6 +178,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 31,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -176,6 +196,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 45,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -192,6 +214,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 27,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -208,6 +232,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 52,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -224,6 +250,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 19,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -240,6 +268,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 88,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
   {
@@ -256,6 +286,8 @@ export const MOCK_PLACES: Place[] = [
     likes: 73,
     createdBy: 'seed_admin',
     isSeeded: true,
+    communityPriceTier: null,
+    totalVotes: 0,
     createdAt: Timestamp.now(),
   },
 ];

@@ -3,13 +3,15 @@ Usage:
 <InfoSection place={place} />
 */
 
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { MapPin } from 'lucide-react-native';
 import { CategoryChip } from '@/components/ui/CategoryChip';
 import { PriceBadge } from '@/components/ui/PriceBadge';
+import { getTierMeta } from '@/constants/price_ranges';
+import { getEffectivePriceTier } from '@/lib/price_consensus_utils';
 import { Colors, FontFamily, FontSize, Radius, Spacing, Typography } from '@/styles/theme';
 import type { Place } from '@/types';
+import { MapPin } from 'lucide-react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const VISIBLE_TAG_COUNT = 3;
 
@@ -19,6 +21,9 @@ interface InfoSectionProps {
 
 export const InfoSection = React.memo(function InfoSection({ place }: InfoSectionProps) {
   const [tagsExpanded, setTagsExpanded] = useState(false);
+
+  const { tier: effectiveTier, isCommunity } = getEffectivePriceTier(place);
+  const listedMeta = getTierMeta(place.priceTier);
 
   const visibleCategories = tagsExpanded
     ? place.categories
@@ -39,9 +44,9 @@ export const InfoSection = React.memo(function InfoSection({ place }: InfoSectio
         </View>
 
         <View style={styles.priceContainer}>
-          <PriceBadge 
-            tier={place.priceTier} 
-            variant="pill" 
+          <PriceBadge
+            tier={effectiveTier}
+            variant="pill"
           />
         </View>
       </View>
@@ -97,6 +102,7 @@ const styles = StyleSheet.create({
   },
   priceContainer: {
     marginTop: 4,
+    alignItems: 'flex-end',
   },
   description: {
     ...Typography.subtitle,
