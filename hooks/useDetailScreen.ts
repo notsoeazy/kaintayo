@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuthStore } from '@/store/auth_store';
 import { useListStore } from '@/store/list_store';
+import { useFeedStore } from '@/store/feed_store';
 import { useTranslation } from '@/hooks/useTranslation';
 import {
   getPlaceById,
@@ -21,6 +22,7 @@ export function useDetailScreen(placeId: string) {
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const { wishlistIds, triedIds, toggleWishlist, toggleTried } = useListStore();
+  const updatePlace = useFeedStore((state) => state.updatePlace);
 
   const [place, setPlace] = useState<Place | null>(null);
   const [photos, setPhotos] = useState<string[]>([]);
@@ -149,6 +151,16 @@ export function useDetailScreen(placeId: string) {
       // Refresh from server to get accurate count
       const tally = await getPriceVoteTally(placeId);
       setVoteTally(tally);
+
+      // Fetch updated place to sync consensus
+      const updatedPlace = await getPlaceById(placeId);
+      if (updatedPlace) {
+        setPlace(updatedPlace);
+        updatePlace(placeId, {
+          communityPriceTier: updatedPlace.communityPriceTier,
+          totalVotes: updatedPlace.totalVotes,
+        });
+      }
     } catch {
       // Rollback on error
       setUserVote(prevVote);
@@ -156,7 +168,7 @@ export function useDetailScreen(placeId: string) {
     } finally {
       setIsVoting(false);
     }
-  }, [user, placeId, isVoting, userVote, voteTally]);
+  }, [user, placeId, isVoting, userVote, voteTally, updatePlace]);
 
   const isWishlisted = wishlistIds.includes(placeId);
   const isTried = triedIds.includes(placeId);

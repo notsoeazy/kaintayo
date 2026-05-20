@@ -18,6 +18,7 @@ interface FeedState {
   setFilter: <K extends keyof FeedFilters>(key: K, value: FeedFilters[K]) => void;
   toggleCategory: (id: FoodCategory) => void;
   resetFilters: () => void;
+  updatePlace: (placeId: string, updatedFields: Partial<Place>) => void;
 }
 
 export const useFeedStore = create<FeedState>((set) => ({
@@ -52,4 +53,12 @@ export const useFeedStore = create<FeedState>((set) => ({
   },
 
   resetFilters: () => set({ filters: defaultFilters }),
+
+  updatePlace: (placeId, updatedFields) => {
+    set((state) => ({
+      places: state.places.map((p) =>
+        p.id === placeId ? { ...p, ...updatedFields } : p
+      ),
+    }));
+  },
 }));
