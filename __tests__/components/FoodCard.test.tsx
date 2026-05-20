@@ -65,7 +65,7 @@ jest.mock('lucide-react-native', () => {
 const samplePlace: Place = {
   id: 'place1',
   name: 'Geewan Naga',
-  categories: ['filipino'],
+  categories: ['silog'],
   priceTier: 'affordable',
   priceMin: 100,
   priceMax: 200,
@@ -78,6 +78,7 @@ const samplePlace: Place = {
   likes: 12,
   communityPriceTier: null,
   totalVotes: 0,
+  createdAt: null,
 };
 
 describe('FoodCard Component', () => {
