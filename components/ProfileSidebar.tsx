@@ -167,6 +167,7 @@ export function ProfileSidebar({ visible, onClose }: ProfileSidebarProps) {
                 />
               </View>
               <Text style={styles.aboutAppName}>KainTayo</Text>
+              <Text style={styles.aboutVersion}>v1.0.0</Text>
               <Text style={styles.aboutTagline}>{'Budget food discovery\nfor Filipino students 🇵🇭'}</Text>
               <View style={styles.aboutDividerThin} />
               <Text style={styles.aboutMadeByLabel}>Made with ❤️ by</Text>
@@ -340,6 +341,17 @@ const styles = StyleSheet.create({
     fontSize: FontSize.lg,
     color: Colors.text,
     marginBottom: 2,
+  },
+  aboutVersion: {
+    fontFamily: FontFamily.bodyMedium,
+    fontSize: FontSize.xs,
+    color: Colors.primary,
+    backgroundColor: Colors.primary + '15',
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: Radius.full,
+    marginBottom: Spacing.xs,
+    overflow: 'hidden',
   },
   aboutTagline: {
     fontFamily: FontFamily.body,
