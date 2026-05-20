@@ -105,6 +105,7 @@ const FoodCardComponent = ({ place, distance }: FoodCardProps) => {
 
             <PriceBadge 
               tier={effectiveTier}
+              variant="on-image"
               containerStyle={styles.priceBadgeShadow}
             />
           </View>
