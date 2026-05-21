@@ -5,3 +5,4 @@
 * Used Claude to create temporary README.md for collaboration guides.
 * Used Antigravity IDE for code reviews and auto-generating commit messages and other development tasks.
 * Used Antigravity to create tests for the codebase. (Sorry Sir wala na time😭)
+* Used Claude to check for vulnerabilities regarding authentication.

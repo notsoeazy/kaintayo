@@ -10,16 +10,19 @@ A community-driven mobile food discovery app for budget-conscious Filipino stude
 
 ---
 
+> **Note:** CI/CD and release are only available on GitHub. Had problems with authentication with Gitlab. Visit the [repo](https://github.com/notsoeazy/kaintayo/releases) to check out the latest release.
+
+
 ## Table of Contents
 
 - [Screenshots](#screenshots)
 - [Core Features](#core-features)
-- [🇵🇭 Filipino Taste Implementation Report](#-filipino-taste-implementation-report)
+- [Filipino Taste Implementation Report](#-filipino-taste-implementation-report)
 - [Architecture Overview](#architecture-overview)
 - [Tech Stack](#tech-stack)
 - [Setup & Run Instructions](#setup--run-instructions)
 - [Testing](#testing)
-- [API Keys & `.env.example`](#api-keys--envexample)
+- [API keys](#api-keys--envexample)
 - [Known Limitations & Future Work](#known-limitations--future-work)
 - [Build Distribution](#build-distribution)
 - [Appendix](#appendix)
@@ -30,9 +33,11 @@ A community-driven mobile food discovery app for budget-conscious Filipino stude
 
 ---
 
-## Screenshots
+## Demo
 
-> Screenshots and screen recordings are included in the demo video submission.
+Follow the link to watch the demo video.
+
+[![KainTayo Demo](https://img.youtube.com/vi/BXVwDHXHr5s/maxresdefault.jpg)](https://youtu.be/BXVwDHXHr5s)
 
 ---
 
@@ -49,7 +54,7 @@ A community-driven mobile food discovery app for budget-conscious Filipino stude
 
 ---
 
-## 🇵🇭 Filipino Taste Implementation Report
+## Filipino Taste Implementation Report
 
 KainTayo satisfies **5 of the 6** Filipino Taste checklist items:
 
