@@ -58,7 +58,8 @@ export default function LoginScreen() {
   };
 
   const handleEmailAuth = async () => {
-    if (!email || !password) {
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || !password) {
       setError(t.loginScreen.errorEmptyFields);
       return;
     }
@@ -66,9 +67,9 @@ export default function LoginScreen() {
     setError('');
     try {
       if (isLoginMode) {
-        await signInWithEmail(email, password);
+        await signInWithEmail(trimmedEmail, password);
       } else {
-        await signUpWithEmail(email, password);
+        await signUpWithEmail(trimmedEmail, password);
       }
     } catch (e: any) {
       if (e?.code === 'auth/email-already-in-use') {
@@ -116,6 +117,8 @@ export default function LoginScreen() {
               autoCapitalize="none"
               keyboardType="email-address"
               autoComplete="email"
+              textContentType="emailAddress"
+              autoCorrect={false}
             />
             <View style={styles.passwordContainer}>
               <TextInput
@@ -126,6 +129,8 @@ export default function LoginScreen() {
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
                 autoComplete="password"
+                textContentType={isLoginMode ? 'password' : 'newPassword'}
+                autoCorrect={false}
               />
               <Pressable
                 onPress={() => setShowPassword(!showPassword)}
