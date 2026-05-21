@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, Redirect } from 'expo-router';
 import { ChevronLeft, Check, X, Calendar } from 'lucide-react-native';
 import { Colors } from '@/styles/theme';
 import { styles } from '@/styles/screens/invites_screen.styles';
@@ -22,7 +22,7 @@ type TabType = 'inbox' | 'outbox';
 export default function InvitesScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, isLoading: authLoading } = useAuthStore();
   const {
     invites,
     sentInvites,
@@ -30,6 +30,10 @@ export default function InvitesScreen() {
     fetchInvites,
     respondToInvite,
   } = useSocialStore();
+
+  if (!authLoading && !user) {
+    return <Redirect href="/(auth)/login_screen" />;
+  }
 
   const [activeTab, setActiveTab] = useState<TabType>('inbox');
   const [refreshing, setRefreshing] = useState(false);
@@ -101,7 +105,7 @@ export default function InvitesScreen() {
           activeOpacity={0.7}
           onPress={() => {
             if (isInbox) {
-              router.push(`/detail/${item.placeId}?invitedBy=${item.fromUsername}&inviteStatus=${item.status}`);
+              router.push(`/detail/${item.placeId}?invitedBy=${item.fromUsername}&inviteStatus=${item.status}&inviteId=${item.id}`);
             } else {
               router.push(`/detail/${item.placeId}`);
             }

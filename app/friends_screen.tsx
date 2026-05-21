@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, Redirect } from 'expo-router';
 import { Image } from 'expo-image';
 import { ChevronLeft, User, UserPlus, UserMinus, Check, X, Users } from 'lucide-react-native';
 import { Colors } from '@/styles/theme';
@@ -32,7 +32,7 @@ export default function FriendsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   
-  const { user } = useAuthStore();
+  const { user, isLoading: authLoading } = useAuthStore();
   const { profile } = useProfileStore();
   const {
     friends,
@@ -47,6 +47,10 @@ export default function FriendsScreen() {
     declineRequest,
     unfriend,
   } = useSocialStore();
+
+  if (!authLoading && !user) {
+    return <Redirect href="/(auth)/login_screen" />;
+  }
 
   const [activeTab, setActiveTab] = useState<TabType>('my_friends');
   const [searchQuery, setSearchQuery] = useState('');

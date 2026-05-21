@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'expo-router';
 import { View, ScrollView, ActivityIndicator, Text, Share, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
@@ -11,14 +12,18 @@ import { LocationMap } from '@/components/detail/LocationMap';
 import { ActionRow } from '@/components/detail/ActionRow';
 import { InviteModal } from '@/components/detail/InviteModal';
 import { InviteFriendsModal } from '@/components/detail/InviteFriendsModal';
+import { useAuthStore } from '@/store/auth_store';
 import { useProfileStore } from '@/store/profile_store';
+import { useSocialStore } from '@/store/social_store';
 import { Colors, FontFamily, FontSize, Spacing } from '@/styles/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 
 export default function DetailScreen() {
-  const { id, invitedBy, inviteStatus } = useLocalSearchParams<{ id: string; invitedBy?: string; inviteStatus?: string }>();
+  const { id, invitedBy, inviteStatus, inviteId } = useLocalSearchParams<{ id: string; invitedBy?: string; inviteStatus?: string; inviteId?: string }>();
   const { t } = useTranslation();
   const { profile } = useProfileStore();
+  const { user, isLoading: authLoading } = useAuthStore();
+  const { respondToInvite } = useSocialStore();
 
   const {
     place,
@@ -48,10 +53,12 @@ export default function DetailScreen() {
     }
   }, [invitedBy, inviteStatus]);
 
-  const handleAcceptInvite = () => {
+  const handleAcceptInvite = async () => {
     setIsInviteModalVisible(false);
-    if (!isWishlisted) {
-      handleWishlist();
+    if (!isWishlisted) handleWishlist();
+    // Update Firestore invite status so the inbox reflects accepted
+    if (user && inviteId) {
+      await respondToInvite(user.uid, inviteId, 'accepted');
     }
   };
 
@@ -64,6 +71,10 @@ export default function DetailScreen() {
       .replace('{{url}}', deepLink);
     await Share.share({ message: msg });
   };
+
+  if (!authLoading && !user) {
+    return <Redirect href="/(auth)/login_screen" />;
+  }
 
   if (isLoading) {
     return (

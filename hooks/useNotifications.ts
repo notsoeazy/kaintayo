@@ -42,12 +42,18 @@ export function useNotifications() {
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
       const data = response.notification.request.content.data;
-      if (data?.url) {
-        router.push(data.url as any);
+      if (!data?.url) return;
+
+      // Guard: redirect to login if not authenticated
+      if (!user) {
+        router.replace('/(auth)/login_screen');
+        return;
       }
+
+      router.push(data.url as any);
     });
     return () => subscription.remove();
-  }, [router]);
+  }, [router, user]);
 
   // FIRESTORE RECEIVED INVITES LISTENER
   useEffect(() => {
@@ -95,7 +101,7 @@ export function useNotifications() {
                         .replace('{{username}}', data.fromUsername || '')
                         .replace('{{placeName}}', data.placeName || ''),
                       data: {
-                        url: `/detail/${data.placeId}?invitedBy=${data.fromUsername}`,
+                        url: `/detail/${data.placeId}?invitedBy=${data.fromUsername}&inviteId=${inviteId}`,
                       },
                     },
                     trigger: null,
