@@ -37,7 +37,7 @@ A community-driven mobile food discovery app for budget-conscious Filipino stude
 
 Follow the link to watch the demo video.
 
-[![KainTayo Demo](https://img.youtube.com/vi/BXVwDHXHr5s/maxresdefault.jpg)](https://youtu.be/BXVwDHXHr5s)
+[![KainTayo Demo](https://img.youtube.com/vi/k8nY4s5T0gY/maxresdefault.jpg)](https://youtu.be/k8nY4s5T0gY?si=UmJhgWFbDez5rneF)
 
 ---
 
